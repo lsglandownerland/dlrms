@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>খতিয়ান এন্ট্রি, সংরক্ষণ ও প্রিন্ট সিস্টেম</title>
+    <title>খতিয়ান এন্ট্রি ও অটো-এক্সপায়ারি কিউআর সিস্টেম</title>
     <!-- QR Code Generator Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
@@ -160,12 +160,6 @@
             flex-direction: column;
             align-items: center;
         }
-        .qr-expiry {
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #000;
-        }
         .qr-container {
             width: 105px;
             height: 105px;
@@ -176,6 +170,19 @@
             padding: 4px;
         }
         .qr-container img { width: 100% !important; height: 100% !important; }
+
+        /* Expired Page Overlay Style */
+        .expired-notice {
+            display: none;
+            padding: 50px 20px;
+            text-align: center;
+            color: #d32f2f;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px dashed #d32f2f;
+            background: #ffebee;
+            margin-top: 50px;
+        }
 
         @media print {
             body { background: none; padding: 0; }
@@ -188,7 +195,7 @@
 
 <!-- Data Entry Form -->
 <div class="form-container">
-    <div class="form-title">খতিয়ান এন্ট্রি, মেয়াদের তারিখ ও সংরক্ষণ প্যানেল</div>
+    <div class="form-title">খতিয়ান এন্ট্রি ও মেয়াদের তারিখ নির্ধারণ প্যানেল</div>
     <div class="form-grid">
         <div class="form-group"><label>বিভাগ</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
         <div class="form-group"><label>জিলা</label><input type="text" id="in_jila" value="নোয়াখালী"></div>
@@ -198,8 +205,11 @@
         <div class="form-group"><label>রে: সা: নং</label><input type="text" id="in_resa" value=""></div>
         <div class="form-group"><label>খতিয়ান নং</label><input type="text" id="in_khatiyan" value="৬৬৮"></div>
         
-        <!-- QR Expiry Date Input -->
-        <div class="form-group"><label>কিউআর মেয়াদের তারিখ (QR Expiry)</label><input type="text" id="in_qr_expiry" value="৩০-১২-২০২৬"></div>
+        <!-- Hidden Expiry Option Input for QR Logic -->
+        <div class="form-group">
+            <label>কিউআর মেয়াদের শেষ তারিখ (YYYY-MM-DD)</label>
+            <input type="date" id="in_qr_expiry_date" value="2026-12-30">
+        </div>
 
         <div class="form-group full-width"><label>মালিকের নাম ও ঠিকানা</label><textarea id="in_owner" rows="3">মালিক
 দং ছকিনা খাতুন
@@ -289,13 +299,18 @@
             </tr>
         </thead>
         <tbody id="savedListBody">
-            <!-- Saved items will load here -->
+            <!-- Saved items load here -->
         </tbody>
     </table>
 </div>
 
+<!-- Expired Notice Overlay (Shows only when link expired) -->
+<div class="expired-notice" id="expiredNotice">
+    ⚠️ এই খতিয়ানের মেয়াদের সময়সীমা পার হয়ে গেছে। <br> কোনো তথ্য প্রদর্শনের জন্য উপলব্ধ নেই।
+</div>
+
 <!-- Main Printable Khatiyan -->
-<div class="page">
+<div class="page" id="khatiyanPage">
     <div class="top-bar">
         <div>পৃষ্ঠা নং: ১ এর ১</div>
     </div>
@@ -387,33 +402,26 @@
             <img src="./logo.png" class="seal-logo" alt="Seal Logo" onerror="this.onerror=null; this.src='logo.png';">
         </div>
         <div class="qr-wrapper">
-            <div class="qr-expiry">মেয়াদকাল: <span id="out_qr_expiry">৩০-১২-২০২৬</span></div>
+            <!-- No Expiry Text Here -->
             <div id="qrcode" class="qr-container"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. Auto English to Bangla Number Convertor
     function toBanglaNum(str) {
         var banglaDigits = {'0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'};
-        return str.replace(/[0-9]/g, function(w){
-            return banglaDigits[w];
-        });
+        return str.replace(/[0-9]/g, function(w){ return banglaDigits[w]; });
     }
 
-    // 2. Set Dynamic Today Date
     function setAutoDate() {
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0');
         var yyyy = today.getFullYear();
-        
-        var dateString = dd + '-' + mm + '-' + yyyy;
-        document.getElementById('out_auto_date').innerText = toBanglaNum(dateString);
+        document.getElementById('out_auto_date').innerText = toBanglaNum(dd + '-' + mm + '-' + yyyy);
     }
 
-    // 3. Update Output Khatiyan View
     function updateKhatiyan() {
         document.getElementById('out_division').innerText = document.getElementById('in_division').value;
         document.getElementById('out_khatiyan').innerText = document.getElementById('in_khatiyan').value;
@@ -435,16 +443,18 @@
         document.getElementById('out_prop_sat').innerText = document.getElementById('in_prop_sat').value;
         document.getElementById('out_remarks').innerText = document.getElementById('in_remarks').value;
 
-        // Expiry Date Update
-        document.getElementById('out_qr_expiry').innerText = toBanglaNum(document.getElementById('in_qr_expiry').value);
+        renderQRCode();
     }
 
-    // 4. Easy Scan QR Code Generator
     function renderQRCode() {
         var qrElement = document.getElementById("qrcode");
         qrElement.innerHTML = "";
         
-        var targetUrl = "https://dlrmslandgovbdjdjsj-spechtrrf.github.io/dlrms-land-gov-bd-dfkljdf-dff-dfwef-hsfdfdf--wesdfsdfsf45-545sf4d5s5df4sf/index.html?id=35";
+        var expiryDate = document.getElementById('in_qr_expiry_date').value;
+        var baseUrl = window.location.href.split('?')[0];
+        
+        // URL parameterized with Expiry Info
+        var targetUrl = baseUrl + "?id=35&exp=" + encodeURIComponent(expiryDate);
         
         try {
             new QRCode(qrElement, {
@@ -456,11 +466,28 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
         } catch(e) {
-            console.log("QR Code generation error: ", e);
+            console.log("QR Code error: ", e);
         }
     }
 
-    // 5. Save Khatiyan Data to LocalStorage
+    // Expiry Validator for QR Scan Access
+    function checkQRExpiry() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var expParam = urlParams.get('exp');
+
+        if (expParam) {
+            var today = new Date();
+            var expDate = new Date(expParam + 'T23:59:59');
+
+            // If Expired, Hide Khatiyan Content and Show Warning
+            if (today > expDate) {
+                document.getElementById('khatiyanPage').style.display = 'none';
+                document.querySelector('.form-container').style.display = 'none';
+                document.getElementById('expiredNotice').style.display = 'block';
+            }
+        }
+    }
+
     function saveKhatiyan() {
         var khatiyanNo = document.getElementById('in_khatiyan').value.trim();
         if(!khatiyanNo) {
@@ -476,7 +503,7 @@
             jl: document.getElementById('in_jl').value,
             resa: document.getElementById('in_resa').value,
             khatiyan: khatiyanNo,
-            expiry: document.getElementById('in_qr_expiry').value,
+            expiry_date: document.getElementById('in_qr_expiry_date').value,
             owner: document.getElementById('in_owner').value,
             share: document.getElementById('in_share').value,
             dag: document.getElementById('in_dag').value,
@@ -498,7 +525,6 @@
         loadSavedList();
     }
 
-    // 6. Load Saved List Panel
     function loadSavedList() {
         var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
         var tbody = document.getElementById('savedListBody');
@@ -526,7 +552,6 @@
         });
     }
 
-    // Restore Data to Form
     function restoreKhatiyan(key) {
         var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
         var item = savedKhatiyans[key];
@@ -539,7 +564,7 @@
         document.getElementById('in_jl').value = item.jl || '';
         document.getElementById('in_resa').value = item.resa || '';
         document.getElementById('in_khatiyan').value = item.khatiyan || '';
-        document.getElementById('in_qr_expiry').value = item.expiry || '';
+        document.getElementById('in_qr_expiry_date').value = item.expiry_date || '';
         document.getElementById('in_owner').value = item.owner || '';
         document.getElementById('in_share').value = item.share || '';
         document.getElementById('in_dag').value = item.dag || '';
@@ -556,7 +581,6 @@
         alert('খতিয়ান লোড করা হয়েছে!');
     }
 
-    // Delete Single Saved Item
     function deleteKhatiyan(key) {
         if(confirm('আপনি কি এই খতিয়ানটি মুছে ফেলতে চান?')) {
             var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
@@ -566,21 +590,16 @@
         }
     }
 
-    // Toggle Saved Panel
     function toggleSavedList() {
         var panel = document.getElementById('savedPanel');
-        if(panel.style.display === 'block') {
-            panel.style.display = 'none';
-        } else {
-            panel.style.display = 'block';
-            loadSavedList();
-        }
+        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        if(panel.style.display === 'block') loadSavedList();
     }
 
     window.onload = function() {
         setAutoDate();
         updateKhatiyan();
-        setTimeout(renderQRCode, 200);
+        checkQRExpiry();
     };
 </script>
 
