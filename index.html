@@ -133,6 +133,13 @@
             font-weight: normal;
         }
 
+        /* Column Numbering Line Header */
+        tr.column-numbers th {
+            border-top: 1px solid #000;
+            padding: 2px 0;
+            font-size: 11px;
+        }
+
         /* Column Widths */
         .col-owner { width: 22%; text-align: left; padding-left: 5px; }
         .col-share { width: 5%; }
@@ -295,38 +302,38 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2" class="col-owner">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা
-                ১ </th>
-                <th rowspan="2" class="col-share">অংশ
-                ২</th>
-                <th rowspan="2" class="col-rent">রাজস্ব
-                ৩</th>
-                <th rowspan="2" class="col-dag">দাগ
-               ৪</th>
-                <th colspan="2">জমি শ্রেণী 
-                ৫</th>
+                <th rowspan="2" class="col-owner">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</th>
+                <th rowspan="2" class="col-share">অংশ</th>
+                <th rowspan="2" class="col-rent">রাজস্ব</th>
+                <th rowspan="2" class="col-dag">দাগ</th>
+                <th colspan="2">জমি শ্রেণী<br>৫</th>
                 <th colspan="2">দাগের মোট পরিমাণ</th>
-                <th rowspan="2" class="col-part-share">দাগের মধ্যে অত্র খতিয়ানের অংশ
-                ৭</th>
+                <th rowspan="2" class="col-part-share">দাগের মধ্যে অত্র খতিয়ানের অংশ<br>৭</th>
                 <th colspan="2">অংশ অনুযায়ী জমির পরিমাণ</th>
                 <th rowspan="2" class="col-remarks">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</th>
             </tr>
             <tr>
-                <th class="col-cat-agri">কৃষি 
-                ৫(ক)</th>
-                <th class="col-cat-nonagri">অকৃষি 
-                ৫(খ)</th>
-                <th>একর
-                ৬(ক)</th>
-                <th>শতাংশ
-                ৬(খ)</th>
-                <th>একর
-                ৮(ক)</th>
-                <th>শতাংশ
-                ৮(খ)</th>
+                <th class="col-cat-agri">কৃষি</th>
+                <th class="col-cat-nonagri">অকৃষি</th>
+                <th>একর</th>
+                <th>শতাংশ</th>
+                <th>একর</th>
+                <th>শতাংশ</th>
             </tr>
-            <tr>
-            </tr>
+            <!-- রেখা দিয়ে কলাম নাম্বারিং সারি -->
+            <tr class="column-numbers">
+                <th>১</th>
+                <th>২</th>
+                <th>৩</th>
+                <th>৪</th>
+                <th>৫(ক)</th>
+                <th>৫(খ)</th>
+                <th>৬(ক)</th>
+                <th>৬(খ)</th>
+                <th></th>
+                <th>৮(ক)</th>
+                <th>৮(খ)</th>
+                <th>৯</th>
             </tr>
         </thead>
         <tbody>
