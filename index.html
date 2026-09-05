@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>খতিয়ান এন্ট্রি ও প্রিন্ট</title>
-    <!-- QR Code Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- QR Code Generator Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -21,7 +21,7 @@
             align-items: center;
         }
 
-        /* Form Styles (Prints time hide thakbe) */
+        /* Form Styles */
         .form-container {
             background: #ffffff;
             padding: 20px;
@@ -36,6 +36,7 @@
             font-size: 18px;
             margin-bottom: 15px;
             color: #2E7D32;
+            font-weight: bold;
         }
         .form-grid {
             display: grid;
@@ -100,6 +101,9 @@
         .logo-box {
             width: 75px;
             height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .logo-box img {
             width: 100%;
@@ -188,16 +192,12 @@
             margin: 0 auto;
             text-align: center;
         }
-        #qrcode {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .qr-container {
             width: 70px;
             height: 70px;
-        }
-        #qrcode img {
-            width: 100%;
-            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Print Media Styles */
@@ -288,8 +288,8 @@
 
     <div class="header-section">
         <div class="logo-box">
-            <!-- Uploaded Logo Image -->
-            <img src="logo.png" alt="Logo">
+            <!-- Relative path for GitHub logo.png -->
+            <img src="./logo.png" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
         </div>
         <div class="title-box">
             <div class="main-title">খতিয়ান নং- <span id="out_khatiyan">৬১৮</span></div>
@@ -367,8 +367,8 @@
             </div>
         </div>
         <div>
-            <!-- QR Code Box -->
-            <div id="qrcode"></div>
+            <!-- QR Code Container -->
+            <div id="qrcode" class="qr-container"></div>
         </div>
     </div>
 </div>
@@ -394,14 +394,24 @@
         document.getElementById('out_remarks').innerText = document.getElementById('in_remarks').value;
     }
 
-    // Generate Dynamic QR Code matching current site URL
+    // Generate Dynamic QR Code
+    function renderQRCode() {
+        var qrElement = document.getElementById("qrcode");
+        qrElement.innerHTML = ""; // Clear existing
+        try {
+            new QRCode(qrElement, {
+                text: window.location.href,
+                width: 65,
+                height: 65
+            });
+        } catch(e) {
+            console.log("QR Code generation error: ", e);
+        }
+    }
+
     window.onload = function() {
         updateKhatiyan();
-        new QRCode(document.getElementById("qrcode"), {
-            text: window.location.href,
-            width: 65,
-            height: 65
-        });
+        setTimeout(renderQRCode, 300);
     };
 </script>
 
