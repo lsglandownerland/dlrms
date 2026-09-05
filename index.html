@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>খতিয়ান নং- ৬১৮</title>
+    <title>খতিয়ান এন্ট্রি ও প্রিন্ট</title>
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -15,8 +17,69 @@
             background-color: #f4f4f4;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
         }
+
+        /* Form Styles (Prints time hide thakbe) */
+        .form-container {
+            background: #ffffff;
+            padding: 20px;
+            width: 210mm;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            border: 1px solid #4CAF50;
+        }
+        .form-title {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2E7D32;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group.full-width {
+            grid-column: span 3;
+        }
+        .form-group label {
+            font-size: 13px;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .btn-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .btn {
+            background-color: #2E7D32;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        .btn-print {
+            background-color: #0288D1;
+        }
+
+        /* Page Layout */
         .page {
             background: #fff;
             width: 210mm;
@@ -26,24 +89,41 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
         }
-        
-        /* Header Info */
+
+        /* Header Info & Logo */
+        .header-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .logo-box {
+            width: 75px;
+            height: 75px;
+        }
+        .logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .title-box {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .main-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
         .top-bar {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 5px;
-        }
-        .main-title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 10px;
         }
         .meta-info {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 12px;
             font-weight: bold;
         }
@@ -52,7 +132,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
             text-align: center;
         }
         table, th, td {
@@ -61,12 +141,13 @@
         th, td {
             padding: 4px 2px;
             vertical-align: top;
+            white-space: pre-line;
         }
         th {
             font-weight: normal;
         }
-        
-        /* Column Widths & Alignments */
+
+        /* Column Widths */
         .col-owner { width: 22%; text-align: left; padding-left: 5px; }
         .col-share { width: 6%; }
         .col-rent { width: 5%; }
@@ -80,11 +161,10 @@
         .col-remarks { width: 19%; text-align: left; padding-left: 5px; }
 
         .align-left { text-align: left; padding-left: 5px; }
-        .align-center { text-align: center; }
 
         /* Footer Section */
         .footer-note {
-            margin-top: 15px;
+            margin-top: 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
@@ -106,48 +186,132 @@
             justify-content: center;
             font-size: 10px;
             margin: 0 auto;
+            text-align: center;
         }
-        .qr-placeholder {
-            width: 65px;
-            height: 65px;
-            border: 1px solid #000;
+        #qrcode {
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 10px;
+            align-items: center;
+            width: 70px;
+            height: 70px;
+        }
+        #qrcode img {
+            width: 100%;
+            height: 100%;
         }
 
+        /* Print Media Styles */
         @media print {
             body { background: none; padding: 0; }
+            .form-container { display: none; }
             .page { border: none; box-shadow: none; width: 100%; height: 100%; padding: 10mm; }
         }
     </style>
 </head>
 <body>
 
+<!-- Data Entry Form -->
+<div class="form-container">
+    <div class="form-title">খতিয়ান তথ্য এন্ট্রি ফর্মে পরিবর্তন করুন</div>
+    <div class="form-grid">
+        <div class="form-group"><label>খতিয়ান নং</label><input type="text" id="in_khatiyan" value="৬১৮"></div>
+        <div class="form-group"><label>জিলা</label><input type="text" id="in_jila" value="নোয়াখালী"></div>
+        <div class="form-group"><label>উপজেলা/থানা</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
+        <div class="form-group"><label>মৌজা</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
+        <div class="form-group"><label>জে, এল, নং</label><input type="text" id="in_jl" value="২৩৪"></div>
+        <div class="form-group"><label>রে: সা: নং</label><input type="text" id="in_resa" value=""></div>
+        
+        <div class="form-group full-width"><label>মালিকের নাম ও ঠিকানা</label><textarea id="in_owner" rows="3">মালিক
+দং গিয়াস উদ্দিন
+নিজাম উদ্দিন
+মহি উদ্দিন
+কামাল উদ্দিন
+সিরাজ উদ্দিন
+আলা উদ্দিন
+জহির উদ্দিন
+পিং আনোয়ার আহমেদ
+শাফিয়া খাতুন
+জং আনোয়ার আহমেদ
+মনোয়ার বেগম
+জং ফজলুল হক
+সাং নিজ</textarea></div>
+
+        <div class="form-group"><label>অংশ</label><textarea id="in_share" rows="3">
+০.১১৭
+০.১১৭
+০.১১৭
+০.১১৭
+০.১১৭
+০.১১৬
+০.১১৬
+
+০.১২৫
+
+০.০৫৮</textarea></div>
+        <div class="form-group"><label>দাগ নং</label><textarea id="in_dag" rows="3">৪২৫৭
+৪২৫৮
+৪২৫৯</textarea></div>
+        <div class="form-group"><label>জমি শ্রেণী</label><textarea id="in_cat" rows="3">বাড়ী
+বাড়ী
+বাড়ী</textarea></div>
+        <div class="form-group"><label>দাগের মোট একর</label><textarea id="in_total_acre" rows="3">
+
+১</textarea></div>
+        <div class="form-group"><label>দাগের মোট শতাংশ</label><textarea id="in_total_sat" rows="3">৫৮০০
+১৮০০
+০০০০</textarea></div>
+        <div class="form-group"><label>অত্র খতিয়ানের অংশ</label><textarea id="in_part_share" rows="3">০.১০৩
+০.০৫৫
+০.৩০০</textarea></div>
+        <div class="form-group"><label>অংশ অনুযায়ী একর</label><textarea id="in_prop_acre" rows="3">০
+০
+০</textarea></div>
+        <div class="form-group"><label>অংশ অনুযায়ী শতাংশ</label><textarea id="in_prop_sat" rows="3">০৬০০
+০১০০
+৩০০০</textarea></div>
+        <div class="form-group"><label>মন্তব্য</label><textarea id="in_remarks" rows="3">টিন/১
+
+টিন/১ ঘর/১</textarea></div>
+    </div>
+    <div class="btn-container">
+        <button class="btn" onclick="updateKhatiyan()">খতিয়ান আপডেট করুন</button>
+        <button class="btn btn-print" onclick="window.print()">প্রিন্ট করুন</button>
+    </div>
+</div>
+
+<!-- Main Printable Khatiyan -->
 <div class="page">
     <div class="top-bar">
         <div>বিভাগ: চট্টগ্রাম</div>
         <div>পৃষ্ঠা নং: ১ এর ১</div>
     </div>
 
-    <div class="main-title">খতিয়ান নং- ৬১৮</div>
+    <div class="header-section">
+        <div class="logo-box">
+            <!-- Uploaded Logo Image -->
+            <img src="logo.png" alt="Logo">
+        </div>
+        <div class="title-box">
+            <div class="main-title">খতিয়ান নং- <span id="out_khatiyan">৬১৮</span></div>
+        </div>
+        <div style="width: 75px;"></div>
+    </div>
 
     <div class="meta-info">
-        <div>জিলা: নোয়াখালী</div>
-        <div>উপজেলা/থানা: বেগমগঞ্জ</div>
-        <div>মৌজা: অনন্তপুর</div>
-        <div>জে, এল, নং: ২৩৪</div>
-        <div>রে: সা: নং:</div>
+        <div>জিলা: <span id="out_jila">নোয়াখালী</span></div>
+        <div>উপজেলা/থানা: <span id="out_upazila">বেগমগঞ্জ</span></div>
+        <div>মৌজা: <span id="out_mouza">অনন্তপুর</span></div>
+        <div>জে, এল, নং: <span id="out_jl">২৩৪</span></div>
+        <div>রে: সা: নং: <span id="out_resa"></span></div>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th rowspan="2" class="col-owner">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা(১)</th>
-                <th rowspan="2" class="col-share">অংশ(২)</th>
-                <th rowspan="2" class="col-rent">রাজস্ব(৩)</th>
-                <th rowspan="2" class="col-dag">দাগ(৪)</th>
+                <th rowspan="2" class="col-owner">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</th>
+                <th rowspan="2" class="col-share">অংশ</th>
+                <th rowspan="2" class="col-rent">রাজস্ব</th>
+                <th rowspan="2" class="col-dag">দাগ</th>
                 <th colspan="2">জমি শ্রেণী</th>
                 <th colspan="2">দাগের মোট পরিমাণ</th>
                 <th rowspan="2" class="col-part-share">দাগের মধ্যে অত্র খতিয়ানের অংশ</th>
@@ -165,73 +329,17 @@
         </thead>
         <tbody>
             <tr>
-                <td class="col-owner">
-                    <strong>মালিক</strong><br>
-                    দং গিয়াস উদ্দিন<br>
-                    নিজাম উদ্দিন<br>
-                    মহি উদ্দিন<br>
-                    কামাল উদ্দিন<br>
-                    সিরাজ উদ্দিন<br>
-                    আলা উদ্দিন<br>
-                    জহির উদ্দিন<br>
-                    পিং আনোয়ার আহমেদ<br>
-                    শাফিয়া খাতুন<br>
-                    জং আনোয়ার আহমেদ<br>
-                    মনোয়ারা বেগম<br>
-                    জং ফজলুল হক<br>
-                    সাং নিজ
-                </td>
-                <td class="col-share">
-                    <br>
-                    ০.১১৭<br>
-                    ০.১১৭<br>
-                    ০.১১৭<br>
-                    ০.১১৭<br>
-                    ০.১১৭<br>
-                    ০.১১৬<br>
-                    ০.১১৬<br><br>
-                    ০.১২৫<br><br>
-                    ০.০৫৮
-                </td>
+                <td class="col-owner" id="out_owner"></td>
+                <td class="col-share" id="out_share"></td>
                 <td class="col-rent"></td>
-                <td class="col-dag">
-                    ৪২৫৭<br>
-                    ৪২৫৮<br>
-                    ৪২৫৯
-                </td>
-                <td colspan="2" class="col-cat">
-                    বাড়ী<br>
-                    বাড়ী<br>
-                    বাড়ী
-                </td>
-                <td class="col-total-acre">
-                    <br><br>
-                    ১
-                </td>
-                <td class="col-total-sat">
-                    ৫৮০০<br>
-                    ১৮০০<br>
-                    ০০০০
-                </td>
-                <td class="col-part-share">
-                    ০.১০৩<br>
-                    ০.০৫৫<br>
-                    ০.৩০০
-                </td>
-                <td class="col-prop-acre">
-                    ০<br>
-                    ০<br>
-                    ০
-                </td>
-                <td class="col-prop-sat">
-                    ০৬০০<br>
-                    ০১০০<br>
-                    ৩০০০
-                </td>
-                <td class="col-remarks">
-                    টিন/১<br><br>
-                    টিন/১ ঘর/১
-                </td>
+                <td class="col-dag" id="out_dag"></td>
+                <td colspan="2" class="col-cat" id="out_cat"></td>
+                <td class="col-total-acre" id="out_total_acre"></td>
+                <td class="col-total-sat" id="out_total_sat"></td>
+                <td class="col-part-share" id="out_part_share"></td>
+                <td class="col-prop-acre" id="out_prop_acre"></td>
+                <td class="col-prop-sat" id="out_prop_sat"></td>
+                <td class="col-remarks" id="out_remarks"></td>
             </tr>
             <!-- Total Row -->
             <tr>
@@ -259,12 +367,43 @@
             </div>
         </div>
         <div>
-            <div class="qr-placeholder">
-                [ QR Code ]
-            </div>
+            <!-- QR Code Box -->
+            <div id="qrcode"></div>
         </div>
     </div>
 </div>
+
+<script>
+    function updateKhatiyan() {
+        document.getElementById('out_khatiyan').innerText = document.getElementById('in_khatiyan').value;
+        document.getElementById('out_jila').innerText = document.getElementById('in_jila').value;
+        document.getElementById('out_upazila').innerText = document.getElementById('in_upazila').value;
+        document.getElementById('out_mouza').innerText = document.getElementById('in_mouza').value;
+        document.getElementById('out_jl').innerText = document.getElementById('in_jl').value;
+        document.getElementById('out_resa').innerText = document.getElementById('in_resa').value;
+
+        document.getElementById('out_owner').innerText = document.getElementById('in_owner').value;
+        document.getElementById('out_share').innerText = document.getElementById('in_share').value;
+        document.getElementById('out_dag').innerText = document.getElementById('in_dag').value;
+        document.getElementById('out_cat').innerText = document.getElementById('in_cat').value;
+        document.getElementById('out_total_acre').innerText = document.getElementById('in_total_acre').value;
+        document.getElementById('out_total_sat').innerText = document.getElementById('in_total_sat').value;
+        document.getElementById('out_part_share').innerText = document.getElementById('in_part_share').value;
+        document.getElementById('out_prop_acre').innerText = document.getElementById('in_prop_acre').value;
+        document.getElementById('out_prop_sat').innerText = document.getElementById('in_prop_sat').value;
+        document.getElementById('out_remarks').innerText = document.getElementById('in_remarks').value;
+    }
+
+    // Generate Dynamic QR Code matching current site URL
+    window.onload = function() {
+        updateKhatiyan();
+        new QRCode(document.getElementById("qrcode"), {
+            text: window.location.href,
+            width: 65,
+            height: 65
+        });
+    };
+</script>
 
 </body>
 </html>
