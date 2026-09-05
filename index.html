@@ -112,7 +112,6 @@
             font-size: 13px;
             margin-bottom: 12px;
             font-weight: bold;
-            flex-wrap: wrap;
         }
 
         /* Main Table */
@@ -132,13 +131,6 @@
         }
         th {
             font-weight: normal;
-        }
-
-        /* Column Number Row */
-        .num-row th {
-            font-size: 11px;
-            padding: 2px 0;
-            background-color: #fafafa;
         }
 
         /* Column Widths */
@@ -206,60 +198,74 @@
         <div class="form-group"><label>মৌজা</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
         <div class="form-group"><label>জে, এল, নং</label><input type="text" id="in_jl" value="২৩৪"></div>
         <div class="form-group"><label>রে: সা: নং</label><input type="text" id="in_resa" value=""></div>
-        <div class="form-group"><label>খতিয়ান নং</label><input type="text" id="in_khatiyan" value="৬১৮"></div>
+        <div class="form-group"><label>খতিয়ান নং</label><input type="text" id="in_khatiyan" value="৬৬৮"></div>
         
         <div class="form-group full-width"><label>মালিকের নাম ও ঠিকানা</label><textarea id="in_owner" rows="3">মালিক
-দং গিয়াস উদ্দিন
-নিজাম উদ্দিন
-মহি উদ্দিন
-কামাল উদ্দিন
-সিরাজ উদ্দিন
-আলা উদ্দিন
-জহির উদ্দিন
-পিং আনোয়ার আহমেদ
-শাফিয়া খাতুন
-জং আনোয়ার আহমেদ
-মনোয়ার বেগম
-জং ফজলুল হক
+দং ছকিনা খাতুন
+জং চৌধুরী মিয়া
+রজ্জবের নেছা
+জং আবুল কালাম
+বদেরের নেছা
+জং আবুল কাশেম
+রহিমা খাতুন
+জং সফি উল্যা
+জয়nal আবদীন
+আবুল কাশেম
+আমিন উল্যা
+পিং চৌধুরী মিয়া
 সাং নিজ</textarea></div>
 
         <div class="form-group"><label>অংশ</label><textarea id="in_share" rows="3">
-০.১১৭
-০.১১৭
-০.১১৭
-০.১১৭
-০.১১৭
-০.১১৬
-০.১১৬
+০.০৮৯
 
-০.১২৫
+০.০৬৯
 
-০.০৫৮</textarea></div>
-        <div class="form-group"><label>দাগ নং</label><textarea id="in_dag" rows="3">৪২৫৭
-৪২৫৮
-৪২৫৯</textarea></div>
+০.০৬৯
+
+০.০৬৯
+
+০.২৪৫
+০.২৪৫
+০.২১৪</textarea></div>
+        <div class="form-group"><label>দাগ নং</label><textarea id="in_dag" rows="3">৪২৫৫
+৪২৫৭
+৪৩২৬
+৪৩২৭
+৪৩৩১</textarea></div>
         <div class="form-group"><label>কৃষি জমি শ্রেণী</label><textarea id="in_cat_agri" rows="3"></textarea></div>
         <div class="form-group"><label>অকৃষি জমি শ্রেণী</label><textarea id="in_cat_nonagri" rows="3">বাড়ী
 বাড়ী
-বাড়ী</textarea></div>
+পুকুর
+বাড়ী
+পুকুর</textarea></div>
         <div class="form-group"><label>দাগের মোট একর</label><textarea id="in_total_acre" rows="3">
 
+
 ১</textarea></div>
-        <div class="form-group"><label>দাগের মোট শতাংশ</label><textarea id="in_total_sat" rows="3">৫৮০০
-১৮০০
-০০০০</textarea></div>
-        <div class="form-group"><label>অত্র খতিয়ানের অংশ</label><textarea id="in_part_share" rows="3">০.১০৩
-০.০৫৫
-০.৩০০</textarea></div>
+        <div class="form-group"><label>দাগের মোট শতাংশ</label><textarea id="in_total_sat" rows="3">৫৭০০
+৫৮০০
+১৫০০
+২৩০০
+৪২০০</textarea></div>
+        <div class="form-group"><label>অত্র খতিয়ানের অংশ</label><textarea id="in_part_share" rows="3">০.১৮৮
+০.২৫৮
+০.০৭০
+০.৪১৭
+০.৪৫৭</textarea></div>
         <div class="form-group"><label>অংশ অনুযায়ী একর</label><textarea id="in_prop_acre" rows="3">০
 ০
+০
+০
 ০</textarea></div>
-        <div class="form-group"><label>অংশ অনুযায়ী শতাংশ</label><textarea id="in_prop_sat" rows="3">০৬০০
-০১০০
-৩০০০</textarea></div>
-        <div class="form-group full-width"><label>মন্তব্য</label><textarea id="in_remarks" rows="2">টিন/১
+        <div class="form-group"><label>অংশ অনুযায়ী শতাংশ</label><textarea id="in_prop_sat" rows="3">১০০০
+১৫০০
+০৮০০
+১১০০
+৩৬০০</textarea></div>
+        <div class="form-group full-width"><label>মন্তব্য</label><textarea id="in_remarks" rows="2">টিন/১ ঘর/১
 
-টিন/১ ঘর/১</textarea></div>
+
+ঘর/২</textarea></div>
     </div>
     <div class="btn-container">
         <button class="btn" onclick="updateKhatiyan()">খতিয়ান আপডেট করুন</button>
@@ -274,7 +280,7 @@
     </div>
 
     <div class="header-section">
-        <div class="main-title">খতিয়ান নং- <span id="out_khatiyan">৬১৮</span></div>
+        <div class="main-title">খতিয়ান নং- <span id="out_khatiyan">৬৬৮</span></div>
     </div>
 
     <div class="meta-info">
@@ -299,17 +305,15 @@
                 <th colspan="2">অংশ অনুযায়ী জমির পরিমাণ</th>
                 <th rowspan="2" class="col-remarks">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</th>
             </tr>
-            <!-- Numbers Sub-Header Row -->
-            <tr class="num-row">
-                <th class="col-cat-agri">৫(ক)</th>
-                <th class="col-cat-nonagri">৫(খ)</th>
-                <th>৬(ক)</th>
-                <th>৬(খ)</th>
-                <th>৮(ক)</th>
-                <th>৮(খ)</th>
+            <tr>
+                <th class="col-cat-agri">কৃষি<br>৫(ক)</th>
+                <th class="col-cat-nonagri">অকৃষি<br>৫(খ)</th>
+                <th>একর<br>৬(ক)</th>
+                <th>শতাংশ<br>৬(খ)</th>
+                <th>একর<br>৮(ক)</th>
+                <th>শতাংশ<br>৮(খ)</th>
             </tr>
-            <!-- Column Numbers Row -->
-            <tr class="num-row">
+            <tr>
                 <th>১</th>
                 <th>২</th>
                 <th>৩</th>
@@ -348,7 +352,7 @@
                 <td colspan="4"><strong>পরিবার পরিকল্পনা গ্রহণ করুন</strong></td>
                 <td><strong>মোট জমি:</strong></td>
                 <td>০</td>
-                <td>৩৭০০</td>
+                <td>৮০০০</td>
                 <td></td>
             </tr>
         </tbody>
