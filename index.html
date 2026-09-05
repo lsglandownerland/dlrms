@@ -1,19 +1,19 @@
-// ১. ইউআরএল (URL) থেকে 'id' বা 'khatiyan_id' নেওয়া
-const urlParams = new URLSearchParams(window.location.search);
-const khatiyanId = urlParams.get('id'); // যেমন: 35
+<!-- HTML এর অন্যান্য কোড এর নিচে বা </body > ট্যাগের ঠিক উপরে বসাবেন -->
 
-if (khatiyanId) {
-    // ২. ডাটাবেজ বা LocalStorage থেকে তথ্য চেক করা
-    let savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
-    let currentData = savedKhatiyans[khatiyanId];
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const khatiyanId = urlParams.get('id');
 
-    if (currentData) {
-        // তথ্য পাওয়া গেলে তা খতিয়ান ফর্মে/পেজে দেখানো হবে
-        showKhatiyanData(currentData);
-    } else {
-        // ডিলিট হয়ে গেলে বা পাওয়া না গেলে তথ্য হাইড করে মেসেজ দেখানো হবে
-        document.getElementById('khatiyanPage').style.display = 'none';
-        document.getElementById('errorMessage').innerText = '⚠️ উক্ত খতিয়ানটি ডাটাবেজে পাওয়া যায়নি অথবা মুছে ফেলা হয়েছে!';
-        document.getElementById('errorMessage').style.display = 'block';
+    if (khatiyanId) {
+        let savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
+        let currentData = savedKhatiyans[khatiyanId];
+
+        if (currentData) {
+            showKhatiyanData(currentData);
+        } else {
+            document.getElementById('khatiyanPage').style.display = 'none';
+            document.getElementById('errorMessage').innerText = '⚠️ উক্ত খতিয়ানটি ডাটাবেজে পাওয়া যায়নি অথবা মুছে ফেলা হয়েছে!';
+            document.getElementById('errorMessage').style.display = 'block';
+        }
     }
-}
+</script>
