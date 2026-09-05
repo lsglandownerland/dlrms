@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>খতিয়ান এন্ট্রি ও প্রিন্ট সিস্টেম</title>
+    <title>খতিয়ান এন্ট্রি, সংরক্ষণ ও প্রিন্ট সিস্টেম</title>
     <!-- QR Code Generator Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
@@ -28,7 +28,7 @@
             width: 210mm;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             border: 1px solid #1b5e20;
         }
         .form-title {
@@ -64,10 +64,6 @@
             border-radius: 5px;
             font-size: 13.5px;
             outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: #2e7d32;
         }
         .btn-container {
             margin-top: 20px;
@@ -76,25 +72,42 @@
         .btn {
             background-color: #2e7d32;
             color: white;
-            padding: 10px 24px;
+            padding: 10px 18px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
-            margin: 0 6px;
+            margin: 4px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            transition: background-color 0.2s;
         }
-        .btn:hover {
-            background-color: #1b5e20;
+        .btn:hover { background-color: #1b5e20; }
+        .btn-print { background-color: #0288d1; }
+        .btn-save { background-color: #f57c00; }
+        .btn-list { background-color: #6a1b9a; }
+
+        /* Saved List Panel */
+        .saved-panel {
+            display: none;
+            background: #fff;
+            width: 210mm;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #9c27b0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .btn-print {
-            background-color: #0288d1;
+        .saved-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
         }
-        .btn-print:hover {
-            background-color: #01579b;
+        .saved-table th, .saved-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            font-size: 13px;
         }
+        .saved-table th { background-color: #f3e5f5; }
 
         /* Printable Page Layout */
         .page {
@@ -107,59 +120,16 @@
             position: relative;
         }
 
-        /* Header Info */
-        .header-section {
-            text-align: center;
-            margin-bottom: 12px;
-        }
-        .main-title {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-        .meta-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13.5px;
-            margin-bottom: 14px;
-            font-weight: bold;
-        }
+        .header-section { text-align: center; margin-bottom: 12px; }
+        .main-title { font-size: 22px; font-weight: bold; }
+        .top-bar { display: flex; justify-content: flex-end; font-size: 13px; margin-bottom: 6px; }
+        .meta-info { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 14px; font-weight: bold; }
 
-        /* Main Table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            text-align: center;
-            color: #000;
-        }
-        table, th, td {
-            border: 1px solid #000000;
-        }
-        th, td {
-            padding: 4px 3px;
-            vertical-align: middle;
-            white-space: pre-line;
-            line-height: 1.3;
-        }
-        th {
-            font-weight: normal;
-        }
+        table.main-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; color: #000; }
+        table.main-table, table.main-table th, table.main-table td { border: 1px solid #000000; }
+        table.main-table th, table.main-table td { padding: 4px 3px; vertical-align: middle; white-space: pre-line; line-height: 1.3; }
+        tr.column-numbers th { border-top: 1px solid #000; padding: 2px 0; font-size: 11px; }
 
-        /* Column Numbering Line Header */
-        tr.column-numbers th {
-            border-top: 1px solid #000;
-            padding: 2px 0;
-            font-size: 11px;
-        }
-
-        /* Column Widths */
         .col-owner { width: 22%; text-align: left; padding-left: 6px; }
         .col-share { width: 5%; }
         .col-rent { width: 4%; }
@@ -172,10 +142,8 @@
         .col-prop-acre { width: 5%; }
         .col-prop-sat { width: 6%; }
         .col-remarks { width: 25%; text-align: left; padding-left: 6px; }
-
         .align-left { text-align: left; padding-left: 6px; }
 
-        /* Footer Section */
         .footer-note {
             margin-top: 25px;
             display: flex;
@@ -183,21 +151,21 @@
             align-items: flex-end;
             font-size: 12px;
         }
-        .footer-left {
-            line-height: 1.6;
-        }
-        .footer-center {
-            text-align: center;
-        }
-        .seal-logo {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-        }
+        .footer-left { line-height: 1.6; }
+        .footer-center { text-align: center; }
+        .seal-logo { width: 90px; height: 90px; object-fit: contain; display: block; margin: 0 auto; }
         
-        /* QR Code Container Styling for Optimal Scanning */
+        .qr-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .qr-expiry {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #000;
+        }
         .qr-container {
             width: 105px;
             height: 105px;
@@ -205,36 +173,14 @@
             align-items: center;
             justify-content: center;
             background: #ffffff;
-            padding: 5px;
-            border: 1px solid #eee;
-            box-shadow: 0 0 2px rgba(0,0,0,0.1);
+            padding: 4px;
         }
-        .qr-container img {
-            width: 100% !important;
-            height: 100% !important;
-            image-rendering: pixelated;
-        }
+        .qr-container img { width: 100% !important; height: 100% !important; }
 
-        /* Print Media Styles */
         @media print {
-            body { 
-                background: none; 
-                padding: 0; 
-            }
-            .form-container { 
-                display: none; 
-            }
-            .page { 
-                border: none; 
-                box-shadow: none; 
-                width: 100%; 
-                height: 100%; 
-                padding: 10mm; 
-            }
-            .qr-container {
-                border: none;
-                box-shadow: none;
-            }
+            body { background: none; padding: 0; }
+            .form-container, .saved-panel { display: none !important; }
+            .page { border: none; box-shadow: none; width: 100%; height: 100%; padding: 10mm; }
         }
     </style>
 </head>
@@ -242,7 +188,7 @@
 
 <!-- Data Entry Form -->
 <div class="form-container">
-    <div class="form-title">খতিয়ান তথ্য এন্ট্রি ও সংশোধন প্যানেল</div>
+    <div class="form-title">খতিয়ান এন্ট্রি, মেয়াদের তারিখ ও সংরক্ষণ প্যানেল</div>
     <div class="form-grid">
         <div class="form-group"><label>বিভাগ</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
         <div class="form-group"><label>জিলা</label><input type="text" id="in_jila" value="নোয়াখালী"></div>
@@ -252,6 +198,9 @@
         <div class="form-group"><label>রে: সা: নং</label><input type="text" id="in_resa" value=""></div>
         <div class="form-group"><label>খতিয়ান নং</label><input type="text" id="in_khatiyan" value="৬৬৮"></div>
         
+        <!-- QR Expiry Date Input -->
+        <div class="form-group"><label>কিউআর মেয়াদের তারিখ (QR Expiry)</label><input type="text" id="in_qr_expiry" value="৩০-১২-২০২৬"></div>
+
         <div class="form-group full-width"><label>মালিকের নাম ও ঠিকানা</label><textarea id="in_owner" rows="3">মালিক
 দং ছকিনা খাতুন
 জং চৌধুরী মিয়া
@@ -321,8 +270,28 @@
     </div>
     <div class="btn-container">
         <button class="btn" onclick="updateKhatiyan()">খতিয়ান আপডেট করুন</button>
+        <button class="btn btn-save" onclick="saveKhatiyan()">খতিয়ান সংরক্ষণ করুন</button>
+        <button class="btn btn-list" onclick="toggleSavedList()">সংরক্ষিত খতিয়ান তালিকা</button>
         <button class="btn btn-print" onclick="window.print()">প্রিন্ট করুন</button>
     </div>
+</div>
+
+<!-- Saved List Panel -->
+<div class="saved-panel" id="savedPanel">
+    <h3 style="color: #6a1b9a; margin-bottom: 10px;">সংরক্ষিত খতিয়ানসমূহ</h3>
+    <table class="saved-table">
+        <thead>
+            <tr>
+                <th>খতিয়ান নং</th>
+                <th>মৌজা</th>
+                <th>উপজেলা</th>
+                <th>একশন</th>
+            </tr>
+        </thead>
+        <tbody id="savedListBody">
+            <!-- Saved items will load here -->
+        </tbody>
+    </table>
 </div>
 
 <!-- Main Printable Khatiyan -->
@@ -344,7 +313,7 @@
         <div>রে: সা: নং: <span id="out_resa"></span></div>
     </div>
 
-    <table>
+    <table class="main-table">
         <thead>
             <tr>
                 <th rowspan="2" class="col-owner">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</th>
@@ -365,7 +334,6 @@
                 <th>একর</th>
                 <th>শতাংশ</th>
             </tr>
-            <!-- কলাম নাম্বারিং সারি -->
             <tr class="column-numbers">
                 <th>১</th>
                 <th>২</th>
@@ -396,7 +364,6 @@
                 <td class="col-prop-sat" id="out_prop_sat"></td>
                 <td class="col-remarks" id="out_remarks"></td>
             </tr>
-            <!-- Total Row -->
             <tr>
                 <td class="align-left">..........ধারামতে নোট বা পরিবর্তন মায় মোকদ্দমা নং ............. এবং সন ..............</td>
                 <td>১.০০০</td>
@@ -413,21 +380,40 @@
 
     <div class="footer-note">
         <div class="footer-left">
-            মুদ্রণঃ সেটেলমেন্ট প্রেস, ঢাকা। তারিখঃ ২২-০৮-২০২০৬<br>
+            মুদ্রণঃ সেটেলমেন্ট প্রেস, ঢাকা। তারিখঃ <span id="out_auto_date"></span><br>
             বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
         </div>
         <div class="footer-center">
-            <!-- Seal Logo -->
             <img src="./logo.png" class="seal-logo" alt="Seal Logo" onerror="this.onerror=null; this.src='logo.png';">
         </div>
-        <div>
-            <!-- Easy Scan Optimized QR Code Container -->
+        <div class="qr-wrapper">
+            <div class="qr-expiry">মেয়াদকাল: <span id="out_qr_expiry">৩০-১২-২০২৬</span></div>
             <div id="qrcode" class="qr-container"></div>
         </div>
     </div>
 </div>
 
 <script>
+    // 1. Auto English to Bangla Number Convertor
+    function toBanglaNum(str) {
+        var banglaDigits = {'0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'};
+        return str.replace(/[0-9]/g, function(w){
+            return banglaDigits[w];
+        });
+    }
+
+    // 2. Set Dynamic Today Date
+    function setAutoDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        
+        var dateString = dd + '-' + mm + '-' + yyyy;
+        document.getElementById('out_auto_date').innerText = toBanglaNum(dateString);
+    }
+
+    // 3. Update Output Khatiyan View
     function updateKhatiyan() {
         document.getElementById('out_division').innerText = document.getElementById('in_division').value;
         document.getElementById('out_khatiyan').innerText = document.getElementById('in_khatiyan').value;
@@ -448,9 +434,12 @@
         document.getElementById('out_prop_acre').innerText = document.getElementById('in_prop_acre').value;
         document.getElementById('out_prop_sat').innerText = document.getElementById('in_prop_sat').value;
         document.getElementById('out_remarks').innerText = document.getElementById('in_remarks').value;
+
+        // Expiry Date Update
+        document.getElementById('out_qr_expiry').innerText = toBanglaNum(document.getElementById('in_qr_expiry').value);
     }
 
-    // Easy Scan QR Code Generator
+    // 4. Easy Scan QR Code Generator
     function renderQRCode() {
         var qrElement = document.getElementById("qrcode");
         qrElement.innerHTML = "";
@@ -471,7 +460,125 @@
         }
     }
 
+    // 5. Save Khatiyan Data to LocalStorage
+    function saveKhatiyan() {
+        var khatiyanNo = document.getElementById('in_khatiyan').value.trim();
+        if(!khatiyanNo) {
+            alert('অনুগ্রহ করে খতিয়ান নং লিখুন');
+            return;
+        }
+
+        var khatiyanData = {
+            division: document.getElementById('in_division').value,
+            jila: document.getElementById('in_jila').value,
+            upazila: document.getElementById('in_upazila').value,
+            mouza: document.getElementById('in_mouza').value,
+            jl: document.getElementById('in_jl').value,
+            resa: document.getElementById('in_resa').value,
+            khatiyan: khatiyanNo,
+            expiry: document.getElementById('in_qr_expiry').value,
+            owner: document.getElementById('in_owner').value,
+            share: document.getElementById('in_share').value,
+            dag: document.getElementById('in_dag').value,
+            cat_agri: document.getElementById('in_cat_agri').value,
+            cat_nonagri: document.getElementById('in_cat_nonagri').value,
+            total_acre: document.getElementById('in_total_acre').value,
+            total_sat: document.getElementById('in_total_sat').value,
+            part_share: document.getElementById('in_part_share').value,
+            prop_acre: document.getElementById('in_prop_acre').value,
+            prop_sat: document.getElementById('in_prop_sat').value,
+            remarks: document.getElementById('in_remarks').value
+        };
+
+        var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
+        savedKhatiyans[khatiyanNo] = khatiyanData;
+        localStorage.setItem('saved_khatiyans', JSON.stringify(savedKhatiyans));
+        
+        alert('খতিয়ান নং ' + khatiyanNo + ' সফলভাবে সংরক্ষণ করা হয়েছে!');
+        loadSavedList();
+    }
+
+    // 6. Load Saved List Panel
+    function loadSavedList() {
+        var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
+        var tbody = document.getElementById('savedListBody');
+        tbody.innerHTML = '';
+
+        var keys = Object.keys(savedKhatiyans);
+        if(keys.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো খতিয়ান সংরক্ষিত নেই।</td></tr>';
+            return;
+        }
+
+        keys.forEach(function(key) {
+            var item = savedKhatiyans[key];
+            var tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>${item.khatiyan}</b></td>
+                <td>${item.mouza}</td>
+                <td>${item.upazila}</td>
+                <td>
+                    <button class="btn" style="padding: 4px 8px; font-size:12px;" onclick="restoreKhatiyan('${key}')">লোড করুন</button>
+                    <button class="btn" style="padding: 4px 8px; font-size:12px; background:#d32f2f;" onclick="deleteKhatiyan('${key}')">মুছুন</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Restore Data to Form
+    function restoreKhatiyan(key) {
+        var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
+        var item = savedKhatiyans[key];
+        if(!item) return;
+
+        document.getElementById('in_division').value = item.division || '';
+        document.getElementById('in_jila').value = item.jila || '';
+        document.getElementById('in_upazila').value = item.upazila || '';
+        document.getElementById('in_mouza').value = item.mouza || '';
+        document.getElementById('in_jl').value = item.jl || '';
+        document.getElementById('in_resa').value = item.resa || '';
+        document.getElementById('in_khatiyan').value = item.khatiyan || '';
+        document.getElementById('in_qr_expiry').value = item.expiry || '';
+        document.getElementById('in_owner').value = item.owner || '';
+        document.getElementById('in_share').value = item.share || '';
+        document.getElementById('in_dag').value = item.dag || '';
+        document.getElementById('in_cat_agri').value = item.cat_agri || '';
+        document.getElementById('in_cat_nonagri').value = item.cat_nonagri || '';
+        document.getElementById('in_total_acre').value = item.total_acre || '';
+        document.getElementById('in_total_sat').value = item.total_sat || '';
+        document.getElementById('in_part_share').value = item.part_share || '';
+        document.getElementById('in_prop_acre').value = item.prop_acre || '';
+        document.getElementById('in_prop_sat').value = item.prop_sat || '';
+        document.getElementById('in_remarks').value = item.remarks || '';
+
+        updateKhatiyan();
+        alert('খতিয়ান লোড করা হয়েছে!');
+    }
+
+    // Delete Single Saved Item
+    function deleteKhatiyan(key) {
+        if(confirm('আপনি কি এই খতিয়ানটি মুছে ফেলতে চান?')) {
+            var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
+            delete savedKhatiyans[key];
+            localStorage.setItem('saved_khatiyans', JSON.stringify(savedKhatiyans));
+            loadSavedList();
+        }
+    }
+
+    // Toggle Saved Panel
+    function toggleSavedList() {
+        var panel = document.getElementById('savedPanel');
+        if(panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            panel.style.display = 'block';
+            loadSavedList();
+        }
+    }
+
     window.onload = function() {
+        setAutoDate();
         updateKhatiyan();
         setTimeout(renderQRCode, 200);
     };
