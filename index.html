@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>খতিয়ান এন্ট্রি ও অটো-এক্সপায়ারি কিউআর সিস্টেম</title>
+    <title>ডায়নামিক খতিয়ান সংরক্ষণ, আপডেট ও কিউআর যাচাইকরণ সিস্টেম</title>
     <!-- QR Code Generator Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
@@ -106,6 +106,7 @@
             border: 1px solid #ddd;
             padding: 8px;
             font-size: 13px;
+            text-align: center;
         }
         .saved-table th { background-color: #f3e5f5; }
 
@@ -171,22 +172,24 @@
         }
         .qr-container img { width: 100% !important; height: 100% !important; }
 
-        /* Expired Page Overlay Style */
-        .expired-notice {
+        /* Notice Boxes */
+        .notice-box {
             display: none;
-            padding: 50px 20px;
+            padding: 40px 20px;
             text-align: center;
             color: #d32f2f;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             border: 2px dashed #d32f2f;
             background: #ffebee;
             margin-top: 50px;
+            border-radius: 8px;
+            width: 210mm;
         }
 
         @media print {
             body { background: none; padding: 0; }
-            .form-container, .saved-panel { display: none !important; }
+            .form-container, .saved-panel, .notice-box { display: none !important; }
             .page { border: none; box-shadow: none; width: 100%; height: 100%; padding: 10mm; }
         }
     </style>
@@ -194,8 +197,8 @@
 <body>
 
 <!-- Data Entry Form -->
-<div class="form-container">
-    <div class="form-title">খতিয়ান এন্ট্রি ও মেয়াদের তারিখ নির্ধারণ প্যানেল</div>
+<div class="form-container" id="formContainer">
+    <div class="form-title">খতিয়ান এন্ট্রি, আপডেট ও ডাটাবেজ প্যানেল</div>
     <div class="form-grid">
         <div class="form-group"><label>বিভাগ</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
         <div class="form-group"><label>জিলা</label><input type="text" id="in_jila" value="নোয়াখালী"></div>
@@ -203,11 +206,11 @@
         <div class="form-group"><label>মৌজা</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
         <div class="form-group"><label>জে, এল, নং</label><input type="text" id="in_jl" value="২৩৪"></div>
         <div class="form-group"><label>রে: সা: নং</label><input type="text" id="in_resa" value=""></div>
-        <div class="form-group"><label>খতিয়ান নং</label><input type="text" id="in_khatiyan" value="৬৬৮"></div>
+        <div class="form-group"><label>খতিয়ান নং (ইউনিক আইডি)</label><input type="text" id="in_khatiyan" value="৬৬৮"></div>
         
-        <!-- Hidden Expiry Option Input for QR Logic -->
+        <!-- Expiry Date Option -->
         <div class="form-group">
-            <label>কিউআর মেয়াদের শেষ তারিখ (YYYY-MM-DD)</label>
+            <label>কিউআর মেয়াদের শেষ তারিখ</label>
             <input type="date" id="in_qr_expiry_date" value="2026-12-30">
         </div>
 
@@ -279,8 +282,8 @@
 ঘর/২</textarea></div>
     </div>
     <div class="btn-container">
-        <button class="btn" onclick="updateKhatiyan()">খতিয়ান আপডেট করুন</button>
-        <button class="btn btn-save" onclick="saveKhatiyan()">খতিয়ান সংরক্ষণ করুন</button>
+        <button class="btn" onclick="updateKhatiyan()">খতিয়ান প্রিভিউ করুন</button>
+        <button class="btn btn-save" onclick="saveKhatiyan()">সংরক্ষণ / আপডেট করুন</button>
         <button class="btn btn-list" onclick="toggleSavedList()">সংরক্ষিত খতিয়ান তালিকা</button>
         <button class="btn btn-print" onclick="window.print()">প্রিন্ট করুন</button>
     </div>
@@ -288,25 +291,30 @@
 
 <!-- Saved List Panel -->
 <div class="saved-panel" id="savedPanel">
-    <h3 style="color: #6a1b9a; margin-bottom: 10px;">সংরক্ষিত খতিয়ানসমূহ</h3>
+    <h3 style="color: #6a1b9a; margin-bottom: 10px;">সংরক্ষিত খতিয়ান তালিকা (ডাটাবেজ)</h3>
     <table class="saved-table">
         <thead>
             <tr>
                 <th>খতিয়ান নং</th>
                 <th>মৌজা</th>
                 <th>উপজেলা</th>
+                <th>মেয়াদের তারিখ</th>
                 <th>একশন</th>
             </tr>
         </thead>
         <tbody id="savedListBody">
-            <!-- Saved items load here -->
+            <!-- Items loaded dynamically -->
         </tbody>
     </table>
 </div>
 
-<!-- Expired Notice Overlay (Shows only when link expired) -->
-<div class="expired-notice" id="expiredNotice">
-    ⚠️ এই খতিয়ানের মেয়াদের সময়সীমা পার হয়ে গেছে। <br> কোনো তথ্য প্রদর্শনের জন্য উপলব্ধ নেই।
+<!-- Status Message for QR Scans -->
+<div class="notice-box" id="notFoundNotice">
+    ⚠️ উক্ত খতিয়ানটি ডাটাবেজে পাওয়া যায়নি অথবা মুছে ফেলা হয়েছে!
+</div>
+
+<div class="notice-box" id="expiredNotice">
+    ⚠️ এই খতিয়ানটির মেয়াদের সময়সীমা উত্তীর্ণ হয়ে গেছে!
 </div>
 
 <!-- Main Printable Khatiyan -->
@@ -402,7 +410,6 @@
             <img src="./logo.png" class="seal-logo" alt="Seal Logo" onerror="this.onerror=null; this.src='logo.png';">
         </div>
         <div class="qr-wrapper">
-            <!-- No Expiry Text Here -->
             <div id="qrcode" class="qr-container"></div>
         </div>
     </div>
@@ -410,8 +417,9 @@
 
 <script>
     function toBanglaNum(str) {
+        if(!str) return '';
         var banglaDigits = {'0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'};
-        return str.replace(/[0-9]/g, function(w){ return banglaDigits[w]; });
+        return str.toString().replace(/[0-9]/g, function(w){ return banglaDigits[w]; });
     }
 
     function setAutoDate() {
@@ -450,11 +458,11 @@
         var qrElement = document.getElementById("qrcode");
         qrElement.innerHTML = "";
         
-        var expiryDate = document.getElementById('in_qr_expiry_date').value;
+        var khatiyanNo = document.getElementById('in_khatiyan').value.trim();
         var baseUrl = window.location.href.split('?')[0];
         
-        // URL parameterized with Expiry Info
-        var targetUrl = baseUrl + "?id=35&exp=" + encodeURIComponent(expiryDate);
+        // QR URL points specifically to Khatiyan ID
+        var targetUrl = baseUrl + "?khatiyan_id=" + encodeURIComponent(khatiyanNo);
         
         try {
             new QRCode(qrElement, {
@@ -470,24 +478,7 @@
         }
     }
 
-    // Expiry Validator for QR Scan Access
-    function checkQRExpiry() {
-        var urlParams = new URLSearchParams(window.location.search);
-        var expParam = urlParams.get('exp');
-
-        if (expParam) {
-            var today = new Date();
-            var expDate = new Date(expParam + 'T23:59:59');
-
-            // If Expired, Hide Khatiyan Content and Show Warning
-            if (today > expDate) {
-                document.getElementById('khatiyanPage').style.display = 'none';
-                document.querySelector('.form-container').style.display = 'none';
-                document.getElementById('expiredNotice').style.display = 'block';
-            }
-        }
-    }
-
+    // Save or Update Record
     function saveKhatiyan() {
         var khatiyanNo = document.getElementById('in_khatiyan').value.trim();
         if(!khatiyanNo) {
@@ -518,13 +509,15 @@
         };
 
         var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
-        savedKhatiyans[khatiyanNo] = khatiyanData;
+        savedKhatiyans[khatiyanNo] = khatiyanData; // Overwrite or New Add
         localStorage.setItem('saved_khatiyans', JSON.stringify(savedKhatiyans));
         
-        alert('খতিয়ান নং ' + khatiyanNo + ' সফলভাবে সংরক্ষণ করা হয়েছে!');
+        alert('খতিয়ান নং ' + khatiyanNo + ' সফলভাবে আপডেট/সংরক্ষণ করা হয়েছে!');
+        updateKhatiyan();
         loadSavedList();
     }
 
+    // Load Saved Items
     function loadSavedList() {
         var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
         var tbody = document.getElementById('savedListBody');
@@ -532,7 +525,7 @@
 
         var keys = Object.keys(savedKhatiyans);
         if(keys.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো খতিয়ান সংরক্ষিত নেই।</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো খতিয়ান সংরক্ষিত নেই।</td></tr>';
             return;
         }
 
@@ -543,8 +536,9 @@
                 <td><b>${item.khatiyan}</b></td>
                 <td>${item.mouza}</td>
                 <td>${item.upazila}</td>
+                <td>${item.expiry_date || 'মেয়াদহীন'}</td>
                 <td>
-                    <button class="btn" style="padding: 4px 8px; font-size:12px;" onclick="restoreKhatiyan('${key}')">লোড করুন</button>
+                    <button class="btn" style="padding: 4px 8px; font-size:12px;" onclick="restoreKhatiyan('${key}')">এডিট / লোড</button>
                     <button class="btn" style="padding: 4px 8px; font-size:12px; background:#d32f2f;" onclick="deleteKhatiyan('${key}')">মুছুন</button>
                 </td>
             `;
@@ -552,6 +546,7 @@
         });
     }
 
+    // Edit/Restore Record to Form
     function restoreKhatiyan(key) {
         var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
         var item = savedKhatiyans[key];
@@ -578,11 +573,12 @@
         document.getElementById('in_remarks').value = item.remarks || '';
 
         updateKhatiyan();
-        alert('খতিয়ান লোড করা হয়েছে!');
+        alert('খতিয়ান লোড করা হয়েছে! পরিবর্তন শেষে "সংরক্ষণ / আপডেট করুন" চাপুন।');
     }
 
+    // Delete Record Completely
     function deleteKhatiyan(key) {
-        if(confirm('আপনি কি এই খতিয়ানটি মুছে ফেলতে চান?')) {
+        if(confirm('আপনি কি নিশ্চিত যে এই খতিয়ানটি ডিলিট করতে চান? ডিলিট করলে এর কিউআর স্ক্যান আর কাজ করবে না।')) {
             var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
             delete savedKhatiyans[key];
             localStorage.setItem('saved_khatiyans', JSON.stringify(savedKhatiyans));
@@ -596,10 +592,64 @@
         if(panel.style.display === 'block') loadSavedList();
     }
 
+    // Handle QR Scan Link Access (Validation Check)
+    function handleQRScanMode() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var kId = urlParams.get('khatiyan_id');
+
+        if (kId) {
+            // Hide Form Controls in Scan View
+            document.getElementById('formContainer').style.display = 'none';
+
+            var savedKhatiyans = JSON.parse(localStorage.getItem('saved_khatiyans') || '{}');
+            var item = savedKhatiyans[kId];
+
+            // 1. Check if Record Exists (If deleted -> block)
+            if (!item) {
+                document.getElementById('khatiyanPage').style.display = 'none';
+                document.getElementById('notFoundNotice').style.display = 'block';
+                return;
+            }
+
+            // 2. Check Expiry Date
+            if (item.expiry_date) {
+                var today = new Date();
+                var expDate = new Date(item.expiry_date + 'T23:59:59');
+                if (today > expDate) {
+                    document.getElementById('khatiyanPage').style.display = 'none';
+                    document.getElementById('expiredNotice').style.display = 'block';
+                    return;
+                }
+            }
+
+            // Populate scanned item data to display
+            document.getElementById('in_division').value = item.division;
+            document.getElementById('in_jila').value = item.jila;
+            document.getElementById('in_upazila').value = item.upazila;
+            document.getElementById('in_mouza').value = item.mouza;
+            document.getElementById('in_jl').value = item.jl;
+            document.getElementById('in_resa').value = item.resa;
+            document.getElementById('in_khatiyan').value = item.khatiyan;
+            document.getElementById('in_owner').value = item.owner;
+            document.getElementById('in_share').value = item.share;
+            document.getElementById('in_dag').value = item.dag;
+            document.getElementById('in_cat_agri').value = item.cat_agri;
+            document.getElementById('in_cat_nonagri').value = item.cat_nonagri;
+            document.getElementById('in_total_acre').value = item.total_acre;
+            document.getElementById('in_total_sat').value = item.total_sat;
+            document.getElementById('in_part_share').value = item.part_share;
+            document.getElementById('in_prop_acre').value = item.prop_acre;
+            document.getElementById('in_prop_sat').value = item.prop_sat;
+            document.getElementById('in_remarks').value = item.remarks;
+
+            updateKhatiyan();
+        }
+    }
+
     window.onload = function() {
         setAutoDate();
         updateKhatiyan();
-        checkQRExpiry();
+        handleQRScanMode();
     };
 </script>
 
