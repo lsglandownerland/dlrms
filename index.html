@@ -3,457 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ডিজিটাল ভূমি রেকর্ড ও জরিপ ব্যবস্থা</title>
-    
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase JS SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
+    <title>ভূমি রেকর্ড ও জরিপ অধিদপ্তর - খতিয়ান ব্যবস্থা</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Kalpurush, SolaimanLipi, Arial, sans-serif;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background-color: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        /* Form Container */
+        .form-container {
+            background: #ffffff; padding: 20px; width: 210mm; border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #2e7d32;
         }
-        body {
-            background-color: #f4f6f9;
-            color: #333;
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: span 3; }
+        .form-group label { font-size: 12px; font-weight: bold; margin-bottom: 3px; }
+        .form-group input, .form-group textarea { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+
+        .btn { background: #2e7d32; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 5px; }
+        .btn-danger { background: #d32f2f; }
+        .btn-info { background: #0288d1; }
+
+        /* Saved Table */
+        .saved-panel { display: none; background: #fff; width: 210mm; padding: 15px; margin-bottom: 20px; border: 1px solid #aaa; border-radius: 6px; }
+        .saved-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .saved-table th, .saved-table td { border: 1px solid #ddd; padding: 6px; font-size: 13px; }
+
+        /* Khatiyan Printable Layout */
+        .page { background: #ffffff; width: 210mm; min-height: 297mm; padding: 15mm 12mm; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        .header-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+        .meta-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+
+        table.main-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
+        table.main-table, table.main-table th, table.main-table td { border: 1px solid #000; }
+        table.main-table th, table.main-table td { padding: 4px; white-space: pre-line; }
+
+        .footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .qr-container { width: 100px; height: 100px; }
+
+        /* Error Notice */
+        .error-box {
+            display: none; background: #ffebee; color: #c62828; padding: 30px;
+            border: 2px dashed #c62828; border-radius: 8px; text-align: center;
+            font-size: 18px; font-weight: bold; width: 210mm; margin-top: 50px;
         }
 
-        /* Top Green Header Bar */
-        .top-header {
-            background-color: #1b5e20;
-            color: #ffffff;
-            padding: 6px 15px;
-            font-size: 13px;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        /* Navigation Bar */
-        .nav-bar {
-            background-color: #ffffff;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 10px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .nav-logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .nav-logo-area img {
-            height: 35px;
-        }
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-        .nav-links a {
-            text-decoration: none;
-            color: #2e7d32;
-            padding: 4px 8px;
-        }
-        .btn-login {
-            background-color: #1b5e20;
-            color: #fff !important;
-            padding: 5px 15px !important;
-            border-radius: 4px;
-        }
-
-        /* Main Body Content Area */
-        .main-container {
-            min-height: 480px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 15px;
-        }
-
-        /* Verification Result Card */
-        .verify-card {
-            background: #ffffff;
-            border: 1px solid #c8e6c9;
-            border-radius: 6px;
-            width: 380px;
-            padding: 20px 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        .card-header {
-            text-align: center;
-            color: #2e7d32;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-        }
-        .info-row {
-            display: flex;
-            margin-bottom: 8px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        .info-label {
-            width: 90px;
-            font-weight: bold;
-            color: #424242;
-        }
-        .info-colon {
-            width: 15px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .info-value {
-            flex: 1;
-            color: #1b5e20;
-            font-weight: bold;
-        }
-
-        /* Footer Section */
-        .footer {
-            background-color: #ffffff;
-            border-top: 1px solid #e0e0e0;
-            padding: 30px 50px 20px 50px;
-            margin-top: 40px;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .footer-col h4 {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 12px;
-            font-weight: bold;
-        }
-        .footer-col ul {
-            list-style: none;
-            font-size: 12px;
-        }
-        .footer-col ul li {
-            margin-bottom: 6px;
-        }
-        .footer-col ul li a {
-            text-decoration: none;
-            color: #555;
-        }
-        .footer-banner {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .footer-banner img {
-            height: 45px;
-        }
-        .social-icons {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .social-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
-            background: #1877f2;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            text-decoration: none;
-        }
-        .social-btn.twitter { background: #000000; }
-        .social-btn.pinterest { background: #e60023; }
-        .social-btn.youtube { background: #ff0000; }
-
-        /* Admin Entry Form Overlay */
-        .admin-form-container {
-            background: #ffffff;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 2px solid #2e7d32;
-            border-radius: 8px;
-        }
-        .admin-form-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .admin-form-grid input {
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 100%;
-        }
-        .btn-save-admin {
-            background-color: #2e7d32;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            margin-top: 15px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-        }
-
-        .not-found {
-            display: none;
-            color: #d32f2f;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            border: 1px dashed #d32f2f;
-            padding: 20px;
-            border-radius: 6px;
-            background: #ffebee;
+        @media print {
+            .form-container, .saved-panel, .error-box { display: none !important; }
+            .page { border: none; box-shadow: none; width: 100%; padding: 0; }
         }
     </style>
 </head>
 <body>
 
-<!-- Top Green Bar -->
-<div class="top-header" id="topHeaderDate">
-    শনিবার, ২১ ভাদ্র, ১৪৩০, ৫ সেপ্টেম্বর ২০২৬
-</div>
-
-<!-- Navigation Bar -->
-<div class="nav-bar">
-    <div class="nav-logo-area">
-        <i class="fa-solid fa-landmark" style="font-size: 24px; color: #2e7d32;"></i>
+<!-- Admin Entry Form -->
+<div class="form-container" id="adminForm">
+    <h3 style="text-align: center; margin-bottom: 15px; color: #2e7d32;">খতিয়ান এন্ট্রি ও এডমিন প্যানেল</h3>
+    <div class="form-grid">
+        <div class="form-group"><label>আইডি (ID Number):</label><input type="text" id="in_id" value="35"></div>
+        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatiyan" value="৬৬৮"></div>
+        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
+        <div class="form-group"><label>উপজেলা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
+        <div class="form-group"><label>জিলা:</label><input type="text" id="in_jila" value="নোয়াখালী"></div>
+        <div class="form-group"><label>জে এল নং:</label><input type="text" id="in_jl" value="২৩৪"></div>
+        <div class="form-group full"><label>মালিকের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="3">মোঃ রফিক, সাং- অনন্তপুর</textarea></div>
+        <div class="form-group"><label>দাগ নং:</label><textarea id="in_dag" rows="2">৪৩২৬</textarea></div>
+        <div class="form-group"><label>জমি শ্রেণী:</label><textarea id="in_cat" rows="2">বাড়ী</textarea></div>
+        <div class="form-group"><label>জমির শতাংশ:</label><textarea id="in_sat" rows="2">১৫০০</textarea></div>
     </div>
-    <div class="nav-links">
-        <a href="#">হোম</a>
-        <a href="#">আমাদের সম্পর্কে ▾</a>
-        <a href="#">জাতব্য ▾</a>
-        <a href="#">পরিপত্র</a>
-        <a href="#">আবেদনের অবস্থা</a>
-        <a href="#">নির্দেশিকা</a>
-        <a href="#">খতিয়ান ও ম্যাপ অনুসন্ধান</a>
-        <a href="#" class="btn-login">লগইন</a>
-    </div>
-</div>
-
-<!-- Admin Input Panel (Only shows when directly opened without ?id=) -->
-<div class="admin-form-container" id="adminPanel">
-    <h3 style="color: #2e7d32; margin-bottom: 15px; text-align: center;">ডাটাবেজে তথ্য এন্ট্রি প্যানেল</h3>
-    <div class="admin-form-grid">
-        <div><label>আইডি (ID):</label><input type="text" id="in_id" value="24"></div>
-        <div><label>খতিয়ান নং:</label><input type="text" id="in_khatiyan" value="২৪"></div>
-        <div><label>মালিক:</label><input type="text" id="in_owner" value="দং নুরুল ইসলাম"></div>
-        <div><label>দাগ নং:</label><input type="text" id="in_dag" value="২৯"></div>
-        <div><label>সার্ভে:</label><input type="text" id="in_survey" value="বি আর এস"></div>
-        <div><label>মৌজা:</label><input type="text" id="in_mouza" value="দক্ষিণ কেশবপুর"></div>
-        <div><label>উপজিলা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
-        <div><label>জিলা:</label><input type="text" id="in_jila" value="নোয়াখালী"></div>
-        <div><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
-    </div>
-    <button class="btn-save-admin" onclick="saveDataToFirebase()">অনলাইনে সেভ করুন</button>
-</div>
-
-<!-- Main Verification Card Display -->
-<div class="main-container">
-    <div class="not-found" id="notFoundBox">
-        ⚠️ উক্ত আইডি দিয়ে কোনো খতিয়ান ডাটাবেজে পাওয়া যায়নি!
-    </div>
-
-    <div class="verify-card" id="verifyCard">
-        <div class="card-header">
-            খতিয়ান নং - <span id="out_khatiyan">২৪</span>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">মালিক</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_owner">দং নুরুল ইসলাম</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">দাগ নং</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_dag">২৯</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">সার্ভে</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_survey">বি আর এস</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">মৌজা</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_mouza">দক্ষিণ কেশবপুর</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">উপজেলা</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_upazila">বেগমগঞ্জ</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">জেলা</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_jila">নোয়াখালী</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">বিভাগ</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_division">চট্টগ্রাম</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">তারিখ</div>
-            <div class="info-colon">:</div>
-            <div class="info-value" id="out_auto_date">০২ সেপ্টেম্বর ২০২৬</div>
-        </div>
+    <div style="text-align: center; margin-top: 15px;">
+        <button class="btn" onclick="saveData()">সংরক্ষণ করুন</button>
+        <button class="btn btn-info" onclick="toggleSavedPanel()">সংরক্ষিত তালিকা</button>
+        <button class="btn btn-info" onclick="window.print()">প্রিন্ট</button>
     </div>
 </div>
 
-<!-- Footer Section -->
-<div class="footer">
-    <div class="footer-grid">
-        <div class="footer-col">
-            <h4>গুরুত্বপূর্ণ লিংক</h4>
-            <ul>
-                <li><a href="#">▶ বাংলাদেশ জাতীয় তথ্য বাতায়ন</a></li>
-                <li><a href="#">▶ ভূমি মন্ত্রণালয়</a></li>
-                <li><a href="#">▶ তথ্য অধিদপ্তর (পিআইডি)</a></li>
-                <li><a href="#">▶ অভিযোগ প্রতিকার ব্যবস্থা</a></li>
-                <li><a href="#">▶ স্মার্ট টিকিট</a></li>
-                <li><a href="#">▶ গোপনীয়তা নীতি</a></li>
-                <li><a href="#">▶ সাধারণ জিজ্ঞাসা</a></li>
-                <li><a href="#">▶ যোগাযোগ</a></li>
-            </ul>
-        </div>
-        
-        <div class="footer-col">
-            <h4>পরিকল্পনা ও বাস্তবায়ন</h4>
-            <div class="footer-banner">
-                <i class="fa-solid fa-users-gear" style="font-size: 38px; color: #2e7d32;"></i>
-                <div style="font-size: 13px; font-weight: bold; color: #2e7d32;">
-                    জনবান্ধব ভূমিসেবা অটোমেশন
-                </div>
-            </div>
-        </div>
+<!-- Saved List Panel -->
+<div class="saved-panel" id="savedPanel">
+    <h3>সংরক্ষিত খতিয়ানসমূহ</h3>
+    <table class="saved-table">
+        <thead>
+            <tr>
+                <th>আইডি (ID)</th>
+                <th>খতিয়ান নং</th>
+                <th>মৌজা</th>
+                <th>একশন</th>
+            </tr>
+        </thead>
+        <tbody id="savedTbody"></tbody>
+    </table>
+</div>
 
-        <div class="footer-col">
-            <h4>সামাজিক যোগাযোগ</h4>
-            <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" style="height: 35px; margin-bottom: 10px;"></a>
-            <div class="social-icons">
-                <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#" class="social-btn twitter"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#" class="social-btn pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
-                <a href="#" class="social-btn youtube"><i class="fa-brands fa-youtube"></i></a>
-            </div>
-        </div>
+<!-- Error Message Display -->
+<div class="error-box" id="errorNotice">
+    ⚠️ উক্ত আইডি বা খতিয়ানটি ডাটাবেজে পাওয়া যায়নি অথবা মুছে ফেলা হয়েছে!
+</div>
+
+<!-- Khatiyan Display Page -->
+<div class="page" id="khatiyanPage">
+    <div class="header-title">খতিয়ান নং- <span id="out_khatiyan">৬৬৮</span></div>
+    <div class="meta-info">
+        <div>জিলা: <span id="out_jila">নোয়াখালী</span></div>
+        <div>উপজেলা: <span id="out_upazila">বেগমগঞ্জ</span></div>
+        <div>মৌজা: <span id="out_mouza">অনন্তপুর</span></div>
+        <div>জে এল নং: <span id="out_jl">২৩৪</span></div>
+    </div>
+
+    <table class="main-table">
+        <thead>
+            <tr>
+                <th style="width: 35%;">মালিকের নাম ও ঠিকানা</th>
+                <th style="width: 20%;">দাগ নং</th>
+                <th style="width: 25%;">শ্রেণী</th>
+                <th style="width: 20%;">জমির শতাংশ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="out_owner" style="text-align: left;"></td>
+                <td id="out_dag"></td>
+                <td id="out_cat"></td>
+                <td id="out_sat"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div>মুদ্রণ তারিখ: <span id="out_date"></span></div>
+        <div class="qr-container" id="qrcode"></div>
     </div>
 </div>
 
 <script>
-    // -----------------------------------------------------------
-    // 1. Firebase Online Database Configuration
-    // -----------------------------------------------------------
-    const firebaseConfig = {
-        databaseURL: "https://dlrms-khatiyan-default-rtdb.firebaseio.com/"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    // Bangla Number Converter
-    function toBanglaNum(str) {
-        if(!str) return '';
-        var banglaDigits = {'0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'};
-        return str.toString().replace(/[0-9]/g, function(w){ return banglaDigits[w]; });
-    }
-
-    // Auto Update Today's Date in Bangla
-    function setAutoDate() {
-        var months = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = months[today.getMonth()];
-        var yyyy = today.getFullYear();
-        
-        var dateStr = toBanglaNum(dd) + " " + mm + " " + toBanglaNum(yyyy);
-        document.getElementById('out_auto_date').innerText = dateStr;
-    }
-
-    // Save Data to Cloud Database
-    function saveDataToFirebase() {
+    // Save data to localStorage using ID
+    function saveData() {
         var id = document.getElementById('in_id').value.trim();
-        if(!id) { alert("আইডি দিতে হবে!"); return; }
+        if (!id) {
+            alert('অনুগ্রহ করে একটি ID দিন');
+            return;
+        }
 
         var data = {
             id: id,
             khatiyan: document.getElementById('in_khatiyan').value,
-            owner: document.getElementById('in_owner').value,
-            dag: document.getElementById('in_dag').value,
-            survey: document.getElementById('in_survey').value,
             mouza: document.getElementById('in_mouza').value,
             upazila: document.getElementById('in_upazila').value,
             jila: document.getElementById('in_jila').value,
-            division: document.getElementById('in_division').value
+            jl: document.getElementById('in_jl').value,
+            owner: document.getElementById('in_owner').value,
+            dag: document.getElementById('in_dag').value,
+            cat: document.getElementById('in_cat').value,
+            sat: document.getElementById('in_sat').value
         };
 
-        database.ref('khatiyans/' + id).set(data, function(err) {
-            if(!err) {
-                alert("ডাটা সফলভাবে সংরক্ষিত হয়েছে! আইডি: " + id);
-                renderCard(data);
-            } else {
-                alert("ত্রুটি: " + err.message);
-            }
-        });
+        var records = JSON.parse(localStorage.getItem('khatiyan_db') || '{}');
+        records[id] = data;
+        localStorage.setItem('khatiyan_db', JSON.stringify(records));
+
+        alert('আইডি ' + id + ' এর তথ্য সফলভাবে সংরক্ষণ করা হয়েছে!');
+        renderKhatiyan(data);
+        loadSavedTable();
     }
 
-    function renderCard(data) {
+    // Render Data into Display Page
+    function renderKhatiyan(data) {
         document.getElementById('out_khatiyan').innerText = data.khatiyan || '';
-        document.getElementById('out_owner').innerText = data.owner || '';
-        document.getElementById('out_dag').innerText = data.dag || '';
-        document.getElementById('out_survey').innerText = data.survey || '';
         document.getElementById('out_mouza').innerText = data.mouza || '';
         document.getElementById('out_upazila').innerText = data.upazila || '';
         document.getElementById('out_jila').innerText = data.jila || '';
-        document.getElementById('out_division').innerText = data.division || '';
+        document.getElementById('out_jl').innerText = data.jl || '';
+        document.getElementById('out_owner').innerText = data.owner || '';
+        document.getElementById('out_dag').innerText = data.dag || '';
+        document.getElementById('out_cat').innerText = data.cat || '';
+        document.getElementById('out_sat').innerText = data.sat || '';
+
+        // Generate QR Code matching current URL format
+        var qrDiv = document.getElementById('qrcode');
+        qrDiv.innerHTML = '';
+        var currentUrl = window.location.origin + window.location.pathname + '?id=' + data.id;
+        new QRCode(qrDiv, { text: currentUrl, width: 100, height: 100 });
     }
 
-    // Page Load Handling
+    // Load Saved Records
+    function loadSavedTable() {
+        var records = JSON.parse(localStorage.getItem('khatiyan_db') || '{}');
+        var tbody = document.getElementById('savedTbody');
+        tbody.innerHTML = '';
+
+        var keys = Object.keys(records);
+        if (keys.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">কোনো তথ্য সংরক্ষিত নেই</td></tr>';
+            return;
+        }
+
+        keys.forEach(function(key) {
+            var item = records[key];
+            var tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>${item.id}</b></td>
+                <td>${item.khatiyan}</td>
+                <td>${item.mouza}</td>
+                <td>
+                    <button class="btn" style="padding: 3px 8px;" onclick="loadRecord('${item.id}')">ভিউ</button>
+                    <button class="btn btn-danger" style="padding: 3px 8px;" onclick="deleteRecord('${item.id}')">মুছুন</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function loadRecord(id) {
+        var records = JSON.parse(localStorage.getItem('khatiyan_db') || '{}');
+        if (records[id]) {
+            renderKhatiyan(records[id]);
+        }
+    }
+
+    // Delete Record (Scanner will stop showing details after delete)
+    function deleteRecord(id) {
+        if (confirm('আপনি কি নিশ্চিত যে ID ' + id + ' মুছে ফেলতে চান? মুছে ফেললে কিউআর স্ক্যান আর কাজ করবে না।')) {
+            var records = JSON.parse(localStorage.getItem('khatiyan_db') || '{}');
+            delete records[id];
+            localStorage.setItem('khatiyan_db', JSON.stringify(records));
+            loadSavedTable();
+            alert('তথ্য মুছে ফেলা হয়েছে!');
+        }
+    }
+
+    function toggleSavedPanel() {
+        var p = document.getElementById('savedPanel');
+        p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+        if (p.style.display === 'block') loadSavedTable();
+    }
+
+    // URL Check on Page Load (Handles ?id=35 logic)
     window.onload = function() {
-        setAutoDate();
+        var today = new Date();
+        document.getElementById('out_date').innerText = today.toLocaleDateString('bn-BD');
 
         var urlParams = new URLSearchParams(window.location.search);
-        var queryId = urlParams.get('id');
+        var searchId = urlParams.get('id');
 
-        if (queryId) {
-            // Hide admin panel when opened via QR code or ID link
-            document.getElementById('adminPanel').style.display = 'none';
+        if (searchId) {
+            // Hide Form when opened via QR / Direct Link
+            document.getElementById('adminForm').style.display = 'none';
 
-            // Fetch from Firebase Database
-            database.ref('khatiyans/' + queryId).once('value').then(function(snapshot) {
-                if(snapshot.exists()) {
-                    renderCard(snapshot.val());
-                } else {
-                    document.getElementById('verifyCard').style.display = 'none';
-                    document.getElementById('notFoundBox').style.display = 'block';
-                }
-            });
+            var records = JSON.parse(localStorage.getItem('khatiyan_db') || '{}');
+            var data = records[searchId];
+
+            if (data) {
+                renderKhatiyan(data);
+            } else {
+                // Hide page and show error if ID is deleted/missing
+                document.getElementById('khatiyanPage').style.display = 'none';
+                document.getElementById('errorNotice').style.display = 'block';
+            }
+        } else {
+            // Default load
+            saveData();
         }
     };
 </script>
