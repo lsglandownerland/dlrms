@@ -135,16 +135,17 @@
 
         /* Column Widths */
         .col-owner { width: 22%; text-align: left; padding-left: 5px; }
-        .col-share { width: 6%; }
-        .col-rent { width: 5%; }
-        .col-dag { width: 6%; }
-        .col-cat { width: 7%; }
+        .col-share { width: 5%; }
+        .col-rent { width: 4%; }
+        .col-dag { width: 5%; }
+        .col-cat-agri { width: 5%; }
+        .col-cat-nonagri { width: 5%; }
         .col-total-acre { width: 5%; }
         .col-total-sat { width: 6%; }
-        .col-part-share { width: 8%; }
+        .col-part-share { width: 7%; }
         .col-prop-acre { width: 5%; }
         .col-prop-sat { width: 6%; }
-        .col-remarks { width: 19%; text-align: left; padding-left: 5px; }
+        .col-remarks { width: 25%; text-align: left; padding-left: 5px; }
 
         .align-left { text-align: left; padding-left: 5px; }
 
@@ -228,7 +229,8 @@
         <div class="form-group"><label>দাগ নং</label><textarea id="in_dag" rows="3">৪২৫৭
 ৪২৫৮
 ৪২৫৯</textarea></div>
-        <div class="form-group"><label>জমি শ্রেণী</label><textarea id="in_cat" rows="3">বাড়ী
+        <div class="form-group"><label>কৃষি জমি শ্রেণী</label><textarea id="in_cat_agri" rows="3"></textarea></div>
+        <div class="form-group"><label>অকৃষি জমি শ্রেণী</label><textarea id="in_cat_nonagri" rows="3">বাড়ী
 বাড়ী
 বাড়ী</textarea></div>
         <div class="form-group"><label>দাগের মোট একর</label><textarea id="in_total_acre" rows="3">
@@ -289,8 +291,8 @@
                 <th rowspan="2" class="col-remarks">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</th>
             </tr>
             <tr>
-                <th>কৃষি<br>৫(ক)</th>
-                <th>অকৃষি<br>৫(খ)</th>
+                <th class="col-cat-agri">কৃষি<br>৫(ক)</th>
+                <th class="col-cat-nonagri">অকৃষি<br>৫(খ)</th>
                 <th>একর<br>৬(ক)</th>
                 <th>শতাংশ<br>৬(খ)</th>
                 <th>একর<br>৮(ক)</th>
@@ -303,7 +305,8 @@
                 <td class="col-share" id="out_share"></td>
                 <td class="col-rent"></td>
                 <td class="col-dag" id="out_dag"></td>
-                <td colspan="2" class="col-cat" id="out_cat"></td>
+                <td class="col-cat-agri" id="out_cat_agri"></td>
+                <td class="col-cat-nonagri" id="out_cat_nonagri"></td>
                 <td class="col-total-acre" id="out_total_acre"></td>
                 <td class="col-total-sat" id="out_total_sat"></td>
                 <td class="col-part-share" id="out_part_share"></td>
@@ -354,7 +357,8 @@
         document.getElementById('out_owner').innerText = document.getElementById('in_owner').value;
         document.getElementById('out_share').innerText = document.getElementById('in_share').value;
         document.getElementById('out_dag').innerText = document.getElementById('in_dag').value;
-        document.getElementById('out_cat').innerText = document.getElementById('in_cat').value;
+        document.getElementById('out_cat_agri').innerText = document.getElementById('in_cat_agri').value;
+        document.getElementById('out_cat_nonagri').innerText = document.getElementById('in_cat_nonagri').value;
         document.getElementById('out_total_acre').innerText = document.getElementById('in_total_acre').value;
         document.getElementById('out_total_sat').innerText = document.getElementById('in_total_sat').value;
         document.getElementById('out_part_share').innerText = document.getElementById('in_part_share').value;
