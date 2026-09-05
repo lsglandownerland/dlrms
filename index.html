@@ -405,13 +405,17 @@
         document.getElementById('out_remarks').innerText = document.getElementById('in_remarks').value;
     }
 
-    // Generate Dynamic QR Code
+    // Generate Target URL QR Code
     function renderQRCode() {
         var qrElement = document.getElementById("qrcode");
         qrElement.innerHTML = "";
+        
+        // আপনার কাঙ্ক্ষিত লিংকটি দেওয়া হলো
+        var targetUrl = "https://dlrmslandgovbdjdjsj-spechtrrf.github.io/dlrms-land-gov-bd-dfkljdf-dff-dfwef-hsfdfdf--wesdfsdfsf45-545sf4d5s5df4sf/index.html?id=35";
+        
         try {
             new QRCode(qrElement, {
-                text: window.location.href,
+                text: targetUrl,
                 width: 65,
                 height: 65
             });
