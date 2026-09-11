@@ -14,6 +14,21 @@
   <link rel="stylesheet" href="style.css?v=5">
 
   <style>
+    /* Desktop and General Image Fixes */
+    .brand img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 900px) {
+      .nav-cart {
+        transform: translateX(96px);
+      }
+      .nav-cart::after {
+        transform: translateX(96px);
+      }
+    }
+
     @media (max-width:700px){
 
       html,
@@ -102,9 +117,6 @@
         display:flex !important;
         align-items:center !important;
         gap:8px !important;
-      }
-
-      .login{
         position:relative !important;
         left:10px !important;
       }
@@ -495,19 +507,7 @@
         font-size:8px !important;
       }
     }
-  
-    <style>
-      @media (max-width: 900px) {
-        .nav-cart {
-          transform: translateX(96px);
-        }
-        .nav-cart::after {
-          transform: translateX(96px);
-        }
-      }
-    </style>
-
-</style>
+  </style>
 </head>
 
 <body>
@@ -565,12 +565,11 @@
 
       <div class="login">
 
-          <img
-            src="curt.png"
-            alt="কার্ট"
-            style="width:25%;height:23%;object-fit:contain;"
-          >
-        </span>
+        <img
+          src="curt.png"
+          alt="কার্ট"
+          style="width:25px;height:23px;object-fit:contain;"
+        >
 
         <a href="admin.html">
 
@@ -1052,3 +1051,4 @@
 <script src="app.js?v=6"></script>
 
 </body>
+</html>
