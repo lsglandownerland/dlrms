@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>খতিয়ান তথ্য ব্যবস্থাপনা</title>
+  <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন সত্যতা যাচাইকরণ</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'SolaimanLipi', Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; color: #000; }
@@ -151,15 +151,111 @@
     .seal-logo { width: 120px; height: auto; display: block; margin: 0 auto; }
     .qr-code { width: 85px; height: auto; }
 
+    /* Official Government Style Verification Page View */
+    #verification_view {
+      display: none;
+      max-width: 900px;
+      margin: 20px auto;
+      background: #fff;
+      border: 1px solid #278a53;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .v-header {
+      background: #278a53;
+      color: #fff;
+      padding: 15px 20px;
+      text-align: center;
+    }
+    .v-header h2 { margin: 0; font-size: 20px; }
+    .v-header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.9; }
+    .v-status {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      padding: 12px;
+      margin: 15px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 15px;
+    }
+    .v-body { padding: 0 20px 20px 20px; }
+    .v-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .v-item {
+      background: #f8f9fa;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border-left: 3px solid #278a53;
+      font-size: 14px;
+    }
+    .v-item span { font-weight: bold; color: #333; }
+    .v-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    .v-table th, .v-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    .v-table th { background: #e9ecef; }
+
     /* Print Settings */
     @media print {
-      .login-panel, .input-panel, .list-section { display: none !important; }
+      .login-panel, .input-panel, .list-section, #verification_view { display: none !important; }
       body { background: #fff; padding: 0; margin: 0; }
-      .khatian-box { border: none; box-shadow: none; width: 100%; max-width: 100%; padding: 0; }
+      .khatian-box { border: none; box-shadow: none; width: 100%; max-width: 100%; padding: 0; display: block !important; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Official Scan Verification Display Panel -->
+  <div id="verification_view">
+    <div class="v-header">
+      <h2>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h2>
+      <p>ভূমি মন্ত্রণালয় - অনলাইন খতিয়ান সত্যতা যাচাইকরণ পোর্টাল</p>
+    </div>
+    <div class="v-status">✓ খতিয়ানটির তথ্য রেকর্ড অনুসারে সঠিক ও যাচাইকৃত (Verified)</div>
+    <div class="v-body">
+      <div class="v-grid">
+        <div class="v-item">বিভাগ: <span id="v_division"></span></div>
+        <div class="v-item">জেলা: <span id="v_district"></span></div>
+        <div class="v-item">উপজেলা/থানা: <span id="v_upazila"></span></div>
+        <div class="v-item">মৌজা: <span id="v_mouza"></span></div>
+        <div class="v-item">জে. এল. নং: <span id="v_jl"></span></div>
+        <div class="v-item">খতিয়ান নং: <span id="v_khatian"></span></div>
+      </div>
+      
+      <div class="v-item" style="margin-bottom: 15px;">
+        <strong>মালিক ও প্রজার নাম:</strong><br>
+        <span id="v_owner"></span>
+      </div>
+
+      <div class="v-item" style="margin-bottom: 15px;">
+        <strong>মোট জমির পরিমাণ:</strong> <span id="v_land"></span> শতাংশ
+      </div>
+
+      <h4 style="margin-bottom: 5px; color: #278a53;">দাগের বিবরণ:</h4>
+      <table class="v-table">
+        <thead>
+          <tr>
+            <th>দাগ নং</th>
+            <th>শ্রেণী</th>
+            <th>দাগের মোট জমি</th>
+            <th>খতিয়ানে অংশ</th>
+            <th>অংশের জমি</th>
+          </tr>
+        </thead>
+        <tbody id="v_dag_body"></tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- Admin Login Box -->
   <div id="login_panel" class="login-panel">
@@ -216,6 +312,7 @@
           <div class="form-group"><label>মোট জমির পরিমাণ (শতাংশ):</label><input type="text" id="in_my_land" value="৮০০০"></div>
           <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" value="২২-০৮-২০২০"></div>
           <div class="form-group full-width"><label>লোগো লিংক / ফাইল পাথ (ডিফল্ট লোগো ব্যবহার করতে খালি রাখুন):</label><input type="text" id="in_seal_logo" value="DEFAULT_LOGO"></div>
+          <div class="form-group full-width"><label>কাস্টম কিউআর কোড লিঙ্ক (খালি রাখলে স্বয়ংক্রিয় ভেরিফিকেশন লিঙ্ক তৈরি হবে):</label><input type="text" id="in_qr_url" placeholder="স্বয়ংক্রিয় ভেরিফিকেশন লিঙ্কের জন্য খালি রাখুন"></div>
         </div>
 
         <!-- Dag Details Entry Area -->
@@ -254,7 +351,7 @@
   </div>
 
   <!-- Khatian Document Structure -->
-  <div class="khatian-box">
+  <div class="khatian-box" id="document_view">
     <div class="top-header">
       <div style="width: 90px;"></div>
       <div class="khatian-header">খতিয়ান নং- <span id="out_khatian">৬৬৮</span></div>
@@ -319,7 +416,7 @@
           <img id="out_seal_logo" src="" alt="জেলা রেকর্ড রুম নোয়াখালী সিল" class="seal-logo">
         </div>
         <div>
-          <img id="out_qr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Khatian-668" alt="QR Code" class="qr-code">
+          <img id="out_qr" src="" alt="QR Code" class="qr-code">
         </div>
       </div>
     </div>
@@ -427,7 +524,12 @@
         document.getElementById('out_seal_logo').src = logoSrc;
       }
       
-      document.getElementById('out_qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent('খতিয়ান নং: ' + khatianNo);
+      // Dynamic QR Code Link Generation for Verification
+      var customQrUrl = document.getElementById('in_qr_url').value.trim();
+      var baseUrl = window.location.href.split('?')[0];
+      var verifyUrl = customQrUrl || (baseUrl + '?verify=true&khatian=' + encodeURIComponent(khatianNo));
+      
+      document.getElementById('out_qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(verifyUrl);
 
       var dags = getDagsFromForm();
       var tbody = document.getElementById('out_khatian_body');
@@ -481,6 +583,52 @@
       tbody.appendChild(footerTr);
     }
 
+    function checkVerifyMode() {
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('verify') === 'true') {
+        var khatianNo = urlParams.get('khatian');
+        var savedKhatians = JSON.parse(localStorage.getItem('all_khatians') || '{}');
+        var data = savedKhatians[khatianNo];
+
+        document.getElementById('login_panel').style.display = 'none';
+        document.getElementById('admin_panel').style.display = 'none';
+        document.getElementById('document_view').style.display = 'none';
+        document.getElementById('verification_view').style.display = 'block';
+
+        if (data) {
+          document.getElementById('v_division').textContent = data.division || '';
+          document.getElementById('v_district').textContent = data.district || '';
+          document.getElementById('v_upazila').textContent = data.upazila || '';
+          document.getElementById('v_mouza').textContent = data.mouza || '';
+          document.getElementById('v_jl').textContent = data.jl || '';
+          document.getElementById('v_khatian').textContent = data.khatian || '';
+          document.getElementById('v_owner').innerHTML = (data.owner || '').replace(/\n/g, '<br>');
+          document.getElementById('v_land').textContent = data.my_land || '';
+
+          var vBody = document.getElementById('v_dag_body');
+          vBody.innerHTML = '';
+          if (data.dags && data.dags.length > 0) {
+            data.dags.forEach(function(d) {
+              var tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${d.dag}</td>
+                <td>${d.class_name} (${d.type})</td>
+                <td>${d.total_land}</td>
+                <td>${d.part}</td>
+                <td>${d.my_part_land}</td>
+              `;
+              vBody.appendChild(tr);
+            });
+          }
+        } else {
+          document.getElementById('v_khatian').textContent = khatianNo;
+          document.getElementById('v_owner').textContent = "রেকর্ড পাওয়া যায়নি!";
+        }
+        return true;
+      }
+      return false;
+    }
+
     function saveKhatian() {
       var khatianNo = document.getElementById('in_khatian').value.trim();
       if (!khatianNo) {
@@ -499,6 +647,7 @@
         my_land: document.getElementById('in_my_land').value,
         date: document.getElementById('in_date').value,
         seal_logo: document.getElementById('in_seal_logo').value,
+        qr_url: document.getElementById('in_qr_url').value,
         dags: getDagsFromForm()
       };
 
@@ -527,6 +676,7 @@
         document.getElementById('in_my_land').value = data.my_land || '';
         document.getElementById('in_date').value = data.date || '';
         document.getElementById('in_seal_logo').value = data.seal_logo || 'DEFAULT_LOGO';
+        document.getElementById('in_qr_url').value = data.qr_url || '';
 
         document.getElementById('dag_container').innerHTML = '';
         if (data.dags && data.dags.length > 0) {
@@ -560,6 +710,7 @@
     function resetForm() {
       document.getElementById('khatianForm').reset();
       document.getElementById('in_seal_logo').value = 'DEFAULT_LOGO';
+      document.getElementById('in_qr_url').value = '';
       initDefaultDags();
       renderPreview();
     }
@@ -597,10 +748,12 @@
     }
 
     window.onload = function() {
-      checkAuth();
-      initDefaultDags();
-      renderList();
-      renderPreview();
+      if (!checkVerifyMode()) {
+        checkAuth();
+        initDefaultDags();
+        renderList();
+        renderPreview();
+      }
     };
   </script>
 </body>
