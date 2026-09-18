@@ -6,7 +6,7 @@
   <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন সত্যতা যাচাইকরণ</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'SolaimanLipi', Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; color: #000; }
+    body { font-family: 'SolaimanLipi', Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 0; color: #333; }
     
     /* Login Form Styling */
     .login-panel {
@@ -26,7 +26,7 @@
     .btn-logout { background: #dc3545; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; float: right; }
 
     /* Admin Panel Toggle */
-    #admin_panel { display: none; }
+    #admin_panel { display: none; padding: 20px; }
 
     /* Input Form Styling */
     .input-panel {
@@ -94,7 +94,7 @@
     /* Khatian Document Layout */
     .khatian-box {
       max-width: 1000px;
-      margin: 0 auto;
+      margin: 20px auto;
       background: #fff;
       padding: 25px;
       border: 1px solid #999;
@@ -151,59 +151,175 @@
     .seal-logo { width: 120px; height: auto; display: block; margin: 0 auto; }
     .qr-code { width: 85px; height: auto; }
 
-    /* Official Government Style Verification Page View */
+    /* ========================================================= */
+    /* EXACT GOV PORTAL SCAN VERIFICATION UI STYLES (MATCH IMAGE) */
+    /* ========================================================= */
     #verification_view {
       display: none;
-      max-width: 900px;
-      margin: 20px auto;
-      background: #fff;
-      border: 1px solid #278a53;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      overflow: hidden;
+      max-width: 500px;
+      margin: 0 auto;
+      background: #f8faf9;
+      min-height: 100vh;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      font-family: Arial, sans-serif;
     }
-    .v-header {
-      background: #278a53;
-      color: #fff;
-      padding: 15px 20px;
+    .top-date-bar {
+      background-color: #83a58c;
+      color: #ffffff;
       text-align: center;
+      padding: 6px;
+      font-size: 14px;
+      font-weight: bold;
     }
-    .v-header h2 { margin: 0; font-size: 20px; }
-    .v-header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.9; }
-    .v-status {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      padding: 12px;
-      margin: 15px 20px;
-      border-radius: 5px;
+    .land-app-header {
+      background: #fff;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .land-logo-img { height: 45px; }
+    .header-icons { display: flex; gap: 12px; align-items: center; }
+    .header-icon-btn {
+      background: #1e6938;
+      color: #fff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .khatian-card {
+      background: #fdfdfd;
+      margin: 15px 10px;
+      padding: 20px 15px;
+      border-radius: 8px;
+    }
+    .khatian-title {
+      color: #1e6938;
+      font-size: 24px;
       font-weight: bold;
       text-align: center;
-      font-size: 15px;
+      margin-bottom: 20px;
     }
-    .v-body { padding: 0 20px 20px 20px; }
-    .v-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+    .info-list {
+      display: table;
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+      font-size: 18px;
+      color: #2b2b2b;
+    }
+    .info-row {
+      display: table-row;
+      line-height: 2.2;
+    }
+    .info-label {
+      display: table-cell;
+      font-weight: bold;
+      width: 100px;
+      white-space: nowrap;
+    }
+    .info-colon {
+      display: table-cell;
+      width: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .info-value {
+      display: table-cell;
+      font-weight: normal;
+    }
+
+    /* Important Links Section */
+    .links-section {
+      background: #e8f5e9;
+      padding: 20px 15px;
+      margin-top: 20px;
+    }
+    .links-title {
+      color: #1e6938;
+      font-size: 22px;
+      font-weight: bold;
       margin-bottom: 15px;
     }
-    .v-item {
-      background: #f8f9fa;
-      padding: 8px 12px;
-      border-radius: 4px;
-      border-left: 3px solid #278a53;
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 10px;
+      font-size: 15px;
+      color: #2b2b2b;
+      font-weight: 500;
+    }
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .link-arrow {
+      color: #1e6938;
+      font-size: 12px;
+    }
+
+    /* Footer Credits Section */
+    .gov-footer {
+      background: #e8f5e9;
+      padding: 15px;
+      border-top: 1px dashed #c8e6c9;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .footer-heading {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #2b2b2b;
+    }
+    .govt-logos {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .govt-logos img { height: 40px; }
+    .social-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .social-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
       font-size: 14px;
     }
-    .v-item span { font-weight: bold; color: #333; }
-    .v-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 13px;
+    .bg-fb { background: #1877f2; }
+    .bg-x { background: #000; }
+    .bg-insta { background: #e4405f; }
+    .bg-yt { background: #ff0000; }
+
+    .playstore-btn {
+      margin-top: 10px;
+      background: #000;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
     }
-    .v-table th, .v-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    .v-table th { background: #e9ecef; }
 
     /* Print Settings */
     @media print {
@@ -215,45 +331,115 @@
 </head>
 <body>
 
-  <!-- Official Scan Verification Display Panel -->
+  <!-- ========================================================= -->
+  <!-- EXACT SCAN VERIFICATION VIEW MATCHING THE SCREENSHOT -->
+  <!-- ========================================================= -->
   <div id="verification_view">
-    <div class="v-header">
-      <h2>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h2>
-      <p>ভূমি মন্ত্রণালয় - অনলাইন খতিয়ান সত্যতা যাচাইকরণ পোর্টাল</p>
+    <!-- Top Date Bar -->
+    <div class="top-date-bar">
+      শুক্রবার, ১৮ পৌষ ১৩৭৬, ১৮ সেপ্টেম্বর ২০২৬
     </div>
-    <div class="v-status">✓ খতিয়ানটির তথ্য রেকর্ড অনুসারে সঠিক ও যাচাইকৃত (Verified)</div>
-    <div class="v-body">
-      <div class="v-grid">
-        <div class="v-item">বিভাগ: <span id="v_division"></span></div>
-        <div class="v-item">জেলা: <span id="v_district"></span></div>
-        <div class="v-item">উপজেলা/থানা: <span id="v_upazila"></span></div>
-        <div class="v-item">মৌজা: <span id="v_mouza"></span></div>
-        <div class="v-item">জে. এল. নং: <span id="v_jl"></span></div>
-        <div class="v-item">খতিয়ান নং: <span id="v_khatian"></span></div>
+
+    <!-- Header -->
+    <div class="land-app-header">
+      <img src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" class="land-logo-img" alt="Land Logo">
+      <div class="header-icons">
+        <div class="header-icon-btn">🛒</div>
+        <div style="font-size: 20px; color: #333; cursor: pointer;">⋮</div>
       </div>
+    </div>
+
+    <!-- Main Khatian Data Box -->
+    <div class="khatian-card">
+      <div class="khatian-title">খতিয়ান নং - <span id="v_khatian">৪৮৫</span></div>
       
-      <div class="v-item" style="margin-bottom: 15px;">
-        <strong>মালিক ও প্রজার নাম:</strong><br>
-        <span id="v_owner"></span>
+      <div class="info-list">
+        <div class="info-row">
+          <div class="info-label">মালিক</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_owner">দং নজির আহমদ</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">দাগ নং</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_dag">৪১৫০</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">সার্ভে</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_survey">বি আর এস</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">মৌজা</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_mouza">আলাদিনগর</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">উপজেলা</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_upazila">বেগমগঞ্জ রাজস্ব সার্কেল</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">জেলা</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_district">নোয়াখালী</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">বিভাগ</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_division">চট্টগ্রাম</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">তারিখ</div>
+          <div class="info-colon">:</div>
+          <div class="info-value" id="v_date">১৮ সেপ্টেম্বর, ২০২৬</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Important Links Section -->
+    <div class="links-section">
+      <div class="links-title">গুরুত্বপূর্ণ লিঙ্ক</div>
+      <div class="links-grid">
+        <div class="link-item"><span class="link-arrow">▶</span> বাংলাদেশ জাতীয় তথ্য বাতায়ন</div>
+        <div class="link-item"><span class="link-arrow">▶</span> সাপোর্ট টিকেট</div>
+        <div class="link-item"><span class="link-arrow">▶</span> ভূমি মন্ত্রণালয়</div>
+        <div class="link-item"><span class="link-arrow">▶</span> গোপনীয়তা নীতি</div>
+        <div class="link-item"><span class="link-arrow">▶</span> তথ্য অধিদপ্তর (পিআইডি)</div>
+        <div class="link-item"><span class="link-arrow">▶</span> সাধারণ জিজ্ঞাসা</div>
+        <div class="link-item"><span class="link-arrow">▶</span> অভিযোগ প্রতিকার ব্যবস্থা</div>
+        <div class="link-item"><span class="link-arrow">▶</span> যোগাযোগ</div>
+      </div>
+    </div>
+
+    <!-- Footer Credits -->
+    <div class="gov-footer">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-heading">পরিকল্পনা ও বাস্তবায়নে</div>
+          <div class="govt-logos">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="Govt Seal">
+            <span style="font-size: 11px; font-weight: bold; color: #1e6938; line-height: 1.2;">জনবান্ধব ভূমিসেবা অটোমেশন</span>
+          </div>
+        </div>
+        <div>
+          <div class="footer-heading">সামাজিক যোগাযোগ</div>
+          <div class="social-icons">
+            <div class="social-btn bg-fb">f</div>
+            <div class="social-btn bg-x">X</div>
+            <div class="social-btn bg-insta">📷</div>
+            <div class="social-btn bg-yt">▶</div>
+          </div>
+        </div>
       </div>
 
-      <div class="v-item" style="margin-bottom: 15px;">
-        <strong>মোট জমির পরিমাণ:</strong> <span id="v_land"></span> শতাংশ
+      <div class="playstore-btn">
+        <span style="font-size: 18px; margin-right: 6px;">▶</span>
+        <div>
+          <div style="font-size: 8px;">GET IT ON</div>
+          <div style="font-weight: bold; font-size: 12px;">Google Play</div>
+        </div>
       </div>
-
-      <h4 style="margin-bottom: 5px; color: #278a53;">দাগের বিবরণ:</h4>
-      <table class="v-table">
-        <thead>
-          <tr>
-            <th>দাগ নং</th>
-            <th>শ্রেণী</th>
-            <th>দাগের মোট জমি</th>
-            <th>খতিয়ানে অংশ</th>
-            <th>অংশের জমি</th>
-          </tr>
-        </thead>
-        <tbody id="v_dag_body"></tbody>
-      </table>
     </div>
   </div>
 
@@ -286,33 +472,21 @@
         <div class="form-grid">
           <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
           <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী"></div>
-          <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
-          <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
+          <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ রাজস্ব সার্কেল"></div>
+          <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর"></div>
+          <div class="form-group"><label>সার্ভে টাইপ:</label><input type="text" id="in_survey" value="বি আর এস"></div>
           <div class="form-group"><label>জে. এল. নং:</label><input type="text" id="in_jl" value="২৩৪"></div>
-          <div class="form-group"><label>খতিয়ান নং (ইউনিক):</label><input type="text" id="in_khatian" value="৬৬৮" required></div>
+          <div class="form-group"><label>খতিয়ান নং (ইউনিক):</label><input type="text" id="in_khatian" value="৪৮৫" required></div>
           
           <div class="form-group full-width">
             <label>মালিকের নাম ও ঠিকানা:</label>
-            <textarea id="in_owner" rows="5">মালিক
-দং ছকিনা খাতুন
-জং চৌধুরী মিঞা
-রজ্জবের নেছা
-জং আবুল কালাম
-বদরের নেছা
-জং আবুল কাশেম
-রহিমা খাতুন
-জং সফি উল্যা
-জয়নাল আবদীন
-আবুল কাশেম
-আমিন উল্যা
-পিং চৌধুরী মিঞা
-সাং নিজ</textarea>
+            <textarea id="in_owner" rows="3">দং নজির আহমদ</textarea>
           </div>
 
           <div class="form-group"><label>মোট জমির পরিমাণ (শতাংশ):</label><input type="text" id="in_my_land" value="৮০০০"></div>
-          <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" value="২২-০৮-২০২০"></div>
-          <div class="form-group full-width"><label>লোগো লিংক / ফাইল পাথ (ডিফল্ট লোগো ব্যবহার করতে খালি রাখুন):</label><input type="text" id="in_seal_logo" value="DEFAULT_LOGO"></div>
-          <div class="form-group full-width"><label>কাস্টম কিউআর কোড লিঙ্ক (খালি রাখলে স্বয়ংক্রিয় টেক্সট/ভেরিফিকেশন লিঙ্ক তৈরি হবে):</label><input type="text" id="in_qr_url" placeholder="কাস্টম কোনো লিঙ্ক দিতে চাইলে বসান"></div>
+          <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" value="১৮ সেপ্টেম্বর, ২০২৬"></div>
+          <div class="form-group full-width"><label>লোগো লিংক / ফাইল পাথ:</label><input type="text" id="in_seal_logo" value="DEFAULT_LOGO"></div>
+          <div class="form-group full-width"><label>কাস্টম কিউআর কোড লিঙ্ক:</label><input type="text" id="in_qr_url" placeholder="কাস্টম কোনো লিঙ্ক দিতে চাইলে বসান"></div>
         </div>
 
         <!-- Dag Details Entry Area -->
@@ -342,7 +516,7 @@
             <th>উপজেলা</th>
             <th>জেলা</th>
             <th>তারিখ</th>
-            <th>অ্যাকশন (কর্মকাণ্ড)</th>
+            <th>অ্যাকশন</th>
           </tr>
         </thead>
         <tbody id="list_body"></tbody>
@@ -354,7 +528,7 @@
   <div class="khatian-box" id="document_view">
     <div class="top-header">
       <div style="width: 90px;"></div>
-      <div class="khatian-header">খতিয়ান নং- <span id="out_khatian">৬৬৮</span></div>
+      <div class="khatian-header">খতিয়ান নং- <span id="out_khatian">৪৮৫</span></div>
       <div class="page-no">পৃষ্ঠা নং: ১ এর ১</div>
     </div>
 
@@ -362,8 +536,8 @@
       <tr>
         <td>বিভাগ: <span id="out_division">চট্টগ্রাম</span></td>
         <td>জেলা: <span id="out_district">নোয়াখালী</span></td>
-        <td>উপজেলা/থানা: <span id="out_upazila">বেগমগঞ্জ</span></td>
-        <td>মৌজা: <span id="out_mouza">অনন্তপুর</span></td>
+        <td>উপজেলা/থানা: <span id="out_upazila">বেগমগঞ্জ রাজস্ব সার্কেল</span></td>
+        <td>মৌজা: <span id="out_mouza">আলাদিনগর</span></td>
         <td>জে, এল, নং: <span id="out_jl">২৩৪</span></td>
         <td>রে: সা: নং: </td>
       </tr>
@@ -407,7 +581,7 @@
 
     <div class="bottom-section">
       <div class="bottom-note">
-        মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="out_date">২২-০৮-২০২০</span>
+        মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="out_date">১৮ সেপ্টেম্বর, ২০২৬</span>
       </div>
       
       <div class="footer-flex">
@@ -423,10 +597,8 @@
   </div>
 
   <script>
-    // GitHub Direct Raw Image URL
     var embeddedLogo = "https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png";
 
-    // Authentication Functions
     function handleLogin(e) {
       e.preventDefault();
       var user = document.getElementById('username').value;
@@ -457,11 +629,7 @@
     }
 
     var defaultDags = [
-      { dag: "৪২৫৫", type: "অকৃষি", class_name: "বাড়ী", total_land: "৫৭০০", part: "০.১৮৮", my_part_land: "১০০০", remark: "টিন/১ ঘর/১" },
-      { dag: "৪২৫৭", type: "অকৃষি", class_name: "বাড়ী", total_land: "৫৮০০", part: "০.২৫৮", my_part_land: "১৫০০", remark: "" },
-      { dag: "৪৩২৬", type: "কৃষি", class_name: "পুকুর", total_land: "১৫০০", part: "০.০৭০", my_part_land: "০৮০০", remark: "" },
-      { dag: "৪৩২৭", type: "অকৃষি", class_name: "বাড়ী", total_land: "২৩০০", part: "০.৪৯৭", my_part_land: "১১০০", remark: "ঘর/২" },
-      { dag: "৪৩৩১", type: "অকৃষি", class_name: "পুকুর", total_land: "৪২০০", part: "০.৪৫৭", my_part_land: "৩৬০০", remark: "" }
+      { dag: "৪১৫০", type: "অকৃষি", class_name: "বাড়ী", total_land: "৫৭০০", part: "০.১৮৮", my_part_land: "১০০০", remark: "" }
     ];
 
     function addDagRow(data) {
@@ -475,10 +643,10 @@
           <option value="অকৃষি" ${data.type === 'অকৃষি' ? 'selected' : ''}>অকৃষি</option>
           <option value="কৃষি" ${data.type === 'কৃষি' ? 'selected' : ''}>কৃষি</option>
         </select>
-        <input type="text" placeholder="শ্রেণী (যেমন: বাড়ী/পুকুর)" class="dag-class" value="${data.class_name}">
+        <input type="text" placeholder="শ্রেণী" class="dag-class" value="${data.class_name}">
         <input type="text" placeholder="দাগের মোট জমি" class="dag-total" value="${data.total_land}">
-        <input type="text" placeholder="খতিয়ান অংশ (যেমন: ০.১৮৮)" class="dag-part" value="${data.part}">
-        <input type="text" placeholder="অংশ জমি (শতাংশ)" class="dag-land" value="${data.my_part_land}">
+        <input type="text" placeholder="খতিয়ান অংশ" class="dag-part" value="${data.part}">
+        <input type="text" placeholder="অংশ জমি" class="dag-land" value="${data.my_part_land}">
         <button type="button" class="btn-sm btn-del" onclick="this.parentElement.remove()">X</button>
       `;
       container.appendChild(row);
@@ -512,42 +680,26 @@
       var district = document.getElementById('in_district').value;
       var upazila = document.getElementById('in_upazila').value;
       var mouza = document.getElementById('in_mouza').value;
-      var jl = document.getElementById('in_jl').value;
-      var myLand = document.getElementById('in_my_land').value;
       var owner = document.getElementById('in_owner').value;
+      var dateStr = document.getElementById('in_date').value;
 
       document.getElementById('out_division').textContent = division;
       document.getElementById('out_district').textContent = district;
       document.getElementById('out_upazila').textContent = upazila;
       document.getElementById('out_mouza').textContent = mouza;
-      document.getElementById('out_jl').textContent = jl;
+      document.getElementById('out_jl').textContent = document.getElementById('in_jl').value;
       document.getElementById('out_khatian').textContent = khatianNo;
-      document.getElementById('out_date').textContent = document.getElementById('in_date').value;
+      document.getElementById('out_date').textContent = dateStr;
       
       var logoSrc = document.getElementById('in_seal_logo').value.trim();
-      if (!logoSrc || logoSrc === 'DEFAULT_LOGO' || logoSrc === './logo (1).png' || logoSrc === 'logo (1).png') {
+      if (!logoSrc || logoSrc === 'DEFAULT_LOGO') {
         document.getElementById('out_seal_logo').src = embeddedLogo;
       } else {
         document.getElementById('out_seal_logo').src = logoSrc;
       }
       
-      // Standalone QR Data Payload Generation
       var customQrUrl = document.getElementById('in_qr_url').value.trim();
-      var qrPayload = "";
-
-      if (customQrUrl) {
-        qrPayload = customQrUrl;
-      } else {
-        // Direct Verification Text Format for Instant Mobile Scanner View
-        var firstOwner = owner.split('\n')[0] + ' ' + (owner.split('\n')[1] || '');
-        qrPayload = "ভূমি মন্ত্রণালয় - ই-পর্চা সত্যতা যাচাইকরণের তথ্য\n" +
-                    "স্ট্যাটাস: ✓ সঠিক ও যাচাইকৃত (Verified)\n" +
-                    "জেলা: " + district + " | উপজেলা: " + upazila + "\n" +
-                    "মৌজা: " + mouza + " (JL: " + jl + ")\n" +
-                    "খতিয়ান নং: " + khatianNo + "\n" +
-                    "মালিক: " + firstOwner + "\n" +
-                    "মোট জমি: " + myLand + " শতাংশ";
-      }
+      var qrPayload = customQrUrl || (window.location.href.split('?')[0] + '?verify=true&khatian=' + encodeURIComponent(khatianNo));
 
       document.getElementById('out_qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(qrPayload);
 
@@ -598,7 +750,7 @@
         <td colspan="6">পরিবার পরিকল্পনা গ্রহণ করুন</td>
         <td colspan="2">মোট জমি:</td>
         <td>০</td>
-        <td>${myLand}</td>
+        <td>${document.getElementById('in_my_land').value}</td>
       `;
       tbody.appendChild(footerTr);
     }
@@ -616,33 +768,17 @@
         document.getElementById('verification_view').style.display = 'block';
 
         if (data) {
-          document.getElementById('v_division').textContent = data.division || '';
-          document.getElementById('v_district').textContent = data.district || '';
-          document.getElementById('v_upazila').textContent = data.upazila || '';
-          document.getElementById('v_mouza').textContent = data.mouza || '';
-          document.getElementById('v_jl').textContent = data.jl || '';
           document.getElementById('v_khatian').textContent = data.khatian || '';
-          document.getElementById('v_owner').innerHTML = (data.owner || '').replace(/\n/g, '<br>');
-          document.getElementById('v_land').textContent = data.my_land || '';
-
-          var vBody = document.getElementById('v_dag_body');
-          vBody.innerHTML = '';
-          if (data.dags && data.dags.length > 0) {
-            data.dags.forEach(function(d) {
-              var tr = document.createElement('tr');
-              tr.innerHTML = `
-                <td>${d.dag}</td>
-                <td>${d.class_name} (${d.type})</td>
-                <td>${d.total_land}</td>
-                <td>${d.part}</td>
-                <td>${d.my_part_land}</td>
-              `;
-              vBody.appendChild(tr);
-            });
-          }
+          document.getElementById('v_owner').textContent = data.owner || '';
+          document.getElementById('v_dag').textContent = (data.dags && data.dags.length > 0) ? data.dags.map(d => d.dag).join(', ') : '৪১৫০';
+          document.getElementById('v_survey').textContent = data.survey || 'বি আর এস';
+          document.getElementById('v_mouza').textContent = data.mouza || '';
+          document.getElementById('v_upazila').textContent = data.upazila || '';
+          document.getElementById('v_district').textContent = data.district || '';
+          document.getElementById('v_division').textContent = data.division || '';
+          document.getElementById('v_date').textContent = data.date || '';
         } else {
           document.getElementById('v_khatian').textContent = khatianNo;
-          document.getElementById('v_owner').textContent = "রেকর্ড পাওয়া যায়নি!";
         }
         return true;
       }
@@ -661,6 +797,7 @@
         district: document.getElementById('in_district').value,
         upazila: document.getElementById('in_upazila').value,
         mouza: document.getElementById('in_mouza').value,
+        survey: document.getElementById('in_survey').value,
         jl: document.getElementById('in_jl').value,
         khatian: khatianNo,
         owner: document.getElementById('in_owner').value,
@@ -690,6 +827,7 @@
         document.getElementById('in_district').value = data.district || '';
         document.getElementById('in_upazila').value = data.upazila || '';
         document.getElementById('in_mouza').value = data.mouza || '';
+        document.getElementById('in_survey').value = data.survey || 'বি আর এস';
         document.getElementById('in_jl').value = data.jl || '';
         document.getElementById('in_khatian').value = data.khatian || '';
         document.getElementById('in_owner').value = data.owner || '';
