@@ -8,6 +8,26 @@
     * { box-sizing: border-box; }
     body { font-family: 'SolaimanLipi', Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; color: #000; }
     
+    /* Login Form Styling */
+    .login-panel {
+      max-width: 400px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid #278a53;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .login-panel h3 { margin-top: 0; color: #278a53; }
+    .login-panel .form-group { text-align: left; margin-bottom: 15px; }
+    .login-panel input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; margin-top: 5px; }
+    .btn-login { width: 100%; background: #278a53; color: #fff; border: none; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 15px; }
+    .btn-logout { background: #dc3545; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; float: right; }
+
+    /* Admin Panel Toggle */
+    #admin_panel { display: none; }
+
     /* Input Form Styling */
     .input-panel {
       max-width: 1000px;
@@ -18,7 +38,8 @@
       border: 1px solid #278a53;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .input-panel h3 { margin-top: 0; color: #278a53; text-align: center; }
+    .input-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .input-header h3 { margin: 0; color: #278a53; }
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
     .form-group { display: flex; flex-direction: column; }
     .form-group.full-width { grid-column: 1 / -1; }
@@ -132,7 +153,7 @@
 
     /* Print Settings */
     @media print {
-      .input-panel, .list-section { display: none !important; }
+      .login-panel, .input-panel, .list-section { display: none !important; }
       body { background: #fff; padding: 0; margin: 0; }
       .khatian-box { border: none; box-shadow: none; width: 100%; max-width: 100%; padding: 0; }
     }
@@ -140,22 +161,43 @@
 </head>
 <body>
 
-  <!-- Input Form -->
-  <div class="input-panel">
-    <h3>খতিয়ান তথ্য ইনপুট ও সম্পাদনা ফরম</h3>
+  <!-- Admin Login Box -->
+  <div id="login_panel" class="login-panel">
+    <h3>এডমিন লগইন</h3>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>ব্যবহারকারীর নাম (Username):</label>
+        <input type="text" id="username" placeholder="username দিন" required>
+      </div>
+      <div class="form-group">
+        <label>পাসওয়ার্ড (Password):</label>
+        <input type="password" id="password" placeholder="password দিন" required>
+      </div>
+      <button type="submit" class="btn-login">লগইন করুন</button>
+    </form>
+  </div>
 
-    <form id="khatianForm">
-      <div class="form-grid">
-        <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
-        <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী"></div>
-        <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
-        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
-        <div class="form-group"><label>জে. এল. নং:</label><input type="text" id="in_jl" value="২৩৪"></div>
-        <div class="form-group"><label>খতিয়ান নং (ইউনিক):</label><input type="text" id="in_khatian" value="৬৬৮" required></div>
-        
-        <div class="form-group full-width">
-          <label>মালিকের নাম ও ঠিকানা:</label>
-          <textarea id="in_owner" rows="5">মালিক
+  <!-- Admin Panel (Form & List) -->
+  <div id="admin_panel">
+    <!-- Input Form -->
+    <div class="input-panel">
+      <div class="input-header">
+        <h3>খতিয়ান তথ্য ইনপুট ও সম্পাদনা ফরম</h3>
+        <button type="button" class="btn-logout" onclick="handleLogout()">লগআউট</button>
+      </div>
+
+      <form id="khatianForm">
+        <div class="form-grid">
+          <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
+          <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী"></div>
+          <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
+          <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
+          <div class="form-group"><label>জে. এল. নং:</label><input type="text" id="in_jl" value="২৩৪"></div>
+          <div class="form-group"><label>খতিয়ান নং (ইউনিক):</label><input type="text" id="in_khatian" value="৬৬৮" required></div>
+          
+          <div class="form-group full-width">
+            <label>মালিকের নাম ও ঠিকানা:</label>
+            <textarea id="in_owner" rows="5">মালিক
 দং ছকিনা খাতুন
 জং চৌধুরী মিঞা
 রজ্জবের নেছা
@@ -169,45 +211,46 @@
 আমিন উল্যা
 পিং চৌধুরী মিঞা
 সাং নিজ</textarea>
+          </div>
+
+          <div class="form-group"><label>মোট জমির পরিমাণ (শতাংশ):</label><input type="text" id="in_my_land" value="৮০০০"></div>
+          <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" value="২২-০৮-২০২০"></div>
+          <div class="form-group full-width"><label>লোগো লিংক / ফাইল পাথ (ডিফল্ট লোগো ব্যবহার করতে খালি রাখুন):</label><input type="text" id="in_seal_logo" value="DEFAULT_LOGO"></div>
         </div>
 
-        <div class="form-group"><label>মোট জমির পরিমাণ (শতাংশ):</label><input type="text" id="in_my_land" value="৮০০০"></div>
-        <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" value="২২-০৮-২০২০"></div>
-        <div class="form-group full-width"><label>লোগো লিংক / ফাইল পাথ (ডিফল্ট লোগো ব্যবহার করতে খালি রাখুন):</label><input type="text" id="in_seal_logo" value="DEFAULT_LOGO"></div>
-      </div>
+        <!-- Dag Details Entry Area -->
+        <div class="dag-section">
+          <h4>দাগ তথ্য সংযোজন:</h4>
+          <button type="button" class="btn-add-dag" onclick="addDagRow()">+ আরও দাগ যোগ করুন</button>
+          <div id="dag_container"></div>
+        </div>
 
-      <!-- Dag Details Entry Area -->
-      <div class="dag-section">
-        <h4>দাগ তথ্য সংযোজন:</h4>
-        <button type="button" class="btn-add-dag" onclick="addDagRow()">+ আরও দাগ যোগ করুন</button>
-        <div id="dag_container"></div>
-      </div>
+        <div class="button-group">
+          <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
+          <button type="button" class="btn btn-save" onclick="saveKhatian()">তালিকায় সংরক্ষণ করুন</button>
+          <button type="button" class="btn btn-reset" onclick="resetForm()">নতুন ফরম খালি করুন</button>
+          <button type="button" class="btn btn-print" onclick="window.print()">প্রিন্ট / সেভ (PDF)</button>
+        </div>
+      </form>
+    </div>
 
-      <div class="button-group">
-        <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
-        <button type="button" class="btn btn-save" onclick="saveKhatian()">তালিকায় সংরক্ষণ করুন</button>
-        <button type="button" class="btn btn-reset" onclick="resetForm()">নতুন ফরম খালি করুন</button>
-        <button type="button" class="btn btn-print" onclick="window.print()">প্রিন্ট / সেভ (PDF)</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Saved Records Table List -->
-  <div class="list-section">
-    <h4>সংরক্ষিত খতিয়ান তালিকা</h4>
-    <table class="record-table">
-      <thead>
-        <tr>
-          <th>খতিয়ান নং</th>
-          <th>মৌজা</th>
-          <th>উপজেলা</th>
-          <th>জেলা</th>
-          <th>তারিখ</th>
-          <th>অ্যাকশন (কর্মকাণ্ড)</th>
-        </tr>
-      </thead>
-      <tbody id="list_body"></tbody>
-    </table>
+    <!-- Saved Records Table List -->
+    <div class="list-section">
+      <h4>সংরক্ষিত খতিয়ান তালিকা</h4>
+      <table class="record-table">
+        <thead>
+          <tr>
+            <th>খতিয়ান নং</th>
+            <th>মৌজা</th>
+            <th>উপজেলা</th>
+            <th>জেলা</th>
+            <th>তারিখ</th>
+            <th>অ্যাকশন (কর্মকাণ্ড)</th>
+          </tr>
+        </thead>
+        <tbody id="list_body"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Khatian Document Structure -->
@@ -285,6 +328,36 @@
   <script>
     // GitHub Direct Raw Image URL
     var embeddedLogo = "https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png";
+
+    // Authentication Functions
+    function handleLogin(e) {
+      e.preventDefault();
+      var user = document.getElementById('username').value;
+      var pass = document.getElementById('password').value;
+
+      if (user === 'admin' && pass === '12345') {
+        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        checkAuth();
+      } else {
+        alert('ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!');
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('isAdminLoggedIn');
+      checkAuth();
+    }
+
+    function checkAuth() {
+      var isLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+      if (isLoggedIn) {
+        document.getElementById('login_panel').style.display = 'none';
+        document.getElementById('admin_panel').style.display = 'block';
+      } else {
+        document.getElementById('login_panel').style.display = 'block';
+        document.getElementById('admin_panel').style.display = 'none';
+      }
+    }
 
     var defaultDags = [
       { dag: "৪২৫৫", type: "অকৃষি", class_name: "বাড়ী", total_land: "৫৭০০", part: "০.১৮৮", my_part_land: "১০০০", remark: "টিন/১ ঘর/১" },
@@ -524,6 +597,7 @@
     }
 
     window.onload = function() {
+      checkAuth();
       initDefaultDags();
       renderList();
       renderPreview();
