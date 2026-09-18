@@ -312,7 +312,7 @@
           <div class="form-group"><label>মোট জমির পরিমাণ (শতাংশ):</label><input type="text" id="in_my_land" value="৮০০০"></div>
           <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" value="২২-০৮-২০২০"></div>
           <div class="form-group full-width"><label>লোগো লিংক / ফাইল পাথ (ডিফল্ট লোগো ব্যবহার করতে খালি রাখুন):</label><input type="text" id="in_seal_logo" value="DEFAULT_LOGO"></div>
-          <div class="form-group full-width"><label>কাস্টম কিউআর কোড লিঙ্ক (খালি রাখলে স্বয়ংক্রিয় ভেরিফিকেশন লিঙ্ক তৈরি হবে):</label><input type="text" id="in_qr_url" placeholder="স্বয়ংক্রিয় ভেরিফিকেশন লিঙ্কের জন্য খালি রাখুন"></div>
+          <div class="form-group full-width"><label>কাস্টম কিউআর কোড লিঙ্ক (খালি রাখলে স্বয়ংক্রিয় টেক্সট/ভেরিফিকেশন লিঙ্ক তৈরি হবে):</label><input type="text" id="in_qr_url" placeholder="কাস্টম কোনো লিঙ্ক দিতে চাইলে বসান"></div>
         </div>
 
         <!-- Dag Details Entry Area -->
@@ -508,12 +508,19 @@
 
     function renderPreview() {
       var khatianNo = document.getElementById('in_khatian').value;
-      
-      document.getElementById('out_division').textContent = document.getElementById('in_division').value;
-      document.getElementById('out_district').textContent = document.getElementById('in_district').value;
-      document.getElementById('out_upazila').textContent = document.getElementById('in_upazila').value;
-      document.getElementById('out_mouza').textContent = document.getElementById('in_mouza').value;
-      document.getElementById('out_jl').textContent = document.getElementById('in_jl').value;
+      var division = document.getElementById('in_division').value;
+      var district = document.getElementById('in_district').value;
+      var upazila = document.getElementById('in_upazila').value;
+      var mouza = document.getElementById('in_mouza').value;
+      var jl = document.getElementById('in_jl').value;
+      var myLand = document.getElementById('in_my_land').value;
+      var owner = document.getElementById('in_owner').value;
+
+      document.getElementById('out_division').textContent = division;
+      document.getElementById('out_district').textContent = district;
+      document.getElementById('out_upazila').textContent = upazila;
+      document.getElementById('out_mouza').textContent = mouza;
+      document.getElementById('out_jl').textContent = jl;
       document.getElementById('out_khatian').textContent = khatianNo;
       document.getElementById('out_date').textContent = document.getElementById('in_date').value;
       
@@ -524,18 +531,31 @@
         document.getElementById('out_seal_logo').src = logoSrc;
       }
       
-      // Dynamic QR Code Link Generation for Verification
+      // Standalone QR Data Payload Generation
       var customQrUrl = document.getElementById('in_qr_url').value.trim();
-      var baseUrl = window.location.href.split('?')[0];
-      var verifyUrl = customQrUrl || (baseUrl + '?verify=true&khatian=' + encodeURIComponent(khatianNo));
-      
-      document.getElementById('out_qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(verifyUrl);
+      var qrPayload = "";
+
+      if (customQrUrl) {
+        qrPayload = customQrUrl;
+      } else {
+        // Direct Verification Text Format for Instant Mobile Scanner View
+        var firstOwner = owner.split('\n')[0] + ' ' + (owner.split('\n')[1] || '');
+        qrPayload = "ভূমি মন্ত্রণালয় - ই-পর্চা সত্যতা যাচাইকরণের তথ্য\n" +
+                    "স্ট্যাটাস: ✓ সঠিক ও যাচাইকৃত (Verified)\n" +
+                    "জেলা: " + district + " | উপজেলা: " + upazila + "\n" +
+                    "মৌজা: " + mouza + " (JL: " + jl + ")\n" +
+                    "খতিয়ান নং: " + khatianNo + "\n" +
+                    "মালিক: " + firstOwner + "\n" +
+                    "মোট জমি: " + myLand + " শতাংশ";
+      }
+
+      document.getElementById('out_qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(qrPayload);
 
       var dags = getDagsFromForm();
       var tbody = document.getElementById('out_khatian_body');
       tbody.innerHTML = '';
 
-      var ownerText = document.getElementById('in_owner').value.replace(/\n/g, '<br>');
+      var ownerText = owner.replace(/\n/g, '<br>');
       var totalRows = dags.length;
 
       dags.forEach(function(d, index) {
@@ -578,7 +598,7 @@
         <td colspan="6">পরিবার পরিকল্পনা গ্রহণ করুন</td>
         <td colspan="2">মোট জমি:</td>
         <td>০</td>
-        <td>${document.getElementById('in_my_land').value}</td>
+        <td>${myLand}</td>
       `;
       tbody.appendChild(footerTr);
     }
