@@ -4,177 +4,233 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>খতিয়ান বিস্তারিত তথ্য</title>
-  <!-- QRCode library (QR code তৈরির জন্য) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'SolaimanLipi', Arial, sans-serif;
+      font-family: Arial, 'SolaimanLipi', sans-serif;
     }
+
     body {
-      background-color: #f4f6f8;
-      color: #333;
+      background-color: #f4f6f5;
     }
+
     /* ওপরের সবুজ বার */
-    .top-date-bar {
+    .top-bar {
       background-color: #719680;
       color: #ffffff;
       text-align: center;
-      padding: 8px 12px;
-      font-size: 14px;
+      padding: 7px 10px;
+      font-size: 13px;
       font-weight: bold;
+      letter-spacing: 0.2px;
     }
-    /* কন্টেইনার */
-    .container {
-      max-width: 500px;
-      margin: 15px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+    /* হেডার আইকন */
+    .header-icon {
+      padding: 12px 20px 5px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .header-logo {
-      text-align: center;
-      margin-bottom: 15px;
+
+    .govt-logo {
+      width: 48px;
+      height: 48px;
     }
-    .header-logo img {
-      width: 60px;
+
+    .right-icons {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
-    .title {
+
+    .cart-btn {
+      background-color: #1b5e20;
+      color: #fff;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .dots-menu {
+      font-size: 20px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    /* খতিয়ান কার্ড */
+    .card {
+      background: #ffffff;
+      margin: 15px;
+      padding: 25px 20px;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .khatian-title {
       text-align: center;
       color: #1b5e20;
       font-size: 22px;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
+
     .info-table {
       width: 100%;
       border-collapse: collapse;
     }
+
+    .info-table tr {
+      height: 38px;
+    }
+
     .info-table td {
-      padding: 8px 4px;
       font-size: 16px;
-      vertical-align: top;
+      vertical-align: middle;
     }
-    .info-table td.label {
-      width: 30%;
+
+    .info-table .label {
       font-weight: bold;
-      color: #222;
+      color: #000000;
+      width: 28%;
     }
-    .info-table td.colon {
-      width: 5%;
+
+    .info-table .colon {
+      width: 7%;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
     }
-    .info-table td.value {
+
+    .info-table .value {
+      color: #333333;
       width: 65%;
-      color: #444;
     }
-    /* গুরুত্বপূর্ণ লিংক সেকশন */
-    .footer-links {
+
+    /* নিচের গুরুত্বপূর্ণ লিংক সেকশন */
+    .links-section {
       background-color: #e8f5e9;
-      padding: 15px;
-      margin-top: 25px;
-      border-radius: 6px;
+      padding: 20px;
+      margin-top: 15px;
     }
-    .footer-links h4 {
+
+    .links-title {
       color: #1b5e20;
-      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
     }
+
     .links-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px 10px;
     }
+
     .links-grid a {
-      color: #2e7d32;
+      color: #222222;
       text-decoration: none;
       font-size: 14px;
-    }
-    /* QR code কন্টেইনার (হাইড থাকবে বা প্রিন্টে দেখাবে) */
-    #qrcode {
       display: flex;
-      justify-content: center;
-      margin-top: 15px;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .links-grid a span {
+      color: #1b5e20;
+      font-size: 9px;
     }
   </style>
 </head>
 <body>
 
-  <!-- অটোমেটিক আপডেট হওয়া ডেট বার -->
-  <div class="top-date-bar" id="top_full_date">
-    <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে অটো তারিখ ও বার বসবে -->
+  <!-- অটোমেটিক আপডেট হওয়া সবুজ তারিখ বার -->
+  <div class="top-bar" id="auto_top_date">
+    <!-- জাভাস্ক্রিপ্ট তারিখটি এখানে ডাইনামিকভাবে বসাবে -->
   </div>
 
-  <div class="container">
-    <div class="header-logo">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="BD Seal">
+  <!-- হেডার -->
+  <div class="header-icon">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" class="govt-logo" alt="BD Govt">
+    <div class="right-icons">
+      <button class="cart-btn">🛒</button>
+      <div class="dots-menu">⋮</div>
     </div>
+  </div>
 
-    <div class="title" id="khatian_title">খতিয়ান নং - ৪৮৫</div>
+  <!-- তথ্য কার্ড -->
+  <div class="card">
+    <div class="khatian-title">খতিয়ান নং - ৪৮৫</div>
 
     <table class="info-table">
       <tr>
         <td class="label">মালিক</td>
         <td class="colon">:</td>
-        <td class="value" id="val_owner">দং নজির আহমদ</td>
+        <td class="value">দং নজির আহমদ</td>
       </tr>
       <tr>
         <td class="label">দাগ নং</td>
         <td class="colon">:</td>
-        <td class="value" id="val_dag">৪১৫০</td>
+        <td class="value">৪১৫০</td>
       </tr>
       <tr>
         <td class="label">সার্ভে</td>
         <td class="colon">:</td>
-        <td class="value" id="val_survey">বি আর এস</td>
+        <td class="value">বি আর এস</td>
       </tr>
       <tr>
         <td class="label">মৌজা</td>
         <td class="colon">:</td>
-        <td class="value" id="val_mouza">আলাদিনগর</td>
+        <td class="value">আলাদিনগর</td>
       </tr>
       <tr>
         <td class="label">উপজেলা</td>
         <td class="colon">:</td>
-        <td class="value" id="val_upazila">বেগমগঞ্জ রাজস্ব সার্কেল</td>
+        <td class="value">বেগমগঞ্জ রাজস্ব সার্কেল</td>
       </tr>
       <tr>
         <td class="label">জেলা</td>
         <td class="colon">:</td>
-        <td class="value" id="val_zila">নোয়াখালী</td>
+        <td class="value">নোয়াখালী</td>
       </tr>
       <tr>
         <td class="label">বিভাগ</td>
         <td class="colon">:</td>
-        <td class="value" id="val_div">চট্টগ্রাম</td>
+        <td class="value">চট্টগ্রাম</td>
       </tr>
       <tr>
         <td class="label">তারিখ</td>
         <td class="colon">:</td>
-        <td class="value" id="val_date">১৮ সেপ্টেম্বর, ২০২৩</td>
+        <td class="value" id="auto_body_date">--</td>
       </tr>
     </table>
+  </div>
 
-    <div id="qrcode"></div>
-
-    <div class="footer-links">
-      <h4>গুরুত্বপূর্ণ লিংক</h4>
-      <div class="links-grid">
-        <a href="#">▶ বাংলাদেশ জাতীয় তথ্য বাতায়ন</a>
-        <a href="#">▶ সাপোর্ট টিকেট</a>
-        <a href="#">▶ ভূমি মন্ত্রণালয়</a>
-        <a href="#">▶ গোপনীয়তা নীতি</a>
-      </div>
+  <!-- ফুটার গুরুত্বপূর্ণ লিংক -->
+  <div class="links-section">
+    <div class="links-title">গুরুত্বপূর্ণ লিংক</div>
+    <div class="links-grid">
+      <a href="#"><span>▶</span> বাংলাদেশ জাতীয় তথ্য বাতায়ন</a>
+      <a href="#"><span>▶</span> সাপোর্ট টিকেট</a>
+      <a href="#"><span>▶</span> ভূমি মন্ত্রণালয়</a>
+      <a href="#"><span>▶</span> গোপনীয়তা নীতি</a>
     </div>
   </div>
 
   <script>
-    // ১. সম্পূর্ণ বার, বাংলা তারিখ ও ইংরেজি তারিখ জেনারেট করার লজিক
-    function getFullHeaderDate() {
+    // অটোমেটিক বার ও পঞ্জিকা তারিখ গণনার ফাংশন
+    function getAutoDates() {
       var today = new Date();
 
-      // বার নির্বাচন
+      // বারের নাম
       var days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
       var dayName = days[today.getDay()];
 
@@ -183,9 +239,10 @@
       var enDay = today.getDate().toLocaleString('bn-BD');
       var enMonth = enMonths[today.getMonth()];
       var enYear = today.getFullYear().toLocaleString('bn-BD');
+      
       var fullEnDate = enDay + ' ' + enMonth + ' ' + enYear;
 
-      // বাংলা তারিখ ও মাস হিসাব
+      // বাংলা পঞ্জিকা হিসাব
       var bnMonths = ['বৈশাখ', 'জ্যৈষ্ঠ', 'আষাঢ়', 'শ্রাবণ', 'ভাদ্র', 'আশ্বিন', 'কার্তিক', 'অগ্রহায়ণ', 'পৌষ', 'মাঘ', 'ফাল্গুন', 'চৈত্র'];
       var year = today.getFullYear();
       var month = today.getMonth();
@@ -234,33 +291,21 @@
 
       var fullBnDate = bnDate.toLocaleString('bn-BD') + ' ' + bnMonth + ' ' + bnYear.toLocaleString('bn-BD');
 
-      return dayName + ', ' + fullBnDate + ', ' + fullEnDate;
+      return {
+        topFormat: dayName + ', ' + fullBnDate + ', ' + fullEnDate,
+        bodyFormat: fullEnDate
+      };
     }
 
-    // ২. পেজ লোড হওয়ার সাথে সাথে বার ও তারিখ আপডেট করা
+    // পেজ রান হওয়ার সাথে সাথেই অটোমেটিক তারিখ বসে যাবে
     window.onload = function() {
-      // ডেট বার আপডেট
-      var topBar = document.getElementById('top_full_date');
-      if (topBar) {
-        topBar.textContent = getFullHeaderDate();
-      }
-
-      // ৩. অনলাইন QR কোড জেনারেট লজিক
-      var websiteBaseUrl = "https://yourdomain.github.io/index.html"; // আপনার হোস্ট করা অনলাইনের লিঙ্কটি এখানে দেবেন
-      var khatianNo = "৪৮৫"; // খতিয়ান নম্বর
-
-      var qrPayload = websiteBaseUrl + '?verify=true&khatian=' + encodeURIComponent(khatianNo);
-
-      // কিউআর কোড রেন্ডার
-      var qrContainer = document.getElementById('qrcode');
-      if (qrContainer) {
-        qrContainer.innerHTML = "";
-        new QRCode(qrContainer, {
-          text: qrPayload,
-          width: 128,
-          height: 128
-        });
-      }
+      var dates = getAutoDates();
+      
+      // ওপরের সবুজ বারের অটো তারিখ আপডেট
+      document.getElementById('auto_top_date').textContent = dates.topFormat;
+      
+      // মূল তালিকার অটো তারিখ আপডেট
+      document.getElementById('auto_body_date').textContent = dates.bodyFormat;
     };
   </script>
 </body>
