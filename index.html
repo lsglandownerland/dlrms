@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন সত্যতা যাচাইকরণ</title>
+  <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন সত্যতা যাচাইকরণ</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'SolaimanLipi', Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 0; color: #333; }
@@ -151,7 +151,9 @@
     .seal-logo { width: 120px; height: auto; display: block; margin: 0 auto; }
     .qr-code { width: 85px; height: auto; }
 
-    /* Verification View Styling */
+    /* ========================================================= */
+    /* EXACT GOV PORTAL SCAN VERIFICATION UI STYLES (MATCH IMAGE) */
+    /* ========================================================= */
     #verification_view {
       display: none;
       max-width: 500px;
@@ -329,12 +331,16 @@
 </head>
 <body>
 
-  <!-- Verification View -->
+  <!-- ========================================================= -->
+  <!-- EXACT SCAN VERIFICATION VIEW MATCHING THE SCREENSHOT -->
+  <!-- ========================================================= -->
   <div id="verification_view">
+    <!-- Top Date Bar -->
     <div class="top-date-bar">
       শুক্রবার, ১৮ পৌষ ১৩৭৬, ১৮ সেপ্টেম্বর ২০২৬
     </div>
 
+    <!-- Header -->
     <div class="land-app-header">
       <img src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" class="land-logo-img" alt="Land Logo">
       <div class="header-icons">
@@ -343,6 +349,7 @@
       </div>
     </div>
 
+    <!-- Main Khatian Data Box -->
     <div class="khatian-card">
       <div class="khatian-title">খতিয়ান নং - <span id="v_khatian">৪৮৫</span></div>
       
@@ -385,11 +392,12 @@
         <div class="info-row">
           <div class="info-label">তারিখ</div>
           <div class="info-colon">:</div>
-          <div class="info-value" id="v_date"></div>
+          <div class="info-value" id="v_date">১৮ সেপ্টেম্বর, ২০২৬</div>
         </div>
       </div>
     </div>
 
+    <!-- Important Links Section -->
     <div class="links-section">
       <div class="links-title">গুরুত্বপূর্ণ লিঙ্ক</div>
       <div class="links-grid">
@@ -404,6 +412,7 @@
       </div>
     </div>
 
+    <!-- Footer Credits -->
     <div class="gov-footer">
       <div class="footer-grid">
         <div>
@@ -450,8 +459,9 @@
     </form>
   </div>
 
-  <!-- Admin Panel -->
+  <!-- Admin Panel (Form & List) -->
   <div id="admin_panel">
+    <!-- Input Form -->
     <div class="input-panel">
       <div class="input-header">
         <h3>খতিয়ান তথ্য ইনপুট ও সম্পাদনা ফরম</h3>
@@ -479,6 +489,7 @@
           <div class="form-group full-width"><label>কাস্টম কিউআর কোড লিঙ্ক:</label><input type="text" id="in_qr_url" placeholder="কাস্টম কোনো লিঙ্ক দিতে চাইলে বসান"></div>
         </div>
 
+        <!-- Dag Details Entry Area -->
         <div class="dag-section">
           <h4>দাগ তথ্য সংযোজন:</h4>
           <button type="button" class="btn-add-dag" onclick="addDagRow()">+ আরও দাগ যোগ করুন</button>
@@ -494,6 +505,7 @@
       </form>
     </div>
 
+    <!-- Saved Records Table List -->
     <div class="list-section">
       <h4>সংরক্ষিত খতিয়ান তালিকা</h4>
       <table class="record-table">
@@ -743,16 +755,6 @@
       tbody.appendChild(footerTr);
     }
 
-    // আজকের তারিখ পাওয়ার জন্য নতুন ফাংশন
-    function getFormattedCurrentDate() {
-      var today = new Date();
-      var months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
-      var day = today.getDate().toLocaleString('bn-BD');
-      var month = months[today.getMonth()];
-      var year = today.getFullYear().toLocaleString('bn-BD');
-      return day + ' ' + month + ', ' + year;
-    }
-
     function checkVerifyMode() {
       var urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('verify') === 'true') {
@@ -774,13 +776,10 @@
           document.getElementById('v_upazila').textContent = data.upazila || '';
           document.getElementById('v_district').textContent = data.district || '';
           document.getElementById('v_division').textContent = data.division || '';
+          document.getElementById('v_date').textContent = data.date || '';
         } else {
           document.getElementById('v_khatian').textContent = khatianNo;
         }
-
-        // ভেরিফাই করলেই অটোমেটিক আজকের তারিখ দেখাবে
-        document.getElementById('v_date').textContent = getFormattedCurrentDate();
-
         return true;
       }
       return false;
