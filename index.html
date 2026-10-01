@@ -1,1008 +1,1271 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন সত্যতা যাচাইকরণ</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'SolaimanLipi', Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-
-    /* ================================
-       LOGIN
-    ================================= */
-
-    .login-panel {
-      max-width: 400px;
-      margin: 50px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 8px;
-      border: 1px solid #278a53;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      text-align: center;
-    }
-
-    .login-panel h3 {
-      margin-top: 0;
-      color: #278a53;
-    }
-
-    .login-panel .form-group {
-      text-align: left;
-      margin-bottom: 15px;
-    }
-
-    .login-panel input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-
-    .btn-login {
-      width: 100%;
-      background: #278a53;
-      color: #fff;
-      border: none;
-      padding: 10px;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 15px;
-    }
-
-    .btn-logout {
-      background: #dc3545;
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      float: right;
-    }
-
-    /* ================================
-       ADMIN PANEL
-    ================================= */
-
-    #admin_panel {
-      display: none;
-      padding: 20px;
-    }
-
-    .input-panel {
-      max-width: 1000px;
-      margin: 0 auto 20px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #278a53;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .input-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .input-header h3 {
-      margin: 0;
-      color: #278a53;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-group label {
-      font-weight: bold;
-      margin-bottom: 4px;
-      font-size: 14px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    .form-group textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-
-    .full-width {
-      grid-column: 1 / -1;
-    }
-
-    .button-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .btn-save {
-      background: #278a53;
-      color: white;
-      border: none;
-      padding: 9px 15px;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-
-    .btn-reset {
-      background: #6c757d;
-      color: white;
-      border: none;
-      padding: 9px 15px;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-
-    .btn-print {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 4px;
-    }
-
-    .btn-edit {
-      background: #ffc107;
-      color: #222;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 4px;
-    }
-
-    .btn-delete {
-      background: #dc3545;
-      color: white;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 4px;
-    }
-
-    /* ================================
-       TABLE
-    ================================= */
-
-    .table-wrap {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-    }
-
-    table th,
-    table td {
-      border: 1px solid #ccc;
-      padding: 7px;
-      text-align: center;
-      vertical-align: middle;
-      font-size: 13px;
-    }
-
-    table th {
-      background: #e8f5ed;
-      color: #155d35;
-    }
-
-    /* ================================
-       SUB ADMIN
-    ================================= */
-
-    .subadmin-panel {
-      margin-top: 20px;
-      border-top: 3px solid #278a53;
-      padding-top: 15px;
-    }
-
-    .subadmin-panel h4 {
-      color: #278a53;
-      margin-top: 0;
-    }
-
-    .permission-badge {
-      display: inline-block;
-      padding: 3px 7px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    .permission-full {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .permission-create {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .permission-view {
-      background: #d1ecf1;
-      color: #0c5460;
-    }
-
-    /* ================================
-       VERIFICATION
-    ================================= */
-
-    #verify_panel {
-      display: none;
-      padding: 20px;
-    }
-
-    .verify-box {
-      max-width: 900px;
-      margin: 20px auto;
-      background: white;
-      border: 1px solid #278a53;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .verify-success {
-      background: #d4edda;
-      color: #155724;
-      padding: 12px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      font-weight: bold;
-    }
-
-    .verify-error {
-      background: #f8d7da;
-      color: #721c24;
-      padding: 12px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      font-weight: bold;
-    }
-
-    /* ================================
-       KHATIAN PREVIEW
-    ================================= */
-
-    .khatian-preview {
-      max-width: 1000px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border: 1px solid #222;
-    }
-
-    .khatian-title {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    .khatian-title h2 {
-      margin: 3px 0;
-      font-size: 22px;
-    }
-
-    .khatian-title h3 {
-      margin: 3px 0;
-      font-size: 17px;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      border: 1px solid #222;
-    }
-
-    .info-item {
-      border-right: 1px solid #222;
-      border-bottom: 1px solid #222;
-      padding: 6px;
-      min-height: 38px;
-    }
-
-    .info-item:nth-child(4n) {
-      border-right: none;
-    }
-
-    .info-label {
-      font-weight: bold;
-      font-size: 12px;
-    }
-
-    .khatian-table {
-      margin-top: 10px;
-    }
-
-    .khatian-table table th,
-    .khatian-table table td {
-      border: 1px solid #222;
-      font-size: 12px;
-      padding: 5px;
-    }
-
-    .signature-area {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 45px;
-      gap: 30px;
-    }
-
-    .signature-box {
-      text-align: center;
-      flex: 1;
-    }
-
-    .signature-line {
-      border-top: 1px solid #222;
-      width: 160px;
-      margin: 35px auto 5px;
-    }
-
-    .qr-logo-area {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .logo-area img {
-      max-width: 100px;
-      max-height: 100px;
-      object-fit: contain;
-    }
-
-    .qr-area img {
-      width: 100px;
-      height: 100px;
-    }
-
-    .note-area {
-      border: 1px solid #222;
-      padding: 8px;
-      margin-top: 15px;
-      min-height: 50px;
-      font-size: 12px;
-    }
-
-    /* ================================
-       WALLET / RECHARGE
-    ================================= */
-
-    .wallet-box {
-      max-width: 1000px;
-      margin: 20px auto;
-      background: #fff;
-      border: 1px solid #278a53;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .wallet-balance {
-      background: #e8f5ed;
-      border: 1px solid #278a53;
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    .wallet-balance strong {
-      display: block;
-      color: #155d35;
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-
-    .wallet-balance span {
-      font-size: 28px;
-      color: #278a53;
-      font-weight: bold;
-    }
-
-    .payment-note {
-      background: #fff3cd;
-      border: 1px solid #ffe69c;
-      color: #664d03;
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      line-height: 1.7;
-    }
-
-    .recharge-table {
-      margin-top: 15px;
-    }
-
-    .status-pending {
-      color: #856404;
-      font-weight: bold;
-    }
-
-    .status-approved {
-      color: #155724;
-      font-weight: bold;
-    }
-
-    .status-rejected {
-      color: #721c24;
-      font-weight: bold;
-    }
-
-    .price-badge {
-      display: inline-block;
-      background: #dc3545;
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 15px;
-      font-weight: bold;
-      margin-left: 5px;
-    }
-
-    .admin-info {
-      background: #e8f5ed;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-    }
-
-    .current-user {
-      color: #155d35;
-      font-weight: bold;
-    }
-
-    /* ================================
-       RESPONSIVE
-    ================================= */
-
-    @media (max-width: 700px) {
-      #admin_panel,
-      #verify_panel {
-        padding: 10px;
-      }
-
-      .input-panel,
-      .wallet-box,
-      .verify-box,
-      .khatian-preview {
-        padding: 12px;
-      }
-
-      .info-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .info-item:nth-child(4n) {
-        border-right: 1px solid #222;
-      }
-
-      .info-item:nth-child(2n) {
-        border-right: none;
-      }
-
-      .signature-area {
-        flex-direction: column;
-      }
-
-      .qr-logo-area {
-        flex-direction: column;
-        gap: 10px;
-      }
-    }
-
-    /* ================================
-       PRINT
-    ================================= */
-
-    @media print {
-      body {
-        background: #fff !important;
-      }
-
-      body * {
-        visibility: hidden;
-      }
-
-      .khatian-preview,
-      .khatian-preview * {
-        visibility: visible;
-      }
-
-      .khatian-preview {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        max-width: none;
-        border: none;
-        margin: 0;
-        padding: 10mm;
-      }
-
-      .no-print {
-        display: none !important;
-      }
-
-      @page {
-        size: A4 portrait;
-        margin: 8mm;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>খতিয়ান সেবা</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:
+    "Noto Sans Bengali",
+    "SolaimanLipi",
+    "Siyam Rupali",
+    Arial,
+    sans-serif;
+  background:#f2f7f4;
+  color:#222;
+}
+
+.container{
+  width:96%;
+  max-width:1200px;
+  margin:20px auto;
+}
+
+.header{
+  background:#176b3a;
+  color:#fff;
+  padding:18px;
+  border-radius:10px;
+  text-align:center;
+  box-shadow:0 3px 10px rgba(0,0,0,.12);
+}
+
+.header h1{
+  margin:0;
+  font-size:28px;
+}
+
+.header p{
+  margin:6px 0 0;
+  font-size:14px;
+}
+
+.card{
+  background:#fff;
+  margin-top:18px;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.card h3{
+  margin-top:0;
+  color:#176b3a;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+.form-group.full{
+  grid-column:1 / -1;
+}
+
+label{
+  font-weight:600;
+  margin-bottom:5px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font-size:15px;
+  outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#176b3a;
+  box-shadow:0 0 0 2px rgba(23,107,58,.08);
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+.button-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+.btn{
+  border:0;
+  border-radius:6px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:600;
+}
+
+.btn-save{
+  background:#176b3a;
+  color:#fff;
+}
+
+.btn-save:hover{
+  background:#11552e;
+}
+
+.btn-reset{
+  background:#777;
+  color:#fff;
+}
+
+.btn-edit{
+  background:#1565c0;
+  color:#fff;
+}
+
+.btn-print{
+  background:#6a1b9a;
+  color:#fff;
+}
+
+.btn-delete{
+  background:#c62828;
+  color:#fff;
+}
+
+.btn-login{
+  background:#176b3a;
+  color:#fff;
+  width:100%;
+}
+
+.login-box{
+  max-width:450px;
+  margin:50px auto;
+}
+
+.login-box h2{
+  text-align:center;
+  color:#176b3a;
+}
+
+.user-info{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  background:#e9f5ed;
+  padding:10px 14px;
+  border-radius:8px;
+  margin-bottom:15px;
+}
+
+.user-role{
+  font-weight:600;
+  color:#176b3a;
+}
+
+.logout-btn{
+  background:#c62828;
+  color:#fff;
+  border:0;
+  padding:7px 12px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px;
+}
+
+th,
+td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:center;
+  vertical-align:middle;
+}
+
+th{
+  background:#e6f2ea;
+  color:#145a31;
+}
+
+.khatian-preview{
+  background:#fff;
+  border:1px solid #ccc;
+  margin-top:20px;
+  padding:20px;
+}
+
+.khatian-title{
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.khatian-title h2{
+  margin:0;
+}
+
+.khatian-title p{
+  margin:4px 0;
+}
+
+.logo-area{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.logo-area img{
+  max-width:90px;
+  max-height:90px;
+}
+
+.qr-area{
+  text-align:right;
+}
+
+.qr-area img{
+  width:90px;
+  height:90px;
+}
+
+.notice{
+  padding:10px;
+  background:#fff8e1;
+  border:1px solid #f0d98c;
+  border-radius:6px;
+  margin-bottom:12px;
+}
+
+.small{
+  font-size:12px;
+  color:#666;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.subadmin-table{
+  min-width:800px;
+}
+
+.subadmin-table th{
+  background:#eef6f0;
+}
+
+.permission-badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:4px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.permission-full{
+  background:#dff4e5;
+  color:#176b3a;
+}
+
+.permission-create{
+  background:#fff1d6;
+  color:#8a5700;
+}
+
+.permission-view{
+  background:#e4efff;
+  color:#15549a;
+}
+
+.active-badge{
+  color:#176b3a;
+  font-weight:600;
+}
+
+.inactive-badge{
+  color:#c62828;
+  font-weight:600;
+}
+
+/* =====================================================
+   WALLET / RECHARGE SYSTEM
+===================================================== */
+
+.wallet-box{
+  margin-top:18px;
+  background:#f5fbf7;
+  border:1px solid #b9ddc5;
+  padding:16px;
+  border-radius:8px;
+}
+
+.wallet-balance{
+  display:inline-block;
+  padding:10px 14px;
+  background:#176b3a;
+  color:#fff;
+  border-radius:7px;
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.payment-note{
+  background:#fff8e1;
+  border:1px solid #f1d78a;
+  padding:12px;
+  border-radius:7px;
+  margin:10px 0;
+  line-height:1.7;
+}
+
+.recharge-table{
+  min-width:700px;
+}
+
+.status-pending{
+  color:#a66b00;
+  font-weight:700;
+}
+
+.status-approved{
+  color:#176b3a;
+  font-weight:700;
+}
+
+.status-rejected{
+  color:#c62828;
+  font-weight:700;
+}
+
+.price-badge{
+  display:inline-block;
+  background:#e8f5e9;
+  color:#176b3a;
+  padding:5px 10px;
+  border-radius:5px;
+  font-weight:700;
+  margin-left:5px;
+}
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+@media print{
+
+  body{
+    background:#fff;
+  }
+
+  .no-print,
+  .header,
+  .login-box,
+  .user-info,
+  .card:not(.print-area),
+  .wallet-box{
+    display:none !important;
+  }
+
+  .container{
+    width:100%;
+    max-width:none;
+    margin:0;
+  }
+
+  .khatian-preview{
+    border:0;
+    margin:0;
+    padding:0;
+    box-shadow:none;
+  }
+
+  @page{
+    size:A4;
+    margin:10mm;
+  }
+
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:768px){
+
+  .container{
+    width:98%;
+    margin:10px auto;
+  }
+
+  .header h1{
+    font-size:22px;
+  }
+
+  .card{
+    padding:12px;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .form-group.full{
+    grid-column:auto;
+  }
+
+  .button-group{
+    flex-direction:column;
+  }
+
+  .button-group .btn{
+    width:100%;
+  }
+
+  table{
+    min-width:650px;
+  }
+
+}
+</style>
 </head>
 
 <body>
 
-<!-- ================================
-     LOGIN PANEL
-================================= -->
+<div id="login_section" class="container login-box">
 
-<div id="login_panel" class="login-panel">
-  <h3>খতিয়ান প্রশাসন</h3>
+  <div class="card">
 
-  <div class="form-group">
-    <label>ইউজার আইডি</label>
-    <input type="text" id="login_username" placeholder="ইউজার আইডি">
-  </div>
+    <h2>খতিয়ান সেবা লগইন</h2>
 
-  <div class="form-group">
-    <label>পাসওয়ার্ড</label>
-    <input type="password" id="login_password" placeholder="পাসওয়ার্ড">
-  </div>
+    <div class="form-group">
+      <label>ইউজার আইডি</label>
+      <input
+        type="text"
+        id="login_username"
+        placeholder="ইউজার আইডি"
+      >
+    </div>
 
-  <button class="btn-login" onclick="loginAdmin()">লগইন</button>
+    <div class="form-group" style="margin-top:10px;">
+      <label>পাসওয়ার্ড</label>
+      <input
+        type="password"
+        id="login_password"
+        placeholder="পাসওয়ার্ড"
+      >
+    </div>
 
-  <div id="login_error"
-       style="color:#dc3545;margin-top:10px;font-weight:bold;"></div>
-</div>
-
-
-<!-- ================================
-     ADMIN PANEL
-================================= -->
-
-<div id="admin_panel">
-
-  <div class="input-panel">
-
-    <div class="input-header">
-      <h3>খতিয়ান তথ্য ব্যবস্থাপনা</h3>
-
-      <button class="btn-logout" onclick="logoutAdmin()">
-        লগআউট
+    <div class="button-group">
+      <button
+        type="button"
+        class="btn btn-login"
+        onclick="login()"
+      >
+        লগইন
       </button>
     </div>
 
-    <div class="admin-info">
-      লগইন ইউজার:
-      <span id="current_user_name" class="current-user"></span>
-      |
-      অনুমতি:
-      <span id="current_user_permission" class="current-user"></span>
+    <div
+      class="notice small"
+      style="margin-top:12px;"
+    >
+      মাস্টার এডমিন ডেমো আইডি:
+      <b>admin</b>
+      /
+      <b>12345</b>
     </div>
 
-    <form id="khatianForm">
+  </div>
 
-      <input type="hidden" id="edit_key">
+</div>
 
-      <div class="form-grid">
 
-        <div class="form-group">
-          <label>জেলা</label>
-          <input type="text" id="district" placeholder="জেলার নাম">
+<div id="app_section" class="hidden">
+
+  <div class="container">
+
+    <div class="header no-print">
+      <h1>খতিয়ান সেবা</h1>
+      <p>খতিয়ান তৈরি, সংরক্ষণ ও ডাউনলোড ব্যবস্থাপনা</p>
+    </div>
+
+
+    <div class="user-info no-print">
+
+      <div>
+        লগইন:
+        <span id="logged_user_name"></span>
+        —
+        <span
+          id="logged_user_role"
+          class="user-role"
+        ></span>
+      </div>
+
+      <button
+        type="button"
+        class="logout-btn"
+        onclick="logout()"
+      >
+        লগআউট
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         KHATIAN FORM
+    ====================================================== -->
+
+    <div class="card no-print">
+
+      <h3>খতিয়ান তথ্য</h3>
+
+      <form id="khatianForm">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>খতিয়ান নং</label>
+            <input
+              type="text"
+              id="in_khatian"
+              placeholder="খতিয়ান নং"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>মৌজা</label>
+            <input
+              type="text"
+              id="in_mouza"
+              placeholder="মৌজার নাম"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>জে.এল. নং</label>
+            <input
+              type="text"
+              id="in_jl"
+              placeholder="জে.এল. নং"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>উপজেলা</label>
+            <input
+              type="text"
+              id="in_upazila"
+              placeholder="উপজেলা"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>জেলা</label>
+            <input
+              type="text"
+              id="in_district"
+              placeholder="জেলা"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>খতিয়ানের ধরন</label>
+            <select id="in_type">
+              <option value="বি.আর.এস">বি.আর.এস</option>
+              <option value="সি.এস">সি.এস</option>
+              <option value="এস.এ">এস.এ</option>
+              <option value="আর.এস">আর.এস</option>
+              <option value="নামজারি">নামজারি</option>
+            </select>
+          </div>
+
+          <div class="form-group full">
+
+            <label>মালিক/মালিকগণের তথ্য</label>
+
+            <textarea
+              id="in_owners"
+              placeholder="মালিকের নাম লিখুন"
+            ></textarea>
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>নোট</label>
+
+            <textarea
+              id="in_note"
+              placeholder="............ ধারামতে নোট বা পরিবর্তন মায় / মকদ্দমা নং ............. এবং সন ..............."
+            ></textarea>
+
+          </div>
+
         </div>
 
-        <div class="form-group">
-          <label>উপজেলা / থানা</label>
-          <input type="text" id="upazila" placeholder="উপজেলা">
+
+        <div class="button-group">
+
+          <button
+            type="button"
+            class="btn btn-save"
+            onclick="saveKhatian()"
+          >
+            খতিয়ান সংরক্ষণ
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-reset"
+            onclick="resetKhatianForm()"
+          >
+            ফরম খালি করুন
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-print"
+            onclick="paidPrintCurrent()"
+          >
+            ডাউনলোড / সেভ (PDF) ৳১০
+          </button>
+
         </div>
 
-        <div class="form-group">
-          <label>মৌজা</label>
-          <input type="text" id="mouza" placeholder="মৌজার নাম">
-        </div>
+      </form>
 
-        <div class="form-group">
-          <label>জে.এল. নং</label>
-          <input type="text" id="jl_no" placeholder="জে.এল. নং">
-        </div>
+    </div>
 
-        <div class="form-group">
-          <label>খতিয়ান নং</label>
-          <input type="text" id="khatian_no" placeholder="খতিয়ান নং">
-        </div>
 
-        <div class="form-group">
-          <label>খতিয়ানের ধরন</label>
-          <input type="text" id="khatian_type" placeholder="যেমন: বি.আর.এস">
-        </div>
+    <!-- =====================================================
+         DAG TABLE
+    ====================================================== -->
 
-        <div class="form-group">
-          <label>শিট নং</label>
-          <input type="text" id="sheet_no" placeholder="শিট নং">
-        </div>
+    <div class="card no-print">
 
-        <div class="form-group">
-          <label>প্রস্তুতের তারিখ</label>
-          <input type="text" id="prepare_date" placeholder="তারিখ">
-        </div>
+      <h3>দাগের তথ্য</h3>
 
-        <div class="form-group full-width">
-          <label>মালিকের নাম</label>
-          <textarea id="owners" placeholder="মালিকের নাম"></textarea>
-        </div>
+      <div class="button-group">
 
-        <div class="form-group">
-          <label>পিতা / স্বামীর নাম</label>
-          <input type="text" id="father_husband">
-        </div>
-
-        <div class="form-group">
-          <label>ঠিকানা</label>
-          <input type="text" id="address">
-        </div>
-
-        <div class="form-group">
-          <label>জাতীয় পরিচয়পত্র / অন্যান্য</label>
-          <input type="text" id="nid">
-        </div>
-
-        <div class="form-group">
-          <label>মোট জমি</label>
-          <input type="text" id="total_land" placeholder="যেমন: ০.০১৭৫০">
-        </div>
-
-        <div class="form-group full-width">
-          <label>নোট</label>
-          <textarea id="note"
-            placeholder="............ ধারামতে নোট বা পরিবর্তন মায় / মকদ্দমা নং ............. এবং সন ..............."></textarea>
-        </div>
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="addDagRow()"
+        >
+          + দাগ যোগ করুন
+        </button>
 
       </div>
 
-      <h4 style="margin-top:20px;color:#278a53;">
-        দাগের তথ্য
-      </h4>
-
       <div class="table-wrap">
-        <table id="dag_input_table">
+
+        <table id="dagTable">
+
           <thead>
+
             <tr>
               <th>ক্রমিক</th>
               <th>দাগ নং</th>
               <th>জমির শ্রেণি</th>
               <th>দাগের মোট জমি</th>
-              <th>খতিয়ানে জমি</th>
+              <th>খতিয়ানে অংশ</th>
               <th>শতাংশ</th>
-              <th class="no-print">অ্যাকশন</th>
+              <th>মন্তব্য</th>
+              <th>অ্যাকশন</th>
             </tr>
+
           </thead>
 
-          <tbody id="dag_input_body"></tbody>
+          <tbody id="dagBody">
+
+          </tbody>
+
         </table>
-      </div>
-
-      <div class="button-row no-print">
-
-        <button type="button"
-                class="btn-save"
-                onclick="addDagRow()">
-          + দাগ যোগ করুন
-        </button>
-
-        <button type="button"
-                class="btn-save"
-                onclick="saveKhatian()">
-          সংরক্ষণ করুন
-        </button>
-
-        <button type="button"
-                class="btn-reset"
-                onclick="resetKhatianForm()">
-          রিসেট
-        </button>
-
-        <button type="button"
-                class="btn-print"
-                onclick="paidPrintCurrent()">
-          ডাউনলোড / সেভ (PDF) ৳১০
-        </button>
 
       </div>
 
-    </form>
-  </div>
-
-
-  <!-- ================================
-       WALLET
-  ================================= -->
-
-  <div class="wallet-box" id="wallet_section">
-
-    <h3 style="color:#278a53;margin-top:0;">
-      আমার ব্যালেন্স ও রিচার্জ
-    </h3>
-
-    <div class="wallet-balance">
-      <strong>বর্তমান ব্যালেন্স</strong>
-      <span id="wallet_balance">৳ ০</span>
     </div>
 
-    <div class="payment-note">
-      <strong>খতিয়ান ডাউনলোড মূল্য:</strong>
-      <span class="price-badge">৳১০</span>
-      <br>
 
-      <strong>bKash Send Money নম্বর:</strong>
-      <span style="font-size:18px;font-weight:bold;">
-        01833013604
+    <!-- =====================================================
+         SAVED KHATIAN LIST
+    ====================================================== -->
+
+    <div class="card no-print">
+
+      <h3>সংরক্ষিত খতিয়ান</h3>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>খতিয়ান নং</th>
+              <th>মৌজা</th>
+              <th>উপজেলা</th>
+              <th>জেলা</th>
+              <th>প্রকার</th>
+              <th>তারিখ</th>
+              <th>অ্যাকশন</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="khatian_list">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUB ADMIN MANAGER
+    ====================================================== -->
+
+    <div
+      id="subadmin_manager"
+      class="card no-print hidden"
+    >
+
+      <h3>সাব-এডমিন ব্যবস্থাপনা</h3>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label>সাব-এডমিনের নাম</label>
+
+          <input
+            type="text"
+            id="subadmin_name"
+            placeholder="নাম"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>ইউজার আইডি</label>
+
+          <input
+            type="text"
+            id="subadmin_username"
+            placeholder="আইডি"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>পাসওয়ার্ড</label>
+
+          <input
+            type="password"
+            id="subadmin_password"
+            placeholder="পাসওয়ার্ড"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>অনুমতি</label>
+
+          <select id="subadmin_permission">
+
+            <option value="full">
+              পূর্ণ অনুমতি
+            </option>
+
+            <option value="create">
+              শুধু তৈরি
+            </option>
+
+            <option value="view">
+              শুধু দেখা
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="button-group"
+        style="margin-top:10px;"
+      >
+
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="saveSubAdmin()"
+        >
+          সাব-এডমিন যোগ করুন
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-reset"
+          onclick="resetSubAdminForm()"
+        >
+          ফরম খালি করুন
+        </button>
+
+      </div>
+
+
+      <div style="overflow-x:auto;">
+
+        <table class="subadmin-table">
+
+          <thead>
+
+            <tr>
+              <th>নাম</th>
+              <th>আইডি</th>
+              <th>অনুমতি</th>
+              <th>অবস্থা</th>
+              <th>অ্যাকশন</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="subadmin_list"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         WALLET / RECHARGE SYSTEM
+    ====================================================== -->
+
+    <div class="wallet-box no-print">
+
+      <h4
+        style="
+          margin:0 0 10px;
+          color:#1f7044;
+        "
+      >
+        অ্যাকাউন্ট ব্যালেন্স ও রিচার্জ
+      </h4>
+
+      <div class="wallet-balance">
+
+        বর্তমান ব্যালেন্স:
+        <span id="wallet_balance">
+          ৳ ০
+        </span>
+
+      </div>
+
+      <span class="price-badge">
+        প্রতি খতিয়ান ডাউনলোড: ৳ ১০
       </span>
 
-      <br>
-      প্রথমে উক্ত নম্বরে bKash Send Money করুন।
-      এরপর নিচের ফর্মে রিচার্জের পরিমাণ এবং Transaction ID
-      দিয়ে রিচার্জ রিকোয়েস্ট পাঠান।
-      অ্যাডমিন অনুমোদন করলে আপনার ব্যালেন্সে টাকা যোগ হবে।
-    </div>
+      <div class="payment-note">
 
-    <div class="form-grid">
+        <b>bKash রিচার্জ:</b>
 
-      <div class="form-group">
-        <label>রিচার্জের পরিমাণ (৳)</label>
-        <input type="number"
-               id="recharge_amount"
-               min="10"
-               step="1"
-               placeholder="যেমন: 100">
-      </div>
+        নিচের bKash নম্বরে
+        <b>Send Money</b>
+        করুন:
 
-      <div class="form-group">
-        <label>bKash Transaction ID</label>
-        <input type="text"
-               id="recharge_txn"
-               placeholder="TXN ID">
-      </div>
+        <b>01833013604</b>
 
-    </div>
+        <br>
 
-    <div class="button-row no-print">
+        এরপর যে পরিমাণ টাকা পাঠিয়েছেন
+        সেই পরিমাণ রিচার্জের জন্য আবেদন করুন
+        এবং bKash
+        <b>TXN নম্বর</b>
+        লিখুন।
 
-      <button type="button"
-              class="btn-save"
-              onclick="submitRechargeRequest()">
-        রিচার্জ রিকোয়েস্ট পাঠান
-      </button>
+        <br>
 
-      <button type="button"
-              class="btn-reset"
-              onclick="loadWallet()">
-        ব্যালেন্স রিফ্রেশ
-      </button>
-
-    </div>
-
-    <h4 style="margin-top:20px;color:#278a53;">
-      আমার রিচার্জ হিস্টোরি
-    </h4>
-
-    <div class="table-wrap recharge-table">
-
-      <table>
-        <thead>
-          <tr>
-            <th>তারিখ</th>
-            <th>পরিমাণ</th>
-            <th>TXN ID</th>
-            <th>স্ট্যাটাস</th>
-          </tr>
-        </thead>
-
-        <tbody id="my_recharge_list"></tbody>
-      </table>
-
-    </div>
-
-  </div>
-
-
-  <!-- ================================
-       MASTER ADMIN SUB ADMIN
-  ================================= -->
-
-  <div class="input-panel subadmin-panel"
-       id="subadmin_manager">
-
-    <h4>Sub-Admin ব্যবস্থাপনা</h4>
-
-    <div class="form-grid">
-
-      <div class="form-group">
-        <label>Sub-Admin ইউজার আইডি</label>
-        <input type="text"
-               id="sub_username"
-               placeholder="ইউজার আইডি">
-      </div>
-
-      <div class="form-group">
-        <label>পাসওয়ার্ড</label>
-        <input type="text"
-               id="sub_password"
-               placeholder="পাসওয়ার্ড">
-      </div>
-
-      <div class="form-group">
-        <label>অনুমতি</label>
-
-        <select id="sub_permission">
-          <option value="full">সম্পূর্ণ অনুমতি</option>
-          <option value="create">তৈরি / সম্পাদনা</option>
-          <option value="view">শুধু দেখা</option>
-        </select>
+        অ্যাডমিন আবেদন যাচাই করে অনুমোদন দিলে
+        টাকা আপনার অ্যাকাউন্ট ব্যালেন্সে যোগ হবে।
 
       </div>
 
-    </div>
 
-    <div class="button-row no-print">
+      <div class="form-grid">
 
-      <button type="button"
-              class="btn-save"
-              onclick="saveSubAdmin()">
-        Sub-Admin তৈরি করুন
-      </button>
+        <div class="form-group">
 
-    </div>
+          <label>
+            রিচার্জের পরিমাণ (টাকা)
+          </label>
 
-    <div class="table-wrap"
-         style="margin-top:15px;">
+          <input
+            type="number"
+            id="recharge_amount"
+            min="10"
+            step="1"
+            placeholder="যেমন: 100"
+          >
 
-      <table>
-        <thead>
-          <tr>
-            <th>ক্রমিক</th>
-            <th>ইউজার আইডি</th>
-            <th>অনুমতি</th>
-            <th>অ্যাকশন</th>
-          </tr>
-        </thead>
-
-        <tbody id="subadmin_list"></tbody>
-      </table>
-
-    </div>
-
-  </div>
+        </div>
 
 
-  <!-- ================================
-       MASTER ADMIN RECHARGE MANAGER
-  ================================= -->
+        <div class="form-group">
 
-  <div class="input-panel"
-       id="recharge_manager"
-       style="display:none;">
+          <label>
+            bKash TXN নম্বর
+          </label>
 
-    <h3 style="color:#278a53;">
-      রিচার্জ রিকোয়েস্ট অনুমোদন
-    </h3>
+          <input
+            type="text"
+            id="recharge_txn"
+            placeholder="যেমন: 8AB12XYZ"
+          >
 
-    <div class="table-wrap">
+        </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>তারিখ</th>
-            <th>ইউজার</th>
-            <th>পরিমাণ</th>
-            <th>TXN ID</th>
-            <th>স্ট্যাটাস</th>
-            <th>অ্যাকশন</th>
-          </tr>
-        </thead>
-
-        <tbody id="recharge_request_list"></tbody>
-
-      </table>
-
-    </div>
-
-  </div>
+      </div>
 
 
-  <!-- ================================
-       KHATIAN LIST
-  ================================= -->
+      <div class="button-group">
 
-  <div class="input-panel">
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="submitRechargeRequest()"
+        >
+          রিচার্জ আবেদন করুন
+        </button>
 
-    <div class="input-header">
-      <h3>সংরক্ষিত খতিয়ান</h3>
-    </div>
+        <button
+          type="button"
+          class="btn btn-reset"
+          onclick="loadWallet()"
+        >
+          ব্যালেন্স রিফ্রেশ
+        </button>
 
-    <div class="table-wrap">
+      </div>
 
-      <table>
 
-        <thead>
-          <tr>
-            <th>ক্রমিক</th>
-            <th>খতিয়ান নং</th>
-            <th>মৌজা</th>
-            <th>জেলা</th>
-            <th>মালিক</th>
-            <th>মোট জমি</th>
-            <th>অ্যাকশন</th>
-          </tr>
-        </thead>
+      <h4
+        style="
+          margin-top:20px;
+          color:#176b3a;
+        "
+      >
+        আমার রিচার্জ ইতিহাস
+      </h4>
 
-        <tbody id="khatian_list"></tbody>
 
-      </table>
+      <div style="overflow-x:auto;">
+
+        <table class="recharge-table">
+
+          <thead>
+
+            <tr>
+              <th>তারিখ</th>
+              <th>পরিমাণ</th>
+              <th>TXN</th>
+              <th>অবস্থা</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="my_recharge_list"></tbody>
+
+        </table>
+
+      </div>
 
     </div>
 
-  </div>
 
-</div>
+    <!-- =====================================================
+         MASTER ADMIN RECHARGE MANAGER
+    ====================================================== -->
+
+    <div
+      id="recharge_manager"
+      class="card no-print hidden"
+    >
+
+      <h3>রিচার্জ আবেদন অনুমোদন</h3>
+
+      <div style="overflow-x:auto;">
+
+        <table class="recharge-table">
+
+          <thead>
+
+            <tr>
+              <th>তারিখ</th>
+              <th>ব্যবহারকারী</th>
+              <th>পরিমাণ</th>
+              <th>TXN</th>
+              <th>অবস্থা</th>
+              <th>অ্যাকশন</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="recharge_request_list"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
 
 
-<!-- ================================
-     KHATIAN PREVIEW
-================================= -->
+    <!-- =====================================================
+         PRINT AREA
+    ====================================================== -->
 
-<div id="preview_container"></div>
+    <div
+      id="print_area"
+      class="khatian-preview print-area"
+    >
+
+      <div class="logo-area">
+
+        <img
+          id="print_logo"
+          src=""
+          alt="Logo"
+          style="display:none;"
+        >
+
+      </div>
 
 
-<!-- ================================
-     VERIFICATION PANEL
-================================= -->
+      <div class="khatian-title">
 
-<div id="verify_panel">
+        <h2>
+          খতিয়ান
+        </h2>
 
-  <div class="verify-box">
+        <p id="print_type"></p>
 
-    <div id="verify_result"></div>
+      </div>
 
-    <div id="verify_content"></div>
+
+      <div
+        style="
+          display:flex;
+          justify-content:space-between;
+          gap:20px;
+          align-items:flex-start;
+        "
+      >
+
+        <div style="flex:1;">
+
+          <table>
+
+            <tbody>
+
+              <tr>
+                <th>খতিয়ান নং</th>
+                <td id="print_khatian"></td>
+
+                <th>মৌজা</th>
+                <td id="print_mouza"></td>
+              </tr>
+
+              <tr>
+                <th>জে.এল. নং</th>
+                <td id="print_jl"></td>
+
+                <th>উপজেলা</th>
+                <td id="print_upazila"></td>
+              </tr>
+
+              <tr>
+                <th>জেলা</th>
+                <td id="print_district"></td>
+
+                <th>প্রকার</th>
+                <td id="print_record_type"></td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+        <div class="qr-area">
+
+          <img
+            id="print_qr"
+            src=""
+            alt="QR Code"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div style="margin-top:15px;">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>ক্রমিক</th>
+              <th>দাগ নং</th>
+              <th>জমির শ্রেণি</th>
+              <th>দাগের মোট জমি</th>
+              <th>খতিয়ানে অংশ</th>
+              <th>শতাংশ</th>
+              <th>মন্তব্য</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="print_dag_body">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div style="margin-top:15px;">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>মালিক/মালিকগণের নাম</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr>
+              <td
+                id="print_owners"
+                style="
+                  text-align:left;
+                  min-height:80px;
+                  white-space:pre-line;
+                "
+              ></td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:15px;
+          border:1px solid #ccc;
+          padding:12px;
+          min-height:70px;
+        "
+      >
+
+        <b>নোট:</b>
+
+        <span
+          id="print_note"
+          style="white-space:pre-line;"
+        ></span>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:45px;
+          display:flex;
+          justify-content:space-between;
+          text-align:center;
+        "
+      >
+
+        <div>
+          প্রস্তুতকারীর স্বাক্ষর
+          <br><br>
+          __________________
+        </div>
+
+        <div>
+          কর্তৃপক্ষের স্বাক্ষর
+          <br><br>
+          __________________
+        </div>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:25px;
+          text-align:center;
+          font-size:12px;
+          color:#555;
+        "
+      >
+
+        ............ ধারামতে নোট বা পরিবর্তন মায় /
+        মকদ্দমা নং ............. এবং সন ...............
+
+      </div>
+
+    </div>
 
   </div>
 
@@ -1011,637 +1274,3382 @@
 
 <script>
 
-  /* ==========================================
-     GLOBAL SETTINGS
-  ========================================== */
-
-  const MASTER_USERNAME = 'admin';
-  const MASTER_PASSWORD = '12345';
-
-  const DOWNLOAD_PRICE = 10;
-  const BKASH_NUMBER = '01833013604';
-
-  let currentEditKey = null;
+var MASTER_ADMIN = {
+  username: 'admin',
+  password: '12345',
+  role: 'master',
+  name: 'মাস্টার এডমিন'
+};
 
 
-  /* ==========================================
-     STORAGE HELPERS
-  ========================================== */
+var DOWNLOAD_PRICE = 10;
+var BKASH_NUMBER = '01833013604';
+
+
+function getSubAdmins(){
+
+  return JSON.parse(
+    localStorage.getItem('sub_admins') || '[]'
+  );
+
+}
+
+
+function saveSubAdmins(list){
+
+  localStorage.setItem(
+    'sub_admins',
+    JSON.stringify(list)
+  );
+
+}
+
+
+function getCurrentUser(){
+
+  return JSON.parse(
+    sessionStorage.getItem('current_admin') || 'null'
+  );
+
+}
+
+
+function setCurrentUser(user){
+
+  sessionStorage.setItem(
+    'current_admin',
+    JSON.stringify(user)
+  );
+
+}
+
+
+function login(){
+
+  var username =
+    document
+      .getElementById('login_username')
+      .value
+      .trim();
+
+  var password =
+    document
+      .getElementById('login_password')
+      .value;
+
+
+  if(
+    username === MASTER_ADMIN.username &&
+    password === MASTER_ADMIN.password
+  ){
+
+    setCurrentUser({
+      username:MASTER_ADMIN.username,
+      name:MASTER_ADMIN.name,
+      role:'master',
+      permission:'full'
+    });
+
+    showApp();
+
+    return;
+  }
+
+
+  var list = getSubAdmins();
+
+  var account = list.find(function(a){
+
+    return (
+      a.username === username &&
+      a.password === password
+    );
+
+  });
+
+
+  if(!account){
+
+    alert(
+      'ইউজার আইডি অথবা পাসওয়ার্ড সঠিক নয়।'
+    );
+
+    return;
+  }
+
+
+  if(account.active === false){
+
+    alert(
+      'এই অ্যাকাউন্টটি বর্তমানে নিষ্ক্রিয়।'
+    );
+
+    return;
+  }
+
+
+  setCurrentUser({
+
+    username:account.username,
+    name:account.name,
+    role:'subadmin',
+    permission:account.permission
+
+  });
+
+
+  showApp();
+
+}
+
+
+function showApp(){
+
+  document
+    .getElementById('login_section')
+    .classList
+    .add('hidden');
+
+
+  document
+    .getElementById('app_section')
+    .classList
+    .remove('hidden');
+
+
+  checkAuth();
+
+  renderKhatianList();
+
+  renderSubAdminList();
+
+  loadWallet();
+
+  addInitialDagRow();
+
+}
+
+
+function logout(){
+
+  sessionStorage.removeItem(
+    'current_admin'
+  );
+
+  location.reload();
+
+}
+
+
+function checkAuth(){
+
+  var user = getCurrentUser();
+
+  if(!user) return;
+
+
+  var nameEl =
+    document.getElementById(
+      'logged_user_name'
+    );
+
+  var roleEl =
+    document.getElementById(
+      'logged_user_role'
+    );
+
+
+  if(nameEl){
+
+    nameEl.textContent =
+      user.name ||
+      user.username;
+
+  }
+
+
+  if(roleEl){
+
+    if(user.role === 'master'){
+
+      roleEl.textContent =
+        'মাস্টার এডমিন';
+
+    }else{
+
+      roleEl.textContent =
+        'সাব-এডমিন';
+
+    }
+
+  }
+
+
+  var subManager =
+    document.getElementById(
+      'subadmin_manager'
+    );
+
+
+  var rechargeManager =
+    document.getElementById(
+      'recharge_manager'
+    );
+
+
+  if(user.role === 'master'){
+
+    if(subManager)
+      subManager.classList.remove('hidden');
+
+    if(rechargeManager)
+      rechargeManager.classList.remove('hidden');
+
+  }else{
+
+    if(subManager)
+      subManager.classList.add('hidden');
+
+    if(rechargeManager)
+      rechargeManager.classList.add('hidden');
+
+  }
+
+
+  var permission =
+    user.permission || 'full';
+
+
+  var isMaster =
+    user.role === 'master';
+
+
+  if(!isMaster && permission === 'view'){
+
+    document
+      .querySelectorAll('.btn-save')
+      .forEach(function(btn){
+
+        btn.disabled = true;
+
+      });
+
+  }
+
+
+  if(!isMaster && permission === 'create'){
+
+    document
+      .querySelectorAll('.btn-edit')
+      .forEach(function(btn){
+
+        btn.style.display = 'none';
+
+      });
+
+  }
+
+}
+
+
+function saveSubAdmin(){
+
+  var currentUser =
+    getCurrentUser();
+
+
+  if(
+    !currentUser ||
+    currentUser.role !== 'master'
+  ){
+
+    alert(
+      'শুধু মাস্টার এডমিন সাব-এডমিন তৈরি করতে পারবেন।'
+    );
+
+    return;
+
+  }
+
+
+  var name =
+    document
+      .getElementById('subadmin_name')
+      .value
+      .trim();
+
+
+  var username =
+    document
+      .getElementById('subadmin_username')
+      .value
+      .trim();
+
+
+  var password =
+    document
+      .getElementById('subadmin_password')
+      .value;
+
+
+  var permission =
+    document
+      .getElementById('subadmin_permission')
+      .value;
+
+
+  if(
+    !name ||
+    !username ||
+    !password
+  ){
+
+    alert(
+      'নাম, আইডি এবং পাসওয়ার্ড—তিনটিই দিতে হবে।'
+    );
+
+    return;
+
+  }
+
+
+  if(
+    username === MASTER_ADMIN.username
+  ){
+
+    alert(
+      'এই আইডি মাস্টার এডমিনের জন্য সংরক্ষিত।'
+    );
+
+    return;
+
+  }
+
+
+  var list =
+    getSubAdmins();
+
+
+  var existing =
+    list.find(function(a){
+
+      return a.username === username;
+
+    });
+
+
+  if(existing){
+
+    if(
+      !confirm(
+        'এই আইডি আগে থেকেই আছে। তথ্য আপডেট করবেন?'
+      )
+    ){
+
+      return;
+
+    }
+
+
+    existing.name =
+      name;
+
+    existing.password =
+      password;
+
+    existing.permission =
+      permission;
+
+    existing.active =
+      true;
+
+
+  }else{
+
+    list.push({
+
+      id:Date.now(),
+
+      name:name,
+
+      username:username,
+
+      password:password,
+
+      permission:permission,
+
+      active:true
+
+    });
+
+  }
+
+
+  saveSubAdmins(list);
+
+  resetSubAdminForm();
+
+  renderSubAdminList();
+
+  alert(
+    'সাব-এডমিন সফলভাবে সংরক্ষণ করা হয়েছে।'
+  );
+
+}
+
+
+function resetSubAdminForm(){
+
+  document
+    .getElementById('subadmin_name')
+    .value = '';
+
+
+  document
+    .getElementById('subadmin_username')
+    .value = '';
+
+
+  document
+    .getElementById('subadmin_password')
+    .value = '';
+
+
+  document
+    .getElementById('subadmin_permission')
+    .value = 'full';
+
+}
+
+
+function renderSubAdminList(){
+
+  var tbody =
+    document.getElementById(
+      'subadmin_list'
+    );
+
+
+  if(!tbody) return;
+
+
+  tbody.innerHTML = '';
+
+
+  var list =
+    getSubAdmins();
+
+
+  if(!list.length){
+
+    tbody.innerHTML =
+      '<tr>' +
+      '<td colspan="5">' +
+      'এখনও কোনো সাব-এডমিন যোগ করা হয়নি।' +
+      '</td>' +
+      '</tr>';
+
+    return;
+
+  }
+
+
+  list.forEach(function(item){
+
+    var tr =
+      document.createElement('tr');
+
+
+    var permissionText =
+      item.permission === 'full'
+      ? 'পূর্ণ অনুমতি'
+      : item.permission === 'create'
+      ? 'শুধু তৈরি'
+      : 'শুধু দেখা';
+
+
+    var permissionClass =
+      item.permission === 'full'
+      ? 'permission-full'
+      : item.permission === 'create'
+      ? 'permission-create'
+      : 'permission-view';
+
+
+    var activeText =
+      item.active === false
+      ? 'নিষ্ক্রিয়'
+      : 'সক্রিয়';
+
+
+    var activeClass =
+      item.active === false
+      ? 'inactive-badge'
+      : 'active-badge';
+
+
+    tr.innerHTML =
+
+      '<td>' +
+      escapeHtml(item.name) +
+      '</td>' +
+
+      '<td>' +
+      escapeHtml(item.username) +
+      '</td>' +
+
+      '<td>' +
+      '<span class="permission-badge ' +
+      permissionClass +
+      '">' +
+      permissionText +
+      '</span>' +
+      '</td>' +
+
+      '<td class="' +
+      activeClass +
+      '">' +
+      activeText +
+      '</td>' +
+
+      '<td>' +
+
+      '<button ' +
+      'type="button" ' +
+      'class="btn btn-edit" ' +
+      'onclick="toggleSubAdmin(' +
+      item.id +
+      ')">' +
+
+      (
+        item.active === false
+        ? 'সক্রিয় করুন'
+        : 'নিষ্ক্রিয় করুন'
+      ) +
+
+      '</button> ' +
+
+      '<button ' +
+      'type="button" ' +
+      'class="btn btn-delete" ' +
+      'onclick="deleteSubAdmin(' +
+      item.id +
+      ')">' +
+
+      'মুছুন' +
+
+      '</button>' +
+
+      '</td>';
+
+
+    tbody.appendChild(tr);
+
+  });
+
+}
+
+
+function toggleSubAdmin(id){
+
+  var list =
+    getSubAdmins();
+
+
+  var item =
+    list.find(function(a){
+
+      return a.id === id;
+
+    });
+
+
+  if(!item) return;
+
+
+  item.active =
+    item.active === false;
+
+
+  saveSubAdmins(list);
+
+  renderSubAdminList();
+
+}
+
+
+function deleteSubAdmin(id){
+
+  if(
+    !confirm(
+      'এই সাব-এডমিনকে মুছে ফেলবেন?'
+    )
+  ){
+
+    return;
+
+  }
+
+
+  var list =
+    getSubAdmins()
+      .filter(function(a){
+
+        return a.id !== id;
+
+      });
+
+
+  saveSubAdmins(list);
+
+  renderSubAdminList();
+
+}
+
+
+function escapeHtml(value){
+
+  return String(
+    value == null ? '' : value
+  )
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+/* ========================================================
+   WALLET / RECHARGE SYSTEM
+======================================================== */
+
+var DOWNLOAD_PRICE = 10;
+
+var BKASH_NUMBER =
+  '01833013604';
+
+
+function getWallets(){
+
+  return JSON.parse(
+    localStorage.getItem(
+      'user_wallets'
+    ) || '{}'
+  );
+
+}
+
+
+function saveWallets(data){
+
+  localStorage.setItem(
+    'user_wallets',
+    JSON.stringify(data)
+  );
+
+}
+
+
+function getRechargeRequests(){
+
+  return JSON.parse(
+    localStorage.getItem(
+      'recharge_requests'
+    ) || '[]'
+  );
+
+}
+
+
+function saveRechargeRequests(list){
+
+  localStorage.setItem(
+    'recharge_requests',
+    JSON.stringify(list)
+  );
+
+}
+
+
+function getUserKey(user){
+
+  return user.role === 'master'
+    ? 'master:admin'
+    : 'subadmin:' + user.username;
+
+}
+
+
+function getWalletBalance(user){
+
+  if(!user) return 0;
+
+
+  var wallets =
+    getWallets();
+
+
+  return Number(
+    wallets[getUserKey(user)] || 0
+  );
+
+}
+
+
+function setWalletBalance(
+  user,
+  amount
+){
+
+  if(!user) return;
+
+
+  var wallets =
+    getWallets();
+
+
+  wallets[getUserKey(user)] =
+    Math.max(
+      0,
+      Number(amount) || 0
+    );
+
+
+  saveWallets(wallets);
+
+}
+
+
+function formatMoney(n){
+
+  return '৳ ' +
+    Number(n || 0)
+      .toLocaleString('bn-BD');
+
+}
+
+
+function nowBanglaDate(){
+
+  return new Date()
+    .toLocaleString('bn-BD');
+
+}
+
+
+function submitRechargeRequest(){
+
+  var user =
+    getCurrentUser();
+
+
+  if(!user){
+
+    alert(
+      'অনুগ্রহ করে আগে লগইন করুন।'
+    );
+
+    return;
+
+  }
+
+
+  var amount =
+    Number(
+      document
+        .getElementById(
+          'recharge_amount'
+        )
+        .value
+    );
+
+
+  var txn =
+    document
+      .getElementById(
+        'recharge_txn'
+      )
+      .value
+      .trim();
+
+
+  if(
+    !amount ||
+    amount < 10
+  ){
+
+    alert(
+      'কমপক্ষে ১০ টাকা রিচার্জ আবেদন করতে হবে।'
+    );
+
+    return;
+
+  }
+
+
+  if(!txn){
+
+    alert(
+      'bKash TXN নম্বর দিন।'
+    );
+
+    return;
+
+  }
+
+
+  var list =
+    getRechargeRequests();
+
+
+  var duplicate =
+    list.find(function(r){
+
+      return (
+        String(r.txn)
+          .toLowerCase() ===
+        txn.toLowerCase() &&
+        r.status !== 'rejected'
+      );
+
+    });
+
+
+  if(duplicate){
+
+    alert(
+      'এই TXN নম্বর দিয়ে আগে আবেদন করা হয়েছে।'
+    );
+
+    return;
+
+  }
+
+
+  list.push({
+
+    id:
+      Date.now() +
+      Math.floor(
+        Math.random() * 1000
+      ),
+
+    userKey:
+      getUserKey(user),
+
+    username:
+      user.username,
+
+    userName:
+      user.name ||
+      user.username,
+
+    amount:
+      amount,
+
+    txn:
+      txn,
+
+    date:
+      nowBanglaDate(),
+
+    status:
+      'pending'
+
+  });
+
+
+  saveRechargeRequests(list);
+
+
+  document
+    .getElementById(
+      'recharge_amount'
+    )
+    .value = '';
+
+
+  document
+    .getElementById(
+      'recharge_txn'
+    )
+    .value = '';
+
+
+  renderRechargeRequests();
+
+  alert(
+    'রিচার্জ আবেদন সফলভাবে জমা হয়েছে। অ্যাডমিন অনুমোদনের পর ব্যালেন্স যোগ হবে।'
+  );
+
+}
+
+
+function renderRechargeRequests(){
+
+  var user =
+    getCurrentUser();
+
+
+  var myBody =
+    document.getElementById(
+      'my_recharge_list'
+    );
+
+
+  if(myBody){
+
+    myBody.innerHTML = '';
+
+
+    var all =
+      getRechargeRequests();
+
+
+    var mine =
+      user
+      ? all.filter(function(r){
+
+          return (
+            r.userKey ===
+            getUserKey(user)
+          );
+
+        })
+      : [];
+
+
+    if(!mine.length){
+
+      myBody.innerHTML =
+        '<tr>' +
+        '<td colspan="4">' +
+        'কোনো রিচার্জ আবেদন নেই।' +
+        '</td>' +
+        '</tr>';
+
+    }else{
+
+      mine
+        .slice()
+        .reverse()
+        .forEach(function(r){
+
+          var statusText =
+            r.status === 'approved'
+            ? 'অনুমোদিত'
+            : r.status === 'rejected'
+            ? 'বাতিল'
+            : 'অপেক্ষমাণ';
+
+
+          var statusClass =
+            r.status === 'approved'
+            ? 'status-approved'
+            : r.status === 'rejected'
+            ? 'status-rejected'
+            : 'status-pending';
+
+
+          var tr =
+            document.createElement(
+              'tr'
+            );
+
+
+          tr.innerHTML =
+            '<td>' +
+            escapeHtml(r.date) +
+            '</td>' +
+
+            '<td>' +
+            formatMoney(r.amount) +
+            '</td>' +
+
+            '<td>' +
+            escapeHtml(r.txn) +
+            '</td>' +
+
+            '<td class="' +
+            statusClass +
+            '">' +
+            statusText +
+            '</td>';
+
+
+          myBody.appendChild(tr);
+
+        });
+
+    }
+
+  }
+
+
+  var adminBody =
+    document.getElementById(
+      'recharge_request_list'
+    );
+
+
+  if(adminBody){
+
+    adminBody.innerHTML = '';
+
+
+    var requests =
+      getRechargeRequests();
+
+
+    if(!requests.length){
+
+      adminBody.innerHTML =
+        '<tr>' +
+        '<td colspan="6">' +
+        'কোনো রিচার্জ আবেদন নেই।' +
+        '</td>' +
+        '</tr>';
+
+    }else{
+
+      requests
+        .slice()
+        .reverse()
+        .forEach(function(r){
+
+          var statusText =
+            r.status === 'approved'
+            ? 'অনুমোদিত'
+            : r.status === 'rejected'
+            ? 'বাতিল'
+            : 'অপেক্ষমাণ';
+
+
+          var statusClass =
+            r.status === 'approved'
+            ? 'status-approved'
+            : r.status === 'rejected'
+            ? 'status-rejected'
+            : 'status-pending';
+
+
+          var action = '';
+
+
+          if(r.status === 'pending'){
+
+            action =
+              '<button ' +
+              'type="button" ' +
+              'class="btn btn-save" ' +
+              'onclick="approveRecharge(' +
+              r.id +
+              ')">' +
+              'অনুমোদন' +
+              '</button> ' +
+
+              '<button ' +
+              'type="button" ' +
+              'class="btn btn-delete" ' +
+              'onclick="rejectRecharge(' +
+              r.id +
+              ')">' +
+              'বাতিল' +
+              '</button>';
+
+          }else{
+
+            action =
+              '<span class="' +
+              statusClass +
+              '">' +
+              statusText +
+              '</span>';
+
+          }
+
+
+          var tr =
+            document.createElement(
+              'tr'
+            );
+
+
+          tr.innerHTML =
+
+            '<td>' +
+            escapeHtml(r.date) +
+            '</td>' +
+
+            '<td>' +
+            escapeHtml(
+              r.userName ||
+              r.username
+            ) +
+            '<br>' +
+            '<span class="small">' +
+            escapeHtml(r.username) +
+            '</span>' +
+            '</td>' +
+
+            '<td>' +
+            formatMoney(r.amount) +
+            '</td>' +
+
+            '<td>' +
+            escapeHtml(r.txn) +
+            '</td>' +
+
+            '<td class="' +
+            statusClass +
+            '">' +
+            statusText +
+            '</td>' +
+
+            '<td>' +
+            action +
+            '</td>';
+
+
+          adminBody.appendChild(tr);
+
+        });
+
+    }
+
+  }
+
+}
+
+
+function approveRecharge(id){
+
+  var user =
+    getCurrentUser();
+
+
+  if(
+    !user ||
+    user.role !== 'master'
+  ){
+
+    alert(
+      'শুধু মাস্টার এডমিন অনুমোদন দিতে পারবেন।'
+    );
+
+    return;
+
+  }
+
+
+  var list =
+    getRechargeRequests();
+
+
+  var req =
+    list.find(function(r){
+
+      return r.id === id;
+
+    });
+
+
+  if(
+    !req ||
+    req.status !== 'pending'
+  ){
+
+    return;
+
+  }
+
+
+  var wallets =
+    getWallets();
+
+
+  wallets[req.userKey] =
+    Number(
+      wallets[req.userKey] || 0
+    ) +
+    Number(
+      req.amount || 0
+    );
+
+
+  saveWallets(wallets);
+
+
+  req.status =
+    'approved';
+
+
+  req.approvedAt =
+    nowBanglaDate();
+
+
+  req.approvedBy =
+    user.username;
+
+
+  saveRechargeRequests(list);
+
+
+  renderRechargeRequests();
+
+  loadWallet();
+
+
+  alert(
+    'রিচার্জ অনুমোদন হয়েছে। ' +
+    formatMoney(req.amount) +
+    ' ব্যবহারকারীর ব্যালেন্সে যোগ হয়েছে।'
+  );
+
+}
+
+
+function rejectRecharge(id){
+
+  var user =
+    getCurrentUser();
+
+
+  if(
+    !user ||
+    user.role !== 'master'
+  ){
+
+    alert(
+      'শুধু মাস্টার এডমিন আবেদন বাতিল করতে পারবেন।'
+    );
+
+    return;
+
+  }
+
+
+  var list =
+    getRechargeRequests();
+
+
+  var req =
+    list.find(function(r){
+
+      return r.id === id;
+
+    });
+
+
+  if(
+    !req ||
+    req.status !== 'pending'
+  ){
+
+    return;
+
+  }
+
+
+  req.status =
+    'rejected';
+
+
+  req.rejectedAt =
+    nowBanglaDate();
+
+
+  req.rejectedBy =
+    user.username;
+
+
+  saveRechargeRequests(list);
+
+  renderRechargeRequests();
+
+
+  alert(
+    'রিচার্জ আবেদন বাতিল করা হয়েছে।'
+  );
+
+}
+
+
+function loadWallet(){
+
+  var user =
+    getCurrentUser();
+
+
+  var el =
+    document.getElementById(
+      'wallet_balance'
+    );
+
+
+  if(el){
+
+    el.textContent =
+      formatMoney(
+        getWalletBalance(user)
+      );
+
+  }
+
+
+  renderRechargeRequests();
+
+}
+
+
+function paidPrintCurrent(){
+
+  var user =
+    getCurrentUser();
+
+
+  if(!user){
+
+    alert(
+      'অনুগ্রহ করে আগে লগইন করুন।'
+    );
+
+    return;
+
+  }
+
+
+  var khatianNo =
+    document
+      .getElementById(
+        'in_khatian'
+      )
+      .value
+      .trim();
+
+
+  if(!khatianNo){
+
+    alert(
+      'প্রথমে খতিয়ান নির্বাচন/তৈরি করুন।'
+    );
+
+    return;
+
+  }
+
+
+  payAndPrint(khatianNo);
+
+}
+
+
+function payAndPrint(key){
+
+  var user =
+    getCurrentUser();
+
+
+  if(!user){
+
+    alert(
+      'অনুগ্রহ করে আগে লগইন করুন।'
+    );
+
+    return;
+
+  }
+
+
+  var balance =
+    getWalletBalance(user);
+
+
+  if(
+    balance <
+    DOWNLOAD_PRICE
+  ){
+
+    alert(
+      'এই খতিয়ান ডাউনলোড করতে ১০ টাকা প্রয়োজন। আপনার বর্তমান ব্যালেন্স ' +
+      formatMoney(balance) +
+      '। অনুগ্রহ করে রিচার্জ করুন।'
+    );
+
+
+    document
+      .querySelector(
+        '.wallet-box'
+      )
+      ?.scrollIntoView({
+        behavior:'smooth',
+        block:'center'
+      });
+
+
+    return;
+
+  }
+
+
+  editKhatian(key);
+
+
+  setWalletBalance(
+    user,
+    balance -
+    DOWNLOAD_PRICE
+  );
+
+
+  loadWallet();
+
+
+  setTimeout(function(){
+
+    window.print();
+
+  },300);
+
+}
+
+    <div class="footer-grid">
+
+      <div>
+
+        <div class="footer-heading">
+          পরিকল্পনা ও বাস্তবায়নে
+        </div>
+
+        <div class="govt-logos">
+
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg"
+            alt="Govt Seal"
+          >
+
+          <span style="
+            font-size:11px;
+            font-weight:bold;
+            color:#1e6938;
+            line-height:1.2;
+          ">
+            জনবান্ধব ভূমিসেবা অটোমেশন
+          </span>
+
+        </div>
+
+      </div>
+
+      <div>
+
+        <div class="footer-heading">
+          সামাজিক যোগাযোগ
+        </div>
+
+        <div class="social-icons">
+
+          <div class="social-btn bg-fb">f</div>
+          <div class="social-btn bg-x">X</div>
+          <div class="social-btn bg-insta">📷</div>
+          <div class="social-btn bg-yt">▶</div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="playstore-btn">
+
+      <span style="
+        font-size:18px;
+        margin-right:6px;
+      ">
+        ▶
+      </span>
+
+      <div>
+
+        <div style="font-size:8px;">
+          GET IT ON
+        </div>
+
+        <div style="
+          font-weight:bold;
+          font-size:12px;
+        ">
+          Google Play
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     LOGIN
+========================================================= -->
+
+<div id="login_panel" class="login-panel">
+
+  <h3>
+    এডমিন লগইন
+  </h3>
+
+  <form id="loginForm" onsubmit="handleLogin(event)">
+
+    <div class="form-group">
+
+      <label>
+        ব্যবহারকারীর নাম (Username):
+      </label>
+
+      <input
+        type="text"
+        id="username"
+        placeholder="username দিন"
+        required
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>
+        পাসওয়ার্ড (Password):
+      </label>
+
+      <input
+        type="password"
+        id="password"
+        placeholder="password দিন"
+        required
+      >
+
+    </div>
+
+    <button
+      type="submit"
+      class="btn-login"
+    >
+      লগইন করুন
+    </button>
+
+  </form>
+
+</div>
+
+
+<!-- =========================================================
+     ADMIN PANEL
+========================================================= -->
+
+<div id="admin_panel">
+
+  <div class="input-panel">
+
+    <div class="input-header">
+
+      <h3>
+        খতিয়ান তথ্য ইনপুট ও সম্পাদনা ফরম
+      </h3>
+
+      <button
+        type="button"
+        class="btn-logout"
+        onclick="handleLogout()"
+      >
+        লগআউট
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         MASTER ADMIN: SUB-ADMIN MANAGEMENT
+    ====================================================== -->
+
+    <div id="subadmin_manager" class="admin-manager admin-only">
+
+      <h4>সাব-এডমিন নিয়ন্ত্রণ</h4>
+
+      <div style="font-size:13px; margin-bottom:12px;">
+        এখানে আপনি নিজের অধীনে আলাদা আইডি ও পাসওয়ার্ড দিয়ে সাব-এডমিন তৈরি, পরিবর্তন ও মুছে ফেলতে পারবেন।
+      </div>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>সাব-এডমিন নাম:</label>
+          <input
+            type="text"
+            id="subadmin_name"
+            placeholder="নাম লিখুন"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>সাব-এডমিন আইডি:</label>
+          <input
+            type="text"
+            id="subadmin_username"
+            placeholder="যেমন: admin01"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>পাসওয়ার্ড:</label>
+          <input
+            type="password"
+            id="subadmin_password"
+            placeholder="পাসওয়ার্ড দিন"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>অনুমতি:</label>
+
+          <select id="subadmin_permission">
+
+            <option value="full">
+              খতিয়ান তৈরি / এডিট / প্রিন্ট
+            </option>
+
+            <option value="create">
+              শুধু খতিয়ান তৈরি / প্রিন্ট
+            </option>
+
+            <option value="view">
+              শুধু দেখা / প্রিন্ট
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="button-group"
+        style="margin-top:10px;"
+      >
+
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="saveSubAdmin()"
+        >
+          সাব-এডমিন যোগ করুন
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-reset"
+          onclick="resetSubAdminForm()"
+        >
+          ফরম খালি করুন
+        </button>
+
+      </div>
+
+
+      <div style="overflow-x:auto;">
+
+        <table class="subadmin-table">
+
+          <thead>
+
+            <tr>
+              <th>নাম</th>
+              <th>আইডি</th>
+              <th>অনুমতি</th>
+              <th>অবস্থা</th>
+              <th>অ্যাকশন</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="subadmin_list"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         WALLET / RECHARGE SYSTEM
+    ====================================================== -->
+
+    <div class="wallet-box">
+
+      <h4
+        style="
+          margin:0 0 10px;
+          color:#1f7044;
+        "
+      >
+        অ্যাকাউন্ট ব্যালেন্স ও রিচার্জ
+      </h4>
+
+
+      <div class="wallet-balance">
+
+        বর্তমান ব্যালেন্স:
+
+        <span id="wallet_balance">
+          ৳ ০
+        </span>
+
+      </div>
+
+
+      <span class="price-badge">
+        প্রতি খতিয়ান ডাউনলোড: ৳ ১০
+      </span>
+
+
+      <div class="payment-note">
+
+        <b>রিচার্জ করার নিয়ম:</b><br>
+
+        ১। বিকাশ
+        <b>Send Money</b>
+        করুন:
+        <b>01833013604</b>
+        <br>
+
+        ২। আপনি যত টাকা রিচার্জ করতে চান,
+        সেই পরিমাণ টাকা পাঠান।
+        <br>
+
+        ৩। নিচে
+        <b>TXN নম্বর</b>
+        ও
+        <b>টাকার পরিমাণ</b>
+        দিয়ে রিচার্জ আবেদন Submit করুন।
+        <br>
+
+        ৪। এডমিন অনুমোদন দিলে অনুমোদিত টাকা
+        আপনার অ্যাকাউন্ট ব্যালেন্সে যোগ হবে।
+        <br>
+
+        ৫। প্রতিটি খতিয়ান ডাউনলোড/প্রিন্ট-PDF করার সময়
+        <b>৳ ১০</b>
+        ব্যালেন্স থেকে কেটে নেওয়া হবে।
+
+      </div>
+
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label>
+            রিচার্জের পরিমাণ (টাকা):
+          </label>
+
+          <input
+            type="number"
+            id="recharge_amount"
+            min="10"
+            step="1"
+            placeholder="যেমন: 100"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            bKash TXN নম্বর:
+          </label>
+
+          <input
+            type="text"
+            id="recharge_txn"
+            placeholder="যেমন: 9A1B2C3D4E"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="button-group"
+        style="margin-top:10px;"
+      >
+
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="submitRechargeRequest()"
+        >
+          রিচার্জ আবেদন Submit
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-reset"
+          onclick="loadWallet()"
+        >
+          ব্যালেন্স আপডেট
+        </button>
+
+      </div>
+
+
+      <div style="overflow-x:auto;">
+
+        <table class="recharge-table">
+
+          <thead>
+
+            <tr>
+              <th>তারিখ</th>
+              <th>পরিমাণ</th>
+              <th>TXN</th>
+              <th>অবস্থা</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="my_recharge_list"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- MASTER ADMIN: RECHARGE APPROVAL -->
+
+    <div
+      id="recharge_manager"
+      class="admin-manager admin-only"
+    >
+
+      <h4>
+        রিচার্জ অনুমোদন
+      </h4>
+
+      <div
+        style="
+          font-size:13px;
+          margin-bottom:10px;
+        "
+      >
+        ব্যবহারকারীর bKash TXN ও টাকার পরিমাণ যাচাই করে অনুমোদন দিন।
+        অনুমোদন দিলে সেই টাকা তার ব্যালেন্সে যোগ হবে।
+      </div>
+
+
+      <div style="overflow-x:auto;">
+
+        <table class="recharge-table">
+
+          <thead>
+
+            <tr>
+              <th>ইউজার</th>
+              <th>তারিখ</th>
+              <th>টাকা</th>
+              <th>TXN</th>
+              <th>অবস্থা</th>
+              <th>অ্যাকশন</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="recharge_request_list"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <form id="khatianForm">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label>
+            বিভাগ:
+          </label>
+
+          <input
+            type="text"
+            id="in_division"
+            value="চট্টগ্রাম"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            জেলা:
+          </label>
+
+          <input
+            type="text"
+            id="in_district"
+            value="নোয়াখালী"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            উপজেলা/থানা:
+          </label>
+
+          <input
+            type="text"
+            id="in_upazila"
+            value="বেগমগঞ্জ রাজস্ব সার্কেল"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            মৌজা:
+          </label>
+
+          <input
+            type="text"
+            id="in_mouza"
+            value="আলাদিনগর"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            সার্ভে টাইপ:
+          </label>
+
+          <input
+            type="text"
+            id="in_survey"
+            value="বি আর এস"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            জে. এল. নং:
+          </label>
+
+          <input
+            type="text"
+            id="in_jl"
+            value="২৩৪"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            খতিয়ান নং (ইউনিক):
+          </label>
+
+          <input
+            type="text"
+            id="in_khatian"
+            value="৪৮৫"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            মালিকের নাম ও ঠিকানা:
+          </label>
+
+          <textarea
+            id="in_owner"
+            rows="3"
+          >দং নজির আহমদ</textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            মোট জমির পরিমাণ (শতাংশ):
+          </label>
+
+          <input
+            type="text"
+            id="in_my_land"
+            value="৮০০০"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            তারিখ:
+          </label>
+
+          <input
+            type="text"
+            id="in_date"
+            value="১৮ সেপ্টেম্বর, ২০২৬"
+          >
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            লোগো / সিল লিংক:
+          </label>
+
+          <input
+            type="text"
+            id="in_seal_logo"
+            value="DEFAULT_LOGO"
+          >
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            কাস্টম কিউআর কোড লিঙ্ক:
+          </label>
+
+          <input
+            type="text"
+            id="in_qr_url"
+            placeholder="কাস্টম কোনো লিঙ্ক দিতে চাইলে বসান"
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- DAG -->
+
+      <div class="dag-section">
+
+        <h4>
+          দাগ তথ্য সংযোজন:
+        </h4>
+
+        <button
+          type="button"
+          class="btn-add-dag"
+          onclick="addDagRow()"
+        >
+          + আরও দাগ যোগ করুন
+        </button>
+
+        <div id="dag_container"></div>
+
+      </div>
+
+
+      <div class="button-group">
+
+        <button
+          type="button"
+          class="btn btn-preview"
+          onclick="renderPreview()"
+        >
+          প্রিভিউ দেখুন
+        </button>
+
+
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="saveKhatian()"
+        >
+          তালিকায় সংরক্ষণ করুন
+        </button>
+
+
+        <button
+          type="button"
+          class="btn btn-reset"
+          onclick="resetForm()"
+        >
+          নতুন ফরম খালি করুন
+        </button>
+
+
+        <button
+          type="button"
+          class="btn btn-print"
+          onclick="paidPrintCurrent()"
+        >
+          ডাউনলোড / সেভ (PDF)
+
+          <span class="price-badge">
+            ৳ ১০
+          </span>
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+
+  <!-- =====================================================
+       SAVED KHATIAN LIST
+  ====================================================== -->
+
+  <div class="list-section">
+
+    <h4>
+      সংরক্ষিত খতিয়ান তালিকা
+    </h4>
+
+
+    <table class="record-table">
+
+      <thead>
+
+        <tr>
+
+          <th>খতিয়ান নং</th>
+          <th>মৌজা</th>
+          <th>উপজেলা</th>
+          <th>জেলা</th>
+          <th>তারিখ</th>
+          <th>অ্যাকশন</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="list_body"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     KHATIAN DOCUMENT
+========================================================= -->
+
+<div
+  class="khatian-box"
+  id="document_view"
+>
+
+  <div class="top-header">
+
+    <div style="width:90px;"></div>
+
+    <div class="khatian-header">
+
+      খতিয়ান নং-
+
+      <span id="out_khatian">
+        ৪৮৫
+      </span>
+
+    </div>
+
+    <div class="page-no">
+      পৃষ্ঠা নং: ১ এর ১
+    </div>
+
+  </div>
+
+
+  <!-- META -->
+
+  <table class="meta-table">
+
+    <tr>
+
+      <td>
+        বিভাগ:
+
+        <span id="out_division">
+          চট্টগ্রাম
+        </span>
+
+      </td>
+
+
+      <td>
+        জেলা:
+
+        <span id="out_district">
+          নোয়াখালী
+        </span>
+
+      </td>
+
+
+      <td>
+        উপজেলা/থানা:
+
+        <span id="out_upazila">
+          বেগমগঞ্জ রাজস্ব সার্কেল
+        </span>
+
+      </td>
+
+
+      <td>
+        মৌজা:
+
+        <span id="out_mouza">
+          আলাদিনগর
+        </span>
+
+      </td>
+
+
+      <td>
+        জে, এল, নং:
+
+        <span id="out_jl">
+          ২৩৪
+        </span>
+
+      </td>
+
+
+      <td>
+        রে: সা: নং:
+      </td>
+
+    </tr>
+
+  </table>
+
+
+  <!-- =====================================================
+       MAIN KHATIAN TABLE
+
+       গুরুত্বপূর্ণ:
+       ১-৯ নম্বরের আলাদা ROW রাখা হয়নি।
+  ====================================================== -->
+
+  <table class="main-table">
+
+    <thead>
+
+      <tr>
+
+        <th
+          rowspan="2"
+          class="col-1"
+        >
+          মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা<br>
+
+          (১)
+        </th>
+
+
+        <th
+          rowspan="2"
+          class="col-2"
+        >
+          অংশ<br>
+
+          (২)
+        </th>
+
+
+        <th
+          rowspan="2"
+          class="col-3"
+        >
+          রাজস্ব<br>
+
+          (৩)
+        </th>
+
+
+        <th
+          rowspan="2"
+          class="col-4"
+        >
+          দাগ<br>
+
+          (৪)
+        </th>
+
+
+        <th colspan="2">
+          জমির শ্রেণী
+        </th>
+
+
+        <th colspan="2">
+          দাগের মোট পরিমাণ
+        </th>
+
+
+        <th
+          rowspan="2"
+          class="col-7"
+        >
+          দাগের মধ্যে অত্র খতিয়ানের অংশ
+        </th>
+
+
+        <th colspan="2">
+          অংশ অনুযায়ী জমির পরিমাণ
+        </th>
+
+
+        <th
+          rowspan="2"
+          class="col-9"
+        >
+          দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্<br>য
+
+          (৯)
+        </th>
+
+      </tr>
+
+
+      <tr>
+
+        <th class="col-5a">
+          কৃষি<br>
+          ৫(ক)
+        </th>
+
+
+        <th class="col-5b">
+          অকৃষি<br>
+          ৫(খ)
+        </th>
+
+
+        <th class="col-6a">
+          একর<br>
+          ৬(ক)
+        </th>
+
+
+        <th class="col-6b">
+          শতাংশ<br>
+          ৬(খ)
+        </th>
+
+
+        <th class="col-8a">
+          একর<br>
+          ৮(ক)
+        </th>
+
+
+        <th class="col-8b">
+          শতাংশ<br>
+          ৮(খ)
+        </th>
+
+      </tr>
+
+    </thead>
+
+
+    <tbody id="out_khatian_body"></tbody>
+
+  </table>
+
+
+  <!-- =====================================================
+       FOOTER
+
+       মোট জমি = ৮(ক)
+       মোট শতাংশ = ৮(খ)
+  ====================================================== -->
+
+  <div class="bottom-section">
+
+    <div class="bottom-note">
+
+      মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা।
+
+      তারিখ:
+
+      <span id="out_date">
+        ১৮ সেপ্টেম্বর, ২০২৬
+      </span>
+
+    </div>
+
+
+    <div class="footer-flex">
+
+      <div>
+        বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
+      </div>
+
+
+      <div class="seal-center">
+
+        <img
+          id="out_seal_logo"
+          src=""
+          alt="জেলা রেকর্ড রুম নোয়াখালী সিল"
+          class="seal-logo"
+        >
+
+      </div>
+
+
+      <div>
+
+        <img
+          id="out_qr"
+          src=""
+          alt="QR Code"
+          class="qr-code"
+        >
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+  /* ========================================================
+     DEFAULT LOGO
+  ======================================================== */
+
+  var embeddedLogo =
+    "https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png";
+
+
+  /* ========================================================
+     LOGIN
+  ======================================================== */
+
+
+  /* ========================================================
+     ACCOUNT SYSTEM
+
+     Master Admin: admin / 12345
+
+     Sub-admins are controlled by Master Admin.
+  ======================================================== */
+
+  var MASTER_ADMIN = {
+    username: 'admin',
+    password: '12345',
+    name: 'মাস্টার এডমিন',
+    role: 'master'
+  };
+
 
   function getSubAdmins() {
-    try {
-      return JSON.parse(
-        localStorage.getItem('sub_admins') || '[]'
-      );
-    } catch (e) {
-      return [];
-    }
+
+    return JSON.parse(
+      localStorage.getItem('sub_admins') || '[]'
+    );
+
   }
 
 
   function saveSubAdmins(list) {
+
     localStorage.setItem(
       'sub_admins',
       JSON.stringify(list)
     );
+
   }
 
 
-  function getAllKhatians() {
-    try {
-      return JSON.parse(
-        localStorage.getItem('all_khatians') || '{}'
-      );
-    } catch (e) {
-      return {};
-    }
-  }
+  function getCurrentUser() {
 
-
-  function saveAllKhatians(data) {
-    localStorage.setItem(
-      'all_khatians',
-      JSON.stringify(data)
+    return JSON.parse(
+      sessionStorage.getItem('current_admin') || 'null'
     );
+
   }
 
 
-  function getRechargeRequests() {
-    try {
-      return JSON.parse(
-        localStorage.getItem('recharge_requests') || '[]'
+  function handleLogin(e) {
+
+    e.preventDefault();
+
+    var user =
+      document
+        .getElementById('username')
+        .value
+        .trim();
+
+
+    var pass =
+      document
+        .getElementById('password')
+        .value;
+
+
+    if (
+      user === MASTER_ADMIN.username &&
+      pass === MASTER_ADMIN.password
+    ) {
+
+      sessionStorage.setItem(
+        'current_admin',
+        JSON.stringify(MASTER_ADMIN)
       );
-    } catch (e) {
-      return [];
+
+      checkAuth();
+
+      return;
+
     }
-  }
 
 
-  function saveRechargeRequests(list) {
-    localStorage.setItem(
-      'recharge_requests',
-      JSON.stringify(list)
+    var subAdmins =
+      getSubAdmins();
+
+
+    var found =
+      subAdmins.find(function(a) {
+
+        return (
+          a.username === user &&
+          a.password === pass &&
+          a.active !== false
+        );
+
+      });
+
+
+    if (found) {
+
+      sessionStorage.setItem(
+        'current_admin',
+        JSON.stringify({
+
+          username: found.username,
+
+          name: found.name,
+
+          role: 'subadmin',
+
+          permission: found.permission
+
+        })
+      );
+
+
+      checkAuth();
+
+      return;
+
+    }
+
+
+    alert(
+      'ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!'
     );
+
   }
+
+
+  function handleLogout() {
+
+    sessionStorage.removeItem(
+      'current_admin'
+    );
+
+    checkAuth();
+
+  }
+
+
+  function checkAuth() {
+
+    var currentUser =
+      getCurrentUser();
+
+
+    var isLoggedIn =
+      !!currentUser;
+
+
+    document
+      .getElementById('login_panel')
+      .style.display =
+      isLoggedIn
+      ? 'none'
+      : 'block';
+
+
+    document
+      .getElementById('admin_panel')
+      .style.display =
+      isLoggedIn
+      ? 'block'
+      : 'none';
+
+
+    if (!isLoggedIn) return;
+
+
+    var isMaster =
+      currentUser.role === 'master';
+
+
+    var permission =
+      currentUser.permission || 'full';
+
+
+    document
+      .getElementById(
+        'subadmin_manager'
+      )
+      .style.display =
+      isMaster
+      ? 'block'
+      : 'none';
+
+
+    document
+      .getElementById(
+        'recharge_manager'
+      )
+      .style.display =
+      isMaster
+      ? 'block'
+      : 'none';
+
+
+    loadWallet();
+
+    renderRechargeRequests();
+
+
+    var managerTitle =
+      document.querySelector(
+        '.input-header h3'
+      );
+
+
+    if (managerTitle) {
+
+      managerTitle.innerHTML =
+
+        'খতিয়ান তথ্য ইনপুট ও সম্পাদনা ফরম' +
+
+        '<span class="role-badge">' +
+
+        (
+          isMaster
+          ? 'মাস্টার এডমিন'
+          : 'সাব-এডমিন: ' +
+            (
+              currentUser.name ||
+              currentUser.username
+            )
+        ) +
+
+        '</span>';
+
+    }
+
+
+    renderSubAdminList();
+
+
+    var saveBtn =
+      document.querySelector(
+        '.btn-save'
+      );
+
+
+    var resetBtn =
+      document.querySelector(
+        '.btn-reset'
+      );
+
+
+    if (
+      !isMaster &&
+      permission === 'view'
+    ) {
+
+      if (saveBtn)
+        saveBtn.style.display =
+          'none';
+
+
+      if (resetBtn)
+        resetBtn.style.display =
+          'none';
+
+
+      document
+        .querySelectorAll(
+          '#khatianForm input, #khatianForm select, #khatianForm textarea'
+        )
+        .forEach(function(el) {
+
+          el.disabled = true;
+
+        });
+
+
+    } else {
+
+      if (saveBtn)
+        saveBtn.style.display =
+          '';
+
+
+      if (resetBtn)
+        resetBtn.style.display =
+          '';
+
+
+      document
+        .querySelectorAll(
+          '#khatianForm input, #khatianForm select, #khatianForm textarea'
+        )
+        .forEach(function(el) {
+
+          el.disabled = false;
+
+        });
+
+    }
+
+
+    if (
+      !isMaster &&
+      permission === 'create'
+    ) {
+
+      document
+        .querySelectorAll('.btn-edit')
+        .forEach(function(btn) {
+
+          btn.style.display =
+            'none';
+
+        });
+
+    }
+
+  }
+
+
+  function saveSubAdmin() {
+
+    var currentUser =
+      getCurrentUser();
+
+
+    if (
+      !currentUser ||
+      currentUser.role !== 'master'
+    ) {
+
+      alert(
+        'শুধু মাস্টার এডমিন সাব-এডমিন তৈরি করতে পারবেন।'
+      );
+
+      return;
+
+    }
+
+
+    var name =
+      document
+        .getElementById('subadmin_name')
+        .value
+        .trim();
+
+
+    var username =
+      document
+        .getElementById('subadmin_username')
+        .value
+        .trim();
+
+
+    var password =
+      document
+        .getElementById('subadmin_password')
+        .value;
+
+
+    var permission =
+      document
+        .getElementById('subadmin_permission')
+        .value;
+
+
+    if (
+      !name ||
+      !username ||
+      !password
+    ) {
+
+      alert(
+        'নাম, আইডি এবং পাসওয়ার্ড—তিনটিই দিতে হবে।'
+      );
+
+      return;
+
+    }
+
+
+    if (
+      username ===
+      MASTER_ADMIN.username
+    ) {
+
+      alert(
+        'এই আইডি মাস্টার এডমিনের জন্য সংরক্ষিত।'
+      );
+
+      return;
+
+    }
+
+
+    var list =
+      getSubAdmins();
+
+
+    var existing =
+      list.find(function(a) {
+
+        return a.username === username;
+
+      });
+
+
+    if (existing) {
+
+      if (
+        !confirm(
+          'এই আইডি আগে থেকেই আছে। তথ্য আপডেট করবেন?'
+        )
+      ) return;
+
+
+      existing.name =
+        name;
+
+
+      existing.password =
+        password;
+
+
+      existing.permission =
+        permission;
+
+
+      existing.active =
+        true;
+
+
+    } else {
+
+      list.push({
+
+        id: Date.now(),
+
+        name: name,
+
+        username: username,
+
+        password: password,
+
+        permission: permission,
+
+        active: true
+
+      });
+
+    }
+
+
+    saveSubAdmins(list);
+
+    resetSubAdminForm();
+
+    renderSubAdminList();
+
+
+    alert(
+      'সাব-এডমিন সফলভাবে সংরক্ষণ করা হয়েছে।'
+    );
+
+  }
+
+
+  function resetSubAdminForm() {
+
+    document
+      .getElementById('subadmin_name')
+      .value = '';
+
+
+    document
+      .getElementById('subadmin_username')
+      .value = '';
+
+
+    document
+      .getElementById('subadmin_password')
+      .value = '';
+
+
+    document
+      .getElementById('subadmin_permission')
+      .value = 'full';
+
+  }
+
+
+  function renderSubAdminList() {
+
+    var tbody =
+      document.getElementById(
+        'subadmin_list'
+      );
+
+
+    if (!tbody) return;
+
+
+    tbody.innerHTML = '';
+
+
+    var list =
+      getSubAdmins();
+
+
+    if (!list.length) {
+
+      tbody.innerHTML =
+        '<tr>' +
+        '<td colspan="5">' +
+        'এখনও কোনো সাব-এডমিন যোগ করা হয়নি।' +
+        '</td>' +
+        '</tr>';
+
+      return;
+
+    }
+
+
+    list.forEach(function(item) {
+
+      var tr =
+        document.createElement('tr');
+
+
+      var permissionText =
+        item.permission === 'full'
+        ? 'পূর্ণ অনুমতি'
+        : item.permission === 'create'
+        ? 'শুধু তৈরি'
+        : 'শুধু দেখা';
+
+
+      var permissionClass =
+        item.permission === 'full'
+        ? 'permission-full'
+        : item.permission === 'create'
+        ? 'permission-create'
+        : 'permission-view';
+
+
+      var activeText =
+        item.active === false
+        ? 'নিষ্ক্রিয়'
+        : 'সক্রিয়';
+
+
+      var activeClass =
+        item.active === false
+        ? 'inactive-badge'
+        : 'active-badge';
+
+
+      tr.innerHTML =
+
+        '<td>' +
+        escapeHtml(item.name) +
+        '</td>' +
+
+        '<td>' +
+        escapeHtml(item.username) +
+        '</td>' +
+
+        '<td>' +
+        '<span class="permission-badge ' +
+        permissionClass +
+        '">' +
+        permissionText +
+        '</span>' +
+        '</td>' +
+
+        '<td class="' +
+        activeClass +
+        '">' +
+        activeText +
+        '</td>' +
+
+        '<td>' +
+
+        '<button ' +
+        'type="button" ' +
+        'class="btn-sm btn-edit" ' +
+        'onclick="toggleSubAdmin(' +
+        item.id +
+        ')">' +
+
+        (
+          item.active === false
+          ? 'সক্রিয় করুন'
+          : 'নিষ্ক্রিয় করুন'
+        ) +
+
+        '</button> ' +
+
+        '<button ' +
+        'type="button" ' +
+        'class="btn-sm btn-del" ' +
+        'onclick="deleteSubAdmin(' +
+        item.id +
+        ')">' +
+
+        'মুছুন' +
+
+        '</button>' +
+
+        '</td>';
+
+
+      tbody.appendChild(tr);
+
+    });
+
+  }
+
+
+  function toggleSubAdmin(id) {
+
+    var list =
+      getSubAdmins();
+
+
+    var item =
+      list.find(function(a) {
+
+        return a.id === id;
+
+      });
+
+
+    if (!item) return;
+
+
+    item.active =
+      item.active === false;
+
+
+    saveSubAdmins(list);
+
+    renderSubAdminList();
+
+  }
+
+
+  function deleteSubAdmin(id) {
+
+    if (
+      !confirm(
+        'এই সাব-এডমিনকে মুছে ফেলবেন?'
+      )
+    ) return;
+
+
+    var list =
+      getSubAdmins()
+        .filter(function(a) {
+
+          return a.id !== id;
+
+        });
+
+
+    saveSubAdmins(list);
+
+    renderSubAdminList();
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(
+      value == null
+        ? ''
+        : value
+    )
+
+      .replace(
+        /&/g,
+        '&amp;'
+      )
+
+      .replace(
+        /</g,
+        '&lt;'
+      )
+
+      .replace(
+        />/g,
+        '&gt;'
+      )
+
+      .replace(
+        /"/g,
+        '&quot;'
+      )
+
+      .replace(
+        /'/g,
+        '&#039;'
+      );
+
+  }
+
+
+  /* ========================================================
+     WALLET / RECHARGE SYSTEM
+  ======================================================== */
+
+  var DOWNLOAD_PRICE = 10;
+
+  var BKASH_NUMBER =
+    '01833013604';
 
 
   function getWallets() {
-    try {
-      return JSON.parse(
-        localStorage.getItem('user_wallets') || '{}'
-      );
-    } catch (e) {
-      return {};
-    }
+
+    return JSON.parse(
+      localStorage.getItem(
+        'user_wallets'
+      ) || '{}'
+    );
+
   }
 
 
   function saveWallets(data) {
+
     localStorage.setItem(
       'user_wallets',
       JSON.stringify(data)
     );
+
   }
 
 
-  /* ==========================================
-     CURRENT USER
-  ========================================== */
+  function getRechargeRequests() {
 
-  function getCurrentAdmin() {
-    try {
-      return JSON.parse(
-        sessionStorage.getItem('current_admin') || 'null'
-      );
-    } catch (e) {
-      return null;
-    }
-  }
-
-
-  function setCurrentAdmin(user) {
-    sessionStorage.setItem(
-      'current_admin',
-      JSON.stringify(user)
+    return JSON.parse(
+      localStorage.getItem(
+        'recharge_requests'
+      ) || '[]'
     );
+
   }
 
 
-  function clearCurrentAdmin() {
-    sessionStorage.removeItem('current_admin');
+  function saveRechargeRequests(list) {
+
+    localStorage.setItem(
+      'recharge_requests',
+      JSON.stringify(list)
+    );
+
   }
 
 
   function getUserKey(user) {
 
-    if (!user) {
-      return null;
-    }
-
-    if (user.type === 'master') {
-      return 'master:' + MASTER_USERNAME;
-    }
-
-    return 'subadmin:' + user.username;
-  }
-
-
-  /* ==========================================
-     MONEY
-  ========================================== */
-
-  function formatMoney(amount) {
-
-    amount = Number(amount || 0);
-
-    return amount.toLocaleString(
-      'bn-BD',
-      {
-        maximumFractionDigits: 0
-      }
-    );
-  }
-
-
-  function nowBanglaDate() {
-
-    return new Date().toLocaleString(
-      'bn-BD',
-      {
-        dateStyle: 'medium',
-        timeStyle: 'short'
-      }
-    );
+    return user.role === 'master'
+      ? 'master:admin'
+      : 'subadmin:' +
+        user.username;
 
   }
 
 
   function getWalletBalance(user) {
 
-    const key = getUserKey(user);
+    if (!user) return 0;
 
-    if (!key) {
-      return 0;
-    }
 
-    const wallets = getWallets();
+    var wallets =
+      getWallets();
 
-    return Number(wallets[key] || 0);
+
+    return Number(
+      wallets[
+        getUserKey(user)
+      ] || 0
+    );
+
   }
 
 
-  function setWalletBalance(user, amount) {
+  function setWalletBalance(
+    user,
+    amount
+  ) {
 
-    const key = getUserKey(user);
+    if (!user) return;
 
-    if (!key) {
-      return;
-    }
 
-    const wallets = getWallets();
+    var wallets =
+      getWallets();
 
-    wallets[key] = Number(amount || 0);
+
+    wallets[
+      getUserKey(user)
+    ] =
+      Math.max(
+        0,
+        Number(amount) || 0
+      );
+
 
     saveWallets(wallets);
 
   }
 
 
-  /* ==========================================
-     LOGIN
-  ========================================== */
+  function formatMoney(n) {
 
-  function loginAdmin() {
-
-    const username =
-      document.getElementById('login_username').value.trim();
-
-    const password =
-      document.getElementById('login_password').value;
-
-    const error =
-      document.getElementById('login_error');
-
-    error.textContent = '';
-
-    if (
-      username === MASTER_USERNAME &&
-      password === MASTER_PASSWORD
-    ) {
-
-      setCurrentAdmin({
-        username: MASTER_USERNAME,
-        type: 'master',
-        permission: 'full'
-      });
-
-      checkAuth();
-
-      return;
-    }
-
-
-    const subAdmins = getSubAdmins();
-
-    const found = subAdmins.find(function(item) {
-
-      return (
-        item.username === username &&
-        item.password === password &&
-        item.active !== false
-      );
-
-    });
-
-
-    if (found) {
-
-      setCurrentAdmin({
-        username: found.username,
-        type: 'subadmin',
-        permission: found.permission
-      });
-
-      checkAuth();
-
-      return;
-    }
-
-
-    error.textContent =
-      'ইউজার আইডি অথবা পাসওয়ার্ড সঠিক নয়।';
+    return '৳ ' +
+      Number(n || 0)
+        .toLocaleString('bn-BD');
 
   }
 
 
-  function logoutAdmin() {
+  function nowBanglaDate() {
 
-    clearCurrentAdmin();
-
-    document.getElementById('admin_panel').style.display =
-      'none';
-
-    document.getElementById('login_panel').style.display =
-      'block';
-
-    document.getElementById('login_password').value = '';
+    return new Date()
+      .toLocaleString('bn-BD');
 
   }
 
-
-  /* ==========================================
-     AUTH CHECK
-  ========================================== */
-
-  function checkAuth() {
-
-    const user = getCurrentAdmin();
-
-    if (!user) {
-
-      document.getElementById('login_panel').style.display =
-        'block';
-
-      document.getElementById('admin_panel').style.display =
-        'none';
-
-      return;
-
-    }
-
-
-    document.getElementById('login_panel').style.display =
-      'none';
-
-    document.getElementById('admin_panel').style.display =
-      'block';
-
-
-    document.getElementById('current_user_name')
-      .textContent = user.username;
-
-
-    let permissionText = 'সম্পূর্ণ অনুমতি';
-
-    if (user.permission === 'create') {
-      permissionText = 'তৈরি / সম্পাদনা';
-    }
-
-    if (user.permission === 'view') {
-      permissionText = 'শুধু দেখা';
-    }
-
-    document.getElementById('current_user_permission')
-      .textContent = permissionText;
-
-
-    const subManager =
-      document.getElementById('subadmin_manager');
-
-    const rechargeManager =
-      document.getElementById('recharge_manager');
-
-
-    if (user.type === 'master') {
-
-      if (subManager) {
-        subManager.style.display = 'block';
-      }
-
-      if (rechargeManager) {
-        rechargeManager.style.display = 'block';
-      }
-
-    } else {
-
-      if (subManager) {
-        subManager.style.display = 'none';
-      }
-
-      if (rechargeManager) {
-        rechargeManager.style.display = 'none';
-      }
-
-    }
-
-
-    const form =
-      document.getElementById('khatianForm');
-
-    const saveButtons =
-      form ? form.querySelectorAll('.btn-save') : [];
-
-    const resetButtons =
-      form ? form.querySelectorAll('.btn-reset') : [];
-
-
-    if (user.permission === 'view') {
-
-      saveButtons.forEach(function(btn) {
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-      });
-
-      resetButtons.forEach(function(btn) {
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-      });
-
-    } else {
-
-      saveButtons.forEach(function(btn) {
-        btn.disabled = false;
-        btn.style.opacity = '1';
-      });
-
-      resetButtons.forEach(function(btn) {
-        btn.disabled = false;
-        btn.style.opacity = '1';
-      });
-
-    }
-
-
-    renderSubAdmins();
-    renderKhatianList();
-    loadWallet();
-    renderRechargeRequests();
-
-  }
-
-
-  /* ==========================================
-     SUB ADMIN
-  ========================================== */
-
-  function saveSubAdmin() {
-
-    const user = getCurrentAdmin();
-
-    if (!user || user.type !== 'master') {
-      alert('শুধুমাত্র Master Admin এই কাজ করতে পারবেন।');
-      return;
-    }
-
-
-    const username =
-      document.getElementById('sub_username').value.trim();
-
-    const password =
-      document.getElementById('sub_password').value.trim();
-
-    const permission =
-      document.getElementById('sub_permission').value;
-
-
-    if (!username || !password) {
-
-      alert('ইউজার আইডি এবং পাসওয়ার্ড দিন।');
-
-      return;
-
-    }
-
-
-    if (username === MASTER_USERNAME) {
-
-      alert('এই ইউজার আইডি ব্যবহার করা যাবে না।');
-
-      return;
-
-    }
-
-
-    const list = getSubAdmins();
-
-
-    const exists = list.some(function(item) {
-
-      return item.username === username;
-
-    });
-
-
-    if (exists) {
-
-      alert('এই ইউজার আইডি ইতোমধ্যে আছে।');
-
-      return;
-
-    }
-
-
-    list.push({
-
-      username: username,
-      password: password,
-      permission: permission,
-      active: true,
-      createdAt: new Date().toISOString()
-
-    });
-
-
-    saveSubAdmins(list);
-
-
-    document.getElementById('sub_username').value = '';
-    document.getElementById('sub_password').value = '';
-
-    renderSubAdmins();
-
-    alert('Sub-Admin সফলভাবে তৈরি হয়েছে।');
-
-  }
-
-
-  function renderSubAdmins() {
-
-    const body =
-      document.getElementById('subadmin_list');
-
-    if (!body) {
-      return;
-    }
-
-
-    const list = getSubAdmins();
-
-    body.innerHTML = '';
-
-
-    if (!list.length) {
-
-      body.innerHTML =
-        '<tr><td colspan="4">কোনো Sub-Admin নেই</td></tr>';
-
-      return;
-
-    }
-
-
-    list.forEach(function(item, index) {
-
-      let badgeClass = 'permission-full';
-      let text = 'সম্পূর্ণ অনুমতি';
-
-      if (item.permission === 'create') {
-        badgeClass = 'permission-create';
-        text = 'তৈরি / সম্পাদনা';
-      }
-
-      if (item.permission === 'view') {
-        badgeClass = 'permission-view';
-        text = 'শুধু দেখা';
-      }
-
-
-      const tr = document.createElement('tr');
-
-      tr.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${escapeHtml(item.username)}</td>
-        <td>
-          <span class="permission-badge ${badgeClass}">
-            ${text}
-          </span>
-        </td>
-        <td>
-          <button
-            type="button"
-            class="btn-edit"
-            onclick="toggleSubAdmin('${escapeJs(item.username)}')">
-            ${item.active === false ? 'চালু করুন' : 'বন্ধ করুন'}
-          </button>
-
-          <button
-            type="button"
-            class="btn-delete"
-            onclick="deleteSubAdmin('${escapeJs(item.username)}')">
-            মুছুন
-          </button>
-        </td>
-      `;
-
-      body.appendChild(tr);
-
-    });
-
-  }
-
-
-  function toggleSubAdmin(username) {
-
-    const list = getSubAdmins();
-
-    const item = list.find(function(x) {
-      return x.username === username;
-    });
-
-    if (!item) {
-      return;
-    }
-
-    item.active = item.active === false;
-
-    saveSubAdmins(list);
-
-    renderSubAdmins();
-
-  }
-
-
-  function deleteSubAdmin(username) {
-
-    if (!confirm(
-      'এই Sub-Admin-কে মুছে ফেলতে চান?'
-    )) {
-      return;
-    }
-
-
-    const list = getSubAdmins().filter(function(item) {
-
-      return item.username !== username;
-
-    });
-
-
-    saveSubAdmins(list);
-
-    renderSubAdmins();
-
-  }
-
-
-  /* ==========================================
-     RECHARGE
-  ========================================== */
 
   function submitRechargeRequest() {
 
-    const user = getCurrentAdmin();
+    var user =
+      getCurrentUser();
+
 
     if (!user) {
-      alert('প্রথমে লগইন করুন।');
+
+      alert(
+        'অনুগ্রহ করে আগে লগইন করুন।'
+      );
+
       return;
+
     }
 
 
-    const amount = Number(
-      document.getElementById('recharge_amount').value
-    );
+    var amount =
+      Number(
+        document
+          .getElementById(
+            'recharge_amount'
+          )
+          .value
+      );
 
-    const txn =
-      document.getElementById('recharge_txn').value.trim();
+
+    var txn =
+      document
+        .getElementById(
+          'recharge_txn'
+        )
+        .value
+        .trim();
 
 
-    if (!amount || amount < DOWNLOAD_PRICE) {
+    if (
+      !amount ||
+      amount < 10
+    ) {
 
       alert(
-        'রিচার্জের পরিমাণ কমপক্ষে ৳' +
-        DOWNLOAD_PRICE +
-        ' হতে হবে।'
+        'কমপক্ষে ১০ টাকা রিচার্জ আবেদন করতে হবে।'
       );
 
       return;
@@ -1651,44 +4659,433 @@
 
     if (!txn) {
 
-      alert('bKash Transaction ID দিন।');
+      alert(
+        'bKash TXN নম্বর দিন।'
+      );
 
       return;
 
     }
 
 
-    const requests = getRechargeRequests();
+    var list =
+      getRechargeRequests();
 
 
-    requests.push({
+    var duplicate =
+      list.find(function(r) {
+
+        return (
+          String(r.txn)
+            .toLowerCase() ===
+          txn.toLowerCase() &&
+          r.status !== 'rejected'
+        );
+
+      });
+
+
+    if (duplicate) {
+
+      alert(
+        'এই TXN নম্বর দিয়ে আগে আবেদন করা হয়েছে।'
+      );
+
+      return;
+
+    }
+
+
+    list.push({
 
       id:
-        Date.now().toString() +
-        Math.random().toString(36).slice(2),
+        Date.now() +
+        Math.floor(
+          Math.random() * 1000
+        ),
 
-      userKey: getUserKey(user),
+      userKey:
+        getUserKey(user),
 
-      username: user.username,
+      username:
+        user.username,
 
-      amount: amount,
+      userName:
+        user.name ||
+        user.username,
 
-      txn: txn,
+      amount:
+        amount,
 
-      status: 'pending',
+      txn:
+        txn,
 
-      createdAt: nowBanglaDate(),
+      date:
+        nowBanglaDate(),
 
-      createdTimestamp: Date.now()
+      status:
+        'pending'
 
     });
 
 
-    saveRechargeRequests(requests);
+    saveRechargeRequests(
+      list
+    );
 
 
-    document.getElementById('recharge_amount').value = '';
-    document.getElementById('recharge_txn').value = '';
+    document
+      .getElementById(
+        'recharge_amount'
+      )
+      .value = '';
+
+
+    document
+      .getElementById(
+        'recharge_txn'
+      )
+      .value = '';
+
+
+    renderRechargeRequests();
+
+
+    alert(
+      'রিচার্জ আবেদন সফলভাবে জমা হয়েছে। অ্যাডমিন অনুমোদনের পর ব্যালেন্স যোগ হবে।'
+    );
+
+  }
+
+
+  function renderRechargeRequests() {
+
+    var user =
+      getCurrentUser();
+
+
+    var myBody =
+      document.getElementById(
+        'my_recharge_list'
+      );
+
+
+    if (myBody) {
+
+      myBody.innerHTML = '';
+
+
+      var all =
+        getRechargeRequests();
+
+
+      var mine =
+        user
+        ? all.filter(function(r) {
+
+            return (
+              r.userKey ===
+              getUserKey(user)
+            );
+
+          })
+        : [];
+
+
+      if (!mine.length) {
+
+        myBody.innerHTML =
+          '<tr>' +
+          '<td colspan="4">' +
+          'কোনো রিচার্জ আবেদন নেই।' +
+          '</td>' +
+          '</tr>';
+
+      } else {
+
+        mine
+          .slice()
+          .reverse()
+          .forEach(function(r) {
+
+            var statusText =
+              r.status === 'approved'
+              ? 'অনুমোদিত'
+              : r.status === 'rejected'
+              ? 'বাতিল'
+              : 'অপেক্ষমাণ';
+
+
+            var statusClass =
+              r.status === 'approved'
+              ? 'status-approved'
+              : r.status === 'rejected'
+              ? 'status-rejected'
+              : 'status-pending';
+
+
+            var tr =
+              document.createElement(
+                'tr'
+              );
+
+
+            tr.innerHTML =
+
+              '<td>' +
+              escapeHtml(r.date) +
+              '</td>' +
+
+              '<td>' +
+              formatMoney(r.amount) +
+              '</td>' +
+
+              '<td>' +
+              escapeHtml(r.txn) +
+              '</td>' +
+
+              '<td class="' +
+              statusClass +
+              '">' +
+              statusText +
+              '</td>';
+
+
+            myBody.appendChild(tr);
+
+          });
+
+      }
+
+    }
+
+
+    var adminBody =
+      document.getElementById(
+        'recharge_request_list'
+      );
+
+
+    if (adminBody) {
+
+      adminBody.innerHTML = '';
+
+
+      var requests =
+        getRechargeRequests();
+
+
+      if (!requests.length) {
+
+        adminBody.innerHTML =
+          '<tr>' +
+          '<td colspan="6">' +
+          'কোনো রিচার্জ আবেদন নেই।' +
+          '</td>' +
+          '</tr>';
+
+      } else {
+
+        requests
+          .slice()
+          .reverse()
+          .forEach(function(r) {
+
+            var statusText =
+              r.status === 'approved'
+              ? 'অনুমোদিত'
+              : r.status === 'rejected'
+              ? 'বাতিল'
+              : 'অপেক্ষমাণ';
+
+
+            var statusClass =
+              r.status === 'approved'
+              ? 'status-approved'
+              : r.status === 'rejected'
+              ? 'status-rejected'
+              : 'status-pending';
+
+
+            var action = '';
+
+
+            if (
+              r.status === 'pending'
+            ) {
+
+              action =
+
+                '<button ' +
+                'type="button" ' +
+                'class="btn-sm btn-save" ' +
+                'onclick="approveRecharge(' +
+                r.id +
+                ')">' +
+                'অনুমোদন' +
+                '</button> ' +
+
+                '<button ' +
+                'type="button" ' +
+                'class="btn-sm btn-del" ' +
+                'onclick="rejectRecharge(' +
+                r.id +
+                ')">' +
+                'বাতিল' +
+                '</button>';
+
+            } else {
+
+              action =
+                '<span class="' +
+                statusClass +
+                '">' +
+                statusText +
+                '</span>';
+
+            }
+
+
+            var tr =
+              document.createElement(
+                'tr'
+              );
+
+
+            tr.innerHTML =
+
+              '<td>' +
+              escapeHtml(
+                r.userName ||
+                r.username
+              ) +
+              '<br>' +
+              '<span class="small">' +
+              escapeHtml(
+                r.username
+              ) +
+              '</span>' +
+              '</td>' +
+
+              '<td>' +
+              escapeHtml(
+                r.date
+              ) +
+              '</td>' +
+
+              '<td>' +
+              formatMoney(
+                r.amount
+              ) +
+              '</td>' +
+
+              '<td>' +
+              escapeHtml(
+                r.txn
+              ) +
+              '</td>' +
+
+              '<td class="' +
+              statusClass +
+              '">' +
+              statusText +
+              '</td>' +
+
+              '<td>' +
+              action +
+              '</td>';
+
+
+            adminBody.appendChild(
+              tr
+            );
+
+          });
+
+      }
+
+    }
+
+  }
+
+
+  function approveRecharge(id) {
+
+    var user =
+      getCurrentUser();
+
+
+    if (
+      !user ||
+      user.role !== 'master'
+    ) {
+
+      alert(
+        'শুধু মাস্টার এডমিন অনুমোদন দিতে পারবেন।'
+      );
+
+      return;
+
+    }
+
+
+    var list =
+      getRechargeRequests();
+
+
+    var req =
+      list.find(function(r) {
+
+        return r.id === id;
+
+      });
+
+
+    if (
+      !req ||
+      req.status !== 'pending'
+    ) {
+
+      return;
+
+    }
+
+
+    var wallets =
+      getWallets();
+
+
+    wallets[
+      req.userKey
+    ] =
+      Number(
+        wallets[
+          req.userKey
+        ] || 0
+      ) +
+      Number(
+        req.amount || 0
+      );
+
+
+    saveWallets(wallets);
+
+
+    req.status =
+      'approved';
+
+
+    req.approvedAt =
+      nowBanglaDate();
+
+
+    req.approvedBy =
+      user.username;
+
+
+    saveRechargeRequests(
+      list
+    );
 
 
     renderRechargeRequests();
@@ -1697,248 +5094,27 @@
 
 
     alert(
-      'রিচার্জ রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে। ' +
-      'অ্যাডমিন অনুমোদনের পর ব্যালেন্সে টাকা যোগ হবে।'
+      'রিচার্জ অনুমোদন হয়েছে। ' +
+      formatMoney(req.amount) +
+      ' ব্যবহারকারীর ব্যালেন্সে যোগ হয়েছে।'
     );
-
-  }
-
-
-  function renderRechargeRequests() {
-
-    const user = getCurrentAdmin();
-
-    const body =
-      document.getElementById('recharge_request_list');
-
-    const myBody =
-      document.getElementById('my_recharge_list');
-
-
-    const requests = getRechargeRequests();
-
-
-    if (myBody) {
-
-      myBody.innerHTML = '';
-
-
-      const mine = user
-        ? requests.filter(function(item) {
-            return item.userKey === getUserKey(user);
-          })
-        : [];
-
-
-      if (!mine.length) {
-
-        myBody.innerHTML =
-          '<tr><td colspan="4">কোনো রিচার্জ রেকর্ড নেই</td></tr>';
-
-      } else {
-
-        mine.slice().reverse().forEach(function(item) {
-
-          let statusText = 'অপেক্ষমাণ';
-          let statusClass = 'status-pending';
-
-          if (item.status === 'approved') {
-            statusText = 'অনুমোদিত';
-            statusClass = 'status-approved';
-          }
-
-          if (item.status === 'rejected') {
-            statusText = 'বাতিল';
-            statusClass = 'status-rejected';
-          }
-
-
-          const tr = document.createElement('tr');
-
-          tr.innerHTML = `
-            <td>${escapeHtml(item.createdAt)}</td>
-            <td>৳ ${formatMoney(item.amount)}</td>
-            <td>${escapeHtml(item.txn)}</td>
-            <td class="${statusClass}">
-              ${statusText}
-            </td>
-          `;
-
-          myBody.appendChild(tr);
-
-        });
-
-      }
-
-    }
-
-
-    if (!body) {
-      return;
-    }
-
-
-    if (!user || user.type !== 'master') {
-      return;
-    }
-
-
-    body.innerHTML = '';
-
-
-    if (!requests.length) {
-
-      body.innerHTML =
-        '<tr><td colspan="6">কোনো রিচার্জ রিকোয়েস্ট নেই</td></tr>';
-
-      return;
-
-    }
-
-
-    requests.slice().reverse().forEach(function(item) {
-
-      let statusText = 'অপেক্ষমাণ';
-      let statusClass = 'status-pending';
-
-      if (item.status === 'approved') {
-        statusText = 'অনুমোদিত';
-        statusClass = 'status-approved';
-      }
-
-      if (item.status === 'rejected') {
-        statusText = 'বাতিল';
-        statusClass = 'status-rejected';
-      }
-
-
-      let actions = '-';
-
-
-      if (item.status === 'pending') {
-
-        actions = `
-          <button
-            type="button"
-            class="btn-save"
-            onclick="approveRecharge('${escapeJs(item.id)}')">
-            অনুমোদন
-          </button>
-
-          <button
-            type="button"
-            class="btn-delete"
-            onclick="rejectRecharge('${escapeJs(item.id)}')">
-            বাতিল
-          </button>
-        `;
-
-      }
-
-
-      const tr = document.createElement('tr');
-
-      tr.innerHTML = `
-        <td>${escapeHtml(item.createdAt)}</td>
-        <td>${escapeHtml(item.username)}</td>
-        <td>৳ ${formatMoney(item.amount)}</td>
-        <td>${escapeHtml(item.txn)}</td>
-        <td class="${statusClass}">
-          ${statusText}
-        </td>
-        <td>${actions}</td>
-      `;
-
-      body.appendChild(tr);
-
-    });
-
-  }
-
-
-  function approveRecharge(id) {
-
-    const user = getCurrentAdmin();
-
-    if (!user || user.type !== 'master') {
-
-      alert(
-        'শুধুমাত্র Master Admin অনুমোদন করতে পারবেন।'
-      );
-
-      return;
-
-    }
-
-
-    const requests = getRechargeRequests();
-
-    const item = requests.find(function(x) {
-      return x.id === id;
-    });
-
-
-    if (!item) {
-      return;
-    }
-
-
-    if (item.status !== 'pending') {
-
-      alert('এই রিকোয়েস্ট ইতোমধ্যে প্রক্রিয়া করা হয়েছে।');
-
-      return;
-
-    }
-
-
-    if (!confirm(
-      '৳' +
-      formatMoney(item.amount) +
-      ' রিচার্জ অনুমোদন করবেন?'
-    )) {
-
-      return;
-
-    }
-
-
-    const wallets = getWallets();
-
-    wallets[item.userKey] =
-      Number(wallets[item.userKey] || 0) +
-      Number(item.amount || 0);
-
-    saveWallets(wallets);
-
-
-    item.status = 'approved';
-
-    item.approvedAt = nowBanglaDate();
-
-    item.approvedBy = user.username;
-
-
-    saveRechargeRequests(requests);
-
-
-    renderRechargeRequests();
-    loadWallet();
-
-
-    alert('রিচার্জ অনুমোদন করা হয়েছে।');
 
   }
 
 
   function rejectRecharge(id) {
 
-    const user = getCurrentAdmin();
+    var user =
+      getCurrentUser();
 
-    if (!user || user.type !== 'master') {
+
+    if (
+      !user ||
+      user.role !== 'master'
+    ) {
 
       alert(
-        'শুধুমাত্র Master Admin বাতিল করতে পারবেন।'
+        'শুধু মাস্টার এডমিন আবেদন বাতিল করতে পারবেন।'
       );
 
       return;
@@ -1946,75 +5122,75 @@
     }
 
 
-    const requests = getRechargeRequests();
-
-    const item = requests.find(function(x) {
-      return x.id === id;
-    });
+    var list =
+      getRechargeRequests();
 
 
-    if (!item) {
-      return;
-    }
+    var req =
+      list.find(function(r) {
+
+        return r.id === id;
+
+      });
 
 
-    if (item.status !== 'pending') {
-
-      alert('এই রিকোয়েস্ট ইতোমধ্যে প্রক্রিয়া করা হয়েছে.');
-
-      return;
-
-    }
-
-
-    if (!confirm(
-      'এই রিচার্জ রিকোয়েস্ট বাতিল করবেন?'
-    )) {
+    if (
+      !req ||
+      req.status !== 'pending'
+    ) {
 
       return;
 
     }
 
 
-    item.status = 'rejected';
-
-    item.rejectedAt = nowBanglaDate();
-
-    item.rejectedBy = user.username;
+    req.status =
+      'rejected';
 
 
-    saveRechargeRequests(requests);
+    req.rejectedAt =
+      nowBanglaDate();
+
+
+    req.rejectedBy =
+      user.username;
+
+
+    saveRechargeRequests(
+      list
+    );
+
 
     renderRechargeRequests();
+
+
+    alert(
+      'রিচার্জ আবেদন বাতিল করা হয়েছে।'
+    );
 
   }
 
 
   function loadWallet() {
 
-    const user = getCurrentAdmin();
-
-    const balanceElement =
-      document.getElementById('wallet_balance');
+    var user =
+      getCurrentUser();
 
 
-    if (!balanceElement) {
-      return;
+    var el =
+      document.getElementById(
+        'wallet_balance'
+      );
+
+
+    if (el) {
+
+      el.textContent =
+        formatMoney(
+          getWalletBalance(user)
+        );
+
     }
-
-
-    if (!user) {
-
-      balanceElement.textContent = '৳ ০';
-
-      return;
-
-    }
-
-
-    balanceElement.textContent =
-      '৳ ' +
-      formatMoney(getWalletBalance(user));
 
 
     renderRechargeRequests();
@@ -2022,74 +5198,60 @@
   }
 
 
-  /* ==========================================
-     PAID PRINT
-  ========================================== */
-
   function paidPrintCurrent() {
 
-    const editKey =
-      document.getElementById('edit_key').value;
+    var user =
+      getCurrentUser();
 
-
-    if (editKey) {
-
-      payAndPrint(editKey);
-
-      return;
-
-    }
-
-
-    const user = getCurrentAdmin();
 
     if (!user) {
 
-      alert('প্রথমে লগইন করুন।');
+      alert(
+        'অনুগ্রহ করে আগে লগইন করুন।'
+      );
 
       return;
 
     }
 
 
-    const key = saveKhatian(true);
+    var khatianNo =
+      document
+        .getElementById(
+          'in_khatian'
+        )
+        .value
+        .trim();
 
 
-    if (key) {
+    if (!khatianNo) {
 
-      payAndPrint(key);
+      alert(
+        'প্রথমে খতিয়ান নির্বাচন/তৈরি করুন।'
+      );
+
+      return;
 
     }
+
+
+    payAndPrint(
+      khatianNo
+    );
 
   }
 
 
   function payAndPrint(key) {
 
-    const user = getCurrentAdmin();
+    var user =
+      getCurrentUser();
 
 
     if (!user) {
 
-      alert('প্রথমে লগইন করুন।');
-
-      return;
-
-    }
-
-
-    const balance =
-      getWalletBalance(user);
-
-
-    if (balance < DOWNLOAD_PRICE) {
-
       alert(
-        'আপনার ব্যালেন্স পর্যাপ্ত নয়।\n\n' +
-        'প্রতি খতিয়ান ডাউনলোডের মূল্য ৳' +
-        DOWNLOAD_PRICE +
-        '।\n\n' +
-        'দয়া করে আগে রিচার্জ করুন।'
+        'অনুগ্রহ করে আগে লগইন করুন।'
       );
 
       return;
@@ -2097,689 +5259,1583 @@
     }
 
 
-    const confirmed = confirm(
-      'এই খতিয়ান ডাউনলোড করতে ৳' +
-      DOWNLOAD_PRICE +
-      ' কাটা হবে।\n\n' +
-      'আপনি কি এগিয়ে যেতে চান?'
-    );
+    var balance =
+      getWalletBalance(user);
 
 
-    if (!confirmed) {
+    if (
+      balance <
+      DOWNLOAD_PRICE
+    ) {
+
+      alert(
+        'এই খতিয়ান ডাউনলোড করতে ১০ টাকা প্রয়োজন। আপনার বর্তমান ব্যালেন্স ' +
+        formatMoney(balance) +
+        '। অনুগ্রহ করে রিচার্জ করুন।'
+      );
+
+
+      var walletBox =
+        document.querySelector(
+          '.wallet-box'
+        );
+
+
+      if (walletBox) {
+
+        walletBox.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
+      }
+
+
       return;
+
     }
-
-
-    setWalletBalance(
-      user,
-      balance - DOWNLOAD_PRICE
-    );
-
-
-    loadWallet();
 
 
     editKhatian(key);
 
 
-    setTimeout(function() {
-
-      window.print();
-
-    }, 300);
-
-  }
+    setWalletBalance(
+      user,
+      balance -
+      DOWNLOAD_PRICE
+    );
 
 
-  /* ==========================================
-     DAG FUNCTIONS
-  ========================================== */
-
-  function addDagRow(data) {
-
-    const body =
-      document.getElementById('dag_input_body');
+    loadWallet();
 
 
-    const index =
-      body.children.length + 1;
+    setTimeout(
+      function() {
 
+        window.print();
 
-    const row =
-      document.createElement('tr');
-
-
-    const dag =
-      data || {};
-
-
-    row.innerHTML = `
-
-      <td class="serial">${index}</td>
-
-      <td>
-        <input
-          type="text"
-          class="dag-no"
-          value="${escapeHtml(dag.dagNo || '')}"
-          style="width:100%;padding:5px;">
-      </td>
-
-      <td>
-        <input
-          type="text"
-          class="dag-class"
-          value="${escapeHtml(dag.landClass || '')}"
-          style="width:100%;padding:5px;">
-      </td>
-
-      <td>
-        <input
-          type="text"
-          class="dag-total"
-          value="${escapeHtml(dag.dagTotal || '')}"
-          style="width:100%;padding:5px;">
-      </td>
-
-      <td>
-        <input
-          type="text"
-          class="dag-khatian"
-          value="${escapeHtml(dag.khatianLand || '')}"
-          style="width:100%;padding:5px;">
-      </td>
-
-      <td>
-        <input
-          type="text"
-          class="dag-percent"
-          value="${escapeHtml(dag.percent || '')}"
-          style="width:100%;padding:5px;">
-      </td>
-
-      <td class="no-print">
-        <button
-          type="button"
-          class="btn-delete"
-          onclick="removeDagRow(this)">
-          মুছুন
-        </button>
-      </td>
-
-    `;
-
-
-    body.appendChild(row);
-
-    renumberDagRows();
+      },
+      300
+    );
 
   }
-
-
-  function removeDagRow(button) {
-
-    const row =
-      button.closest('tr');
-
-    if (row) {
-      row.remove();
+        tbody.innerHTML = '<tr><td colspan="5">এখনও কোনো সাব-এডমিন যোগ করা হয়নি।</td></tr>';
+      return;
     }
 
-    renumberDagRows();
+    list.forEach(function(item) {
 
+      var permissionText =
+        item.permission === 'full'
+          ? 'খতিয়ান তৈরি / এডিট / প্রিন্ট'
+          : item.permission === 'create'
+            ? 'খতিয়ান তৈরি / প্রিন্ট'
+            : 'শুধু দেখা / প্রিন্ট';
+
+      var tr = document.createElement('tr');
+
+      tr.innerHTML =
+        '<td>' + escapeHtml(item.name) + '</td>' +
+        '<td><b>' + escapeHtml(item.username) + '</b></td>' +
+        '<td>' + permissionText + '</td>' +
+        '<td>' + (item.active !== false ? 'সক্রিয়' : 'বন্ধ') + '</td>' +
+        '<td>' +
+          '<button class="btn-sm btn-edit" onclick="toggleSubAdmin(' + item.id + ')">' +
+            (item.active !== false ? 'বন্ধ' : 'চালু') +
+          '</button>' +
+          '<button class="btn-sm btn-del" onclick="deleteSubAdmin(' + item.id + ')">মুছুন</button>' +
+        '</td>';
+
+      tbody.appendChild(tr);
+    });
   }
 
+  function toggleSubAdmin(id) {
 
-  function renumberDagRows() {
+    var list = getSubAdmins();
+    var item = list.find(function(a) { return a.id === id; });
+    if (!item) return;
 
-    const rows =
-      document.querySelectorAll(
-        '#dag_input_body tr'
-      );
+    item.active = item.active === false;
+    saveSubAdmins(list);
+    renderSubAdminList();
+  }
 
+  function deleteSubAdmin(id) {
 
-    rows.forEach(function(row, index) {
+    if (!confirm('এই সাব-এডমিনকে মুছে ফেলবেন?')) return;
 
-      const cell =
-        row.querySelector('.serial');
-
-      if (cell) {
-        cell.textContent = index + 1;
-      }
-
+    var list = getSubAdmins().filter(function(a) {
+      return a.id !== id;
     });
 
+    saveSubAdmins(list);
+    renderSubAdminList();
   }
-
-
-  function collectDagRows() {
-
-    const rows =
-      document.querySelectorAll(
-        '#dag_input_body tr'
-      );
-
-
-    const result = [];
-
-
-    rows.forEach(function(row) {
-
-      result.push({
-
-        dagNo:
-          row.querySelector('.dag-no')?.value.trim() || '',
-
-        landClass:
-          row.querySelector('.dag-class')?.value.trim() || '',
-
-        dagTotal:
-          row.querySelector('.dag-total')?.value.trim() || '',
-
-        khatianLand:
-          row.querySelector('.dag-khatian')?.value.trim() || '',
-
-        percent:
-          row.querySelector('.dag-percent')?.value.trim() || ''
-
-      });
-
-    });
-
-
-    return result;
-
-  }
-
-
-  /* ==========================================
-     SAVE KHATIAN
-  ========================================== */
-
-  function saveKhatian(silent) {
-
-    const user = getCurrentAdmin();
-
-
-    if (!user) {
-
-      alert('প্রথমে লগইন করুন.');
-
-      return null;
-
-    }
-
-
-    if (user.permission === 'view') {
-
-      alert(
-        'আপনার শুধুমাত্র দেখার অনুমতি রয়েছে।'
-      );
-
-      return null;
-
-    }
-
-
-    const khatianNo =
-      document.getElementById('khatian_no').value.trim();
-
-
-    if (!khatianNo) {
-
-      alert('খতিয়ান নং দিন।');
-
-      return null;
-
-    }
-
-
-    const data = {
-
-      district:
-        document.getElementById('district').value.trim(),
-
-      upazila:
-        document.getElementById('upazila').value.trim(),
-
-      mouza:
-        document.getElementById('mouza').value.trim(),
-
-      jl_no:
-        document.getElementById('jl_no').value.trim(),
-
-      khatian_no:
-        khatianNo,
-
-      khatian_type:
-        document.getElementById('khatian_type').value.trim(),
-
-      sheet_no:
-        document.getElementById('sheet_no').value.trim(),
-
-      prepare_date:
-        document.getElementById('prepare_date').value.trim(),
-
-      owners:
-        document.getElementById('owners').value.trim(),
-
-      father_husband:
-        document.getElementById('father_husband').value.trim(),
-
-      address:
-        document.getElementById('address').value.trim(),
-
-      nid:
-        document.getElementById('nid').value.trim(),
-
-      total_land:
-        document.getElementById('total_land').value.trim(),
-
-      note:
-        document.getElementById('note').value.trim(),
-
-      dags:
-        collectDagRows(),
-
-      updatedAt:
-        new Date().toISOString(),
-
-      createdBy:
-        user.username
-
-    };
-
-
-    const all =
-      getAllKhatians();
-
-
-    let key =
-      document.getElementById('edit_key').value;
-
-
-    if (!key) {
-
-      key =
-        'KH-' +
-        Date.now() +
-        '-' +
-        Math.random().toString(36).slice(2, 7);
-
-    }
-
-
-    data.key = key;
-
-
-    all[key] = data;
-
-
-    saveAllKhatians(all);
-
-
-    document.getElementById('edit_key').value = key;
-
-
-    currentEditKey = key;
-
-
-    renderKhatianList();
-
-
-    if (!silent) {
-
-      alert('খতিয়ান সফলভাবে সংরক্ষণ হয়েছে।');
-
-    }
-
-
-    return key;
-
-  }
-
-
-  /* ==========================================
-     EDIT KHATIAN
-  ========================================== */
-
-  function editKhatian(key) {
-
-    const all =
-      getAllKhatians();
-
-    const data =
-      all[key];
-
-
-    if (!data) {
-
-      alert('খতিয়ানের তথ্য পাওয়া যায়নি।');
-
-      return;
-
-    }
-
-
-    document.getElementById('edit_key').value =
-      data.key || key;
-
-    document.getElementById('district').value =
-      data.district || '';
-
-    document.getElementById('upazila').value =
-      data.upazila || '';
-
-    document.getElementById('mouza').value =
-      data.mouza || '';
-
-    document.getElementById('jl_no').value =
-      data.jl_no || '';
-
-    document.getElementById('khatian_no').value =
-      data.khatian_no || '';
-
-    document.getElementById('khatian_type').value =
-      data.khatian_type || '';
-
-    document.getElementById('sheet_no').value =
-      data.sheet_no || '';
-
-    document.getElementById('prepare_date').value =
-      data.prepare_date || '';
-
-    document.getElementById('owners').value =
-      data.owners || '';
-
-    document.getElementById('father_husband').value =
-      data.father_husband || '';
-
-    document.getElementById('address').value =
-      data.address || '';
-
-    document.getElementById('nid').value =
-      data.nid || '';
-
-    document.getElementById('total_land').value =
-      data.total_land || '';
-
-    document.getElementById('note').value =
-      data.note || '';
-
-
-    const body =
-      document.getElementById('dag_input_body');
-
-    body.innerHTML = '';
-
-
-    if (data.dags && data.dags.length) {
-
-      data.dags.forEach(function(dag) {
-
-        addDagRow(dag);
-
-      });
-
-    } else {
-
-      addDagRow();
-
-    }
-
-
-    currentEditKey = key;
-
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-
-  }
-
-
-  /* ==========================================
-     RESET
-  ========================================== */
-
-  function resetKhatianForm() {
-
-    const form =
-      document.getElementById('khatianForm');
-
-    form.reset();
-
-
-    document.getElementById('edit_key').value = '';
-
-    currentEditKey = null;
-
-
-    const body =
-      document.getElementById('dag_input_body');
-
-    body.innerHTML = '';
-
-    addDagRow();
-
-  }
-
-
-  /* ==========================================
-     DELETE KHATIAN
-  ========================================== */
-
-  function deleteKhatian(key) {
-
-    const user = getCurrentAdmin();
-
-
-    if (!user || user.type !== 'master') {
-
-      alert(
-        'শুধুমাত্র Master Admin খতিয়ান মুছতে পারবেন।'
-      );
-
-      return;
-
-    }
-
-
-    if (!confirm(
-      'এই খতিয়ানটি মুছে ফেলতে চান?'
-    )) {
-
-      return;
-
-    }
-
-
-    const all =
-      getAllKhatians();
-
-
-    delete all[key];
-
-
-    saveAllKhatians(all);
-
-    renderKhatianList();
-
-  }
-
-
-  /* ==========================================
-     KHATIAN LIST
-  ========================================== */
-
-  function renderKhatianList() {
-
-    const body =
-      document.getElementById('khatian_list');
-
-
-    if (!body) {
-      return;
-    }
-
-
-    const all =
-      getAllKhatians();
-
-
-    const keys =
-      Object.keys(all);
-
-
-    body.innerHTML = '';
-
-
-    if (!keys.length) {
-
-      body.innerHTML =
-        '<tr><td colspan="7">কোনো খতিয়ান সংরক্ষিত নেই</td></tr>';
-
-      return;
-
-    }
-
-
-    keys.reverse().forEach(function(key, index) {
-
-      const data =
-        all[key];
-
-
-      const tr =
-        document.createElement('tr');
-
-
-      let actions = `
-
-        <button
-          type="button"
-          class="btn-edit"
-          onclick="editKhatian('${escapeJs(key)}')">
-          সম্পাদনা
-        </button>
-
-        <button
-          type="button"
-          class="btn-print"
-          onclick="payAndPrint('${escapeJs(key)}')">
-          ডাউনলোড ৳১০
-        </button>
-
-      `;
-
-
-      if (getCurrentAdmin()?.type === 'master') {
-
-        actions += `
-
-          <button
-            type="button"
-            class="btn-delete"
-            onclick="deleteKhatian('${escapeJs(key)}')">
-            মুছুন
-          </button>
-
-        `;
-
-      }
-
-
-      tr.innerHTML = `
-
-        <td>${index + 1}</td>
-
-        <td>
-          ${escapeHtml(data.khatian_no || '')}
-        </td>
-
-        <td>
-          ${escapeHtml(data.mouza || '')}
-        </td>
-
-        <td>
-          ${escapeHtml(data.district || '')}
-        </td>
-
-        <td>
-          ${escapeHtml(data.owners || '')}
-        </td>
-
-        <td>
-          ${escapeHtml(data.total_land || '')}
-        </td>
-
-        <td class="no-print">
-          ${actions}
-        </td>
-
-      `;
-
-
-      body.appendChild(tr);
-
-    });
-
-  }
-
-
-  /* ==========================================
-     ESCAPE
-  ========================================== */
 
   function escapeHtml(value) {
-
-    return String(value ?? '')
+    return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  }
+
+
+  /* ========================================================
+     WALLET / RECHARGE SYSTEM
+  ======================================================== */
+
+  var DOWNLOAD_PRICE = 10;
+  var BKASH_NUMBER = '01833013604';
+
+  function getWallets() {
+    return JSON.parse(localStorage.getItem('user_wallets') || '{}');
+  }
+
+  function saveWallets(data) {
+    localStorage.setItem('user_wallets', JSON.stringify(data));
+  }
+
+  function getRechargeRequests() {
+    return JSON.parse(localStorage.getItem('recharge_requests') || '[]');
+  }
+
+  function saveRechargeRequests(list) {
+    localStorage.setItem('recharge_requests', JSON.stringify(list));
+  }
+
+  function getUserKey(user) {
+    return user.role === 'master' ? 'master:admin' : 'subadmin:' + user.username;
+  }
+
+  function getWalletBalance(user) {
+    if (!user) return 0;
+    var wallets = getWallets();
+    return Number(wallets[getUserKey(user)] || 0);
+  }
+
+  function setWalletBalance(user, amount) {
+    if (!user) return;
+    var wallets = getWallets();
+    wallets[getUserKey(user)] = Math.max(0, Number(amount) || 0);
+    saveWallets(wallets);
+  }
+
+  function formatMoney(n) {
+    return '৳ ' + Number(n || 0).toLocaleString('bn-BD');
+  }
+
+  function nowBanglaDate() {
+    return new Date().toLocaleString('bn-BD');
+  }
+
+  function submitRechargeRequest() {
+    var user = getCurrentUser();
+    if (!user) { alert('অনুগ্রহ করে আগে লগইন করুন।'); return; }
+
+    var amount = Number(document.getElementById('recharge_amount').value);
+    var txn = document.getElementById('recharge_txn').value.trim();
+
+    if (!amount || amount < 10) {
+      alert('কমপক্ষে ১০ টাকা রিচার্জ আবেদন করতে হবে।');
+      return;
+    }
+    if (!txn) {
+      alert('bKash TXN নম্বর দিন।');
+      return;
+    }
+
+    var list = getRechargeRequests();
+    var duplicate = list.find(function(r) {
+      return String(r.txn).toLowerCase() === txn.toLowerCase() && r.status !== 'rejected';
+    });
+    if (duplicate) {
+      alert('এই TXN নম্বর দিয়ে আগে আবেদন করা হয়েছে।');
+      return;
+    }
+
+    list.push({
+      id: Date.now(),
+      userKey: getUserKey(user),
+      username: user.username,
+      name: user.name || user.username,
+      amount: amount,
+      txn: txn,
+      date: nowBanglaDate(),
+      status: 'pending'
+    });
+
+    saveRechargeRequests(list);
+    document.getElementById('recharge_amount').value = '';
+    document.getElementById('recharge_txn').value = '';
+    renderRechargeRequests();
+    loadWallet();
+    alert('রিচার্জ আবেদন Submit হয়েছে। এডমিন অনুমোদনের পর টাকা ব্যালেন্সে যোগ হবে।');
+  }
+
+  function renderRechargeRequests() {
+    var user = getCurrentUser();
+    var masterBody = document.getElementById('recharge_request_list');
+    var myBody = document.getElementById('my_recharge_list');
+    var list = getRechargeRequests();
+
+    if (masterBody) {
+      masterBody.innerHTML = '';
+      if (!user || user.role !== 'master') {
+        masterBody.innerHTML = '<tr><td colspan="6">শুধু মাস্টার এডমিন দেখতে পারবেন।</td></tr>';
+      } else if (!list.length) {
+        masterBody.innerHTML = '<tr><td colspan="6">কোনো রিচার্জ আবেদন নেই।</td></tr>';
+      } else {
+        list.slice().reverse().forEach(function(r) {
+          var statusText = r.status === 'approved' ? 'অনুমোদিত' : r.status === 'rejected' ? 'বাতিল' : 'অপেক্ষমাণ';
+          var statusClass = r.status === 'approved' ? 'status-approved' : r.status === 'rejected' ? 'status-rejected' : 'status-pending';
+          var action = r.status === 'pending'
+            ? '<button class="btn-sm btn-save" onclick="approveRecharge(' + r.id + ')">অনুমোদন</button>' +
+              '<button class="btn-sm btn-del" onclick="rejectRecharge(' + r.id + ')">বাতিল</button>'
+            : '—';
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + escapeHtml(r.name) + '<br><small>' + escapeHtml(r.username) + '</small></td>' +
+                         '<td>' + escapeHtml(r.date) + '</td>' +
+                         '<td>' + formatMoney(r.amount) + '</td>' +
+                         '<td><b>' + escapeHtml(r.txn) + '</b></td>' +
+                         '<td class="' + statusClass + '">' + statusText + '</td>' +
+                         '<td>' + action + '</td>';
+          masterBody.appendChild(tr);
+        });
+      }
+    }
+
+    if (myBody) {
+      myBody.innerHTML = '';
+      if (!user) {
+        myBody.innerHTML = '<tr><td colspan="4">লগইন করুন।</td></tr>';
+      } else {
+        var mine = list.filter(function(r) { return r.userKey === getUserKey(user); }).slice().reverse();
+        if (!mine.length) {
+          myBody.innerHTML = '<tr><td colspan="4">এখনও কোনো রিচার্জ আবেদন করা হয়নি।</td></tr>';
+        } else {
+          mine.forEach(function(r) {
+            var statusText = r.status === 'approved' ? 'অনুমোদিত' : r.status === 'rejected' ? 'বাতিল' : 'অপেক্ষমাণ';
+            var statusClass = r.status === 'approved' ? 'status-approved' : r.status === 'rejected' ? 'status-rejected' : 'status-pending';
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + escapeHtml(r.date) + '</td>' +
+                           '<td>' + formatMoney(r.amount) + '</td>' +
+                           '<td>' + escapeHtml(r.txn) + '</td>' +
+                           '<td class="' + statusClass + '">' + statusText + '</td>';
+            myBody.appendChild(tr);
+          });
+        }
+      }
+    }
+  }
+
+  function approveRecharge(id) {
+    var user = getCurrentUser();
+    if (!user || user.role !== 'master') { alert('শুধু মাস্টার এডমিন অনুমোদন দিতে পারবেন।'); return; }
+
+    var list = getRechargeRequests();
+    var req = list.find(function(r) { return r.id === id; });
+    if (!req || req.status !== 'pending') return;
+
+    var wallets = getWallets();
+    wallets[req.userKey] = Number(wallets[req.userKey] || 0) + Number(req.amount || 0);
+    saveWallets(wallets);
+
+    req.status = 'approved';
+    req.approvedAt = nowBanglaDate();
+    req.approvedBy = user.username;
+    saveRechargeRequests(list);
+
+    renderRechargeRequests();
+    loadWallet();
+    alert('রিচার্জ অনুমোদন হয়েছে। ' + formatMoney(req.amount) + ' ব্যবহারকারীর ব্যালেন্সে যোগ হয়েছে।');
+  }
+
+  function rejectRecharge(id) {
+    var user = getCurrentUser();
+    if (!user || user.role !== 'master') { alert('শুধু মাস্টার এডমিন আবেদন বাতিল করতে পারবেন।'); return; }
+    var list = getRechargeRequests();
+    var req = list.find(function(r) { return r.id === id; });
+    if (!req || req.status !== 'pending') return;
+    req.status = 'rejected';
+    req.rejectedAt = nowBanglaDate();
+    req.rejectedBy = user.username;
+    saveRechargeRequests(list);
+    renderRechargeRequests();
+    alert('রিচার্জ আবেদন বাতিল করা হয়েছে।');
+  }
+
+  function loadWallet() {
+    var user = getCurrentUser();
+    var el = document.getElementById('wallet_balance');
+    if (el) el.textContent = formatMoney(getWalletBalance(user));
+    renderRechargeRequests();
+  }
+
+  function paidPrintCurrent() {
+    var user = getCurrentUser();
+    if (!user) { alert('অনুগ্রহ করে আগে লগইন করুন।'); return; }
+    var khatianNo = document.getElementById('in_khatian').value.trim();
+    if (!khatianNo) { alert('প্রথমে খতিয়ান নির্বাচন/তৈরি করুন।'); return; }
+    payAndPrint(khatianNo);
+  }
+
+  function payAndPrint(key) {
+    var user = getCurrentUser();
+    if (!user) { alert('অনুগ্রহ করে আগে লগইন করুন।'); return; }
+
+    var balance = getWalletBalance(user);
+    if (balance < DOWNLOAD_PRICE) {
+      alert('এই খতিয়ান ডাউনলোড করতে ১০ টাকা প্রয়োজন। আপনার বর্তমান ব্যালেন্স ' + formatMoney(balance) + '। অনুগ্রহ করে রিচার্জ করুন।');
+      document.querySelector('.wallet-box')?.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+
+    editKhatian(key);
+    setWalletBalance(user, balance - DOWNLOAD_PRICE);
+    loadWallet();
+
+    setTimeout(function() {
+      window.print();
+    }, 300);
+  }
+
+  /* ========================================================
+     DEFAULT DAG
+  ======================================================== */
+
+  var defaultDags = [
+
+    {
+      dag: "৪১৫০",
+      type: "অকৃষি",
+      class_name: "বাড়ী",
+      total_land: "৫৭০০",
+      part: "০.১৮৮",
+      my_part_land: "১০০০",
+      remark: ""
+    }
+
+  ];
+
+
+  /* ========================================================
+     ADD DAG
+  ======================================================== */
+
+  function addDagRow(data) {
+
+    data = data || {
+
+      dag: "",
+      type: "অকৃষি",
+      class_name: "",
+      total_land: "",
+      part: "",
+      my_part_land: "",
+      remark: ""
+
+    };
+
+
+    var container =
+      document.getElementById(
+        'dag_container'
+      );
+
+
+    var row =
+      document.createElement('div');
+
+
+    row.className = 'dag-row';
+
+
+    row.innerHTML = `
+
+      <input
+        type="text"
+        placeholder="দাগ নং"
+        class="dag-no"
+        value="${data.dag}"
+      >
+
+      <select class="dag-type">
+
+        <option
+          value="অকৃষি"
+          ${data.type === 'অকৃষি'
+            ? 'selected'
+            : ''}
+        >
+          অকৃষি
+        </option>
+
+        <option
+          value="কৃষি"
+          ${data.type === 'কৃষি'
+            ? 'selected'
+            : ''}
+        >
+          কৃষি
+        </option>
+
+      </select>
+
+      <input
+        type="text"
+        placeholder="শ্রেণী"
+        class="dag-class"
+        value="${data.class_name}"
+      >
+
+      <input
+        type="text"
+        placeholder="দাগের মোট জমি"
+        class="dag-total"
+        value="${data.total_land}"
+      >
+
+      <input
+        type="text"
+        placeholder="খতিয়ান অংশ"
+        class="dag-part"
+        value="${data.part}"
+      >
+
+      <input
+        type="text"
+        placeholder="অংশ জমি"
+        class="dag-land"
+        value="${data.my_part_land}"
+      >
+
+      <button
+        type="button"
+        class="btn-sm btn-del"
+        onclick="this.parentElement.remove()"
+      >
+        X
+      </button>
+
+    `;
+
+
+    container.appendChild(row);
 
   }
 
 
-  function escapeJs(value) {
+  function initDefaultDags() {
 
-    return String(value ?? '')
-      .replace(/\\/g, '\\\\')
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r');
+    document.getElementById(
+      'dag_container'
+    ).innerHTML = '';
+
+
+    defaultDags.forEach(
+      function(d) {
+
+        addDagRow(d);
+
+      }
+    );
 
   }
 
 
-  /* ==========================================
-     INIT
-  ========================================== */
+  /* ========================================================
+     GET DAGS
+  ======================================================== */
 
-  window.onload = function() {
+  function getDagsFromForm() {
+
+    var rows =
+      document.querySelectorAll(
+        '.dag-row'
+      );
+
+
+    var dags = [];
+
+
+    rows.forEach(
+      function(r) {
+
+        dags.push({
+
+          dag:
+            r.querySelector(
+              '.dag-no'
+            ).value,
+
+          type:
+            r.querySelector(
+              '.dag-type'
+            ).value,
+
+          class_name:
+            r.querySelector(
+              '.dag-class'
+            ).value,
+
+          total_land:
+            r.querySelector(
+              '.dag-total'
+            ).value,
+
+          part:
+            r.querySelector(
+              '.dag-part'
+            ).value,
+
+          my_part_land:
+            r.querySelector(
+              '.dag-land'
+            ).value,
+
+          remark: ""
+
+        });
+
+      }
+    );
+
+
+    return dags;
+
+  }
+
+
+  /* ========================================================
+     RENDER PREVIEW
+  ======================================================== */
+
+  function renderPreview() {
+
+    var khatianNo =
+      document.getElementById(
+        'in_khatian'
+      ).value;
+
+
+    var division =
+      document.getElementById(
+        'in_division'
+      ).value;
+
+
+    var district =
+      document.getElementById(
+        'in_district'
+      ).value;
+
+
+    var upazila =
+      document.getElementById(
+        'in_upazila'
+      ).value;
+
+
+    var mouza =
+      document.getElementById(
+        'in_mouza'
+      ).value;
+
+
+    var owner =
+      document.getElementById(
+        'in_owner'
+      ).value;
+
+
+    var dateStr =
+      document.getElementById(
+        'in_date'
+      ).value;
+
+
+    /* META */
+
+    document.getElementById(
+      'out_division'
+    ).textContent = division;
+
+
+    document.getElementById(
+      'out_district'
+    ).textContent = district;
+
+
+    document.getElementById(
+      'out_upazila'
+    ).textContent = upazila;
+
+
+    document.getElementById(
+      'out_mouza'
+    ).textContent = mouza;
+
+
+    document.getElementById(
+      'out_jl'
+    ).textContent =
+      document.getElementById(
+        'in_jl'
+      ).value;
+
+
+    document.getElementById(
+      'out_khatian'
+    ).textContent = khatianNo;
+
+
+    document.getElementById(
+      'out_date'
+    ).textContent = dateStr;
+
+
+    /* LOGO / SEAL */
+
+    var logoSrc =
+      document.getElementById(
+        'in_seal_logo'
+      ).value.trim();
+
 
     if (
-      !document.querySelector(
-        '#dag_input_body tr'
-      )
+      !logoSrc ||
+      logoSrc === 'DEFAULT_LOGO'
     ) {
 
-      addDagRow();
+      document.getElementById(
+        'out_seal_logo'
+      ).src = embeddedLogo;
+
+    } else {
+
+      document.getElementById(
+        'out_seal_logo'
+      ).src = logoSrc;
 
     }
 
 
-    checkAuth();
+    /* QR */
 
-    loadWallet();
+    var customQrUrl =
+      document.getElementById(
+        'in_qr_url'
+      ).value.trim();
 
-  };
+
+    var qrPayload =
+      customQrUrl ||
+      (
+        window.location.href.split('?')[0] +
+        '?verify=true&khatian=' +
+        encodeURIComponent(khatianNo)
+      );
+
+
+    document.getElementById(
+      'out_qr'
+    ).src =
+      'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' +
+      encodeURIComponent(qrPayload);
+
+
+    /* TABLE */
+
+    var dags =
+      getDagsFromForm();
+
+
+    var tbody =
+      document.getElementById(
+        'out_khatian_body'
+      );
+
+
+    tbody.innerHTML = '';
+
+
+    var ownerText =
+      owner.replace(
+        /\n/g,
+        '<br>'
+      );
+
+
+    var totalRows =
+      dags.length;
+
+
+    dags.forEach(
+      function(d, index) {
+
+        var tr =
+          document.createElement('tr');
+
+
+        tr.className =
+          'data-row';
+
+
+        var ownerTd = '';
+
+
+        if (index === 0) {
+
+          ownerTd = `
+
+            <td
+              class="text-left"
+              id="out_owner"
+              rowspan="${totalRows}"
+            >
+              <b>
+                ${ownerText}
+              </b>
+            </td>
+
+          `;
+
+        }
+
+
+        var krishiVal =
+          d.type === 'কৃষি'
+            ? d.class_name
+            : '';
+
+
+        var okrishiVal =
+          d.type === 'অকৃষি'
+            ? d.class_name
+            : '';
+
+
+        tr.innerHTML = `
+
+          ${ownerTd}
+
+          <td>
+            ${d.part || ''}
+          </td>
+
+          <td></td>
+
+          <td>
+            ${d.dag}
+          </td>
+
+          <td>
+            ${krishiVal}
+          </td>
+
+          <td>
+            ${okrishiVal}
+          </td>
+
+          <td></td>
+
+          <td>
+            ${d.total_land}
+          </td>
+
+          <td>
+            ${d.part}
+          </td>
+
+          <td>
+            ০
+          </td>
+
+          <td>
+            ${d.my_part_land}
+          </td>
+
+          <td>
+            ${d.remark || ''}
+          </td>
+
+        `;
+
+
+        tbody.appendChild(tr);
+
+      }
+    );
+
+
+    /* ======================================================
+       TOTAL FOOTER
+
+       মোট জমি → ৮(ক)
+       মোট শতাংশ → ৮(খ)
+
+       এখানে colspan="7" দেওয়া হয়েছে যাতে
+       ৮(ক) ও ৮(খ) ঠিক জায়গায় থাকে।
+    ====================================================== */
+
+    var footerTr =
+      document.createElement('tr');
+
+
+    footerTr.className =
+      'table-footer-row';
+
+
+    footerTr.innerHTML = `
+
+      <!-- মালিকের ঘর -->
+
+      <td
+        class="text-left"
+        style="
+          font-weight:normal;
+          font-size:11px;
+        "
+      >
+
+        ............ ধারামতে নোট বা পরিবর্তন মায়<br>
+
+        মকদ্দমা নং .............
+        এবং সন ...............
+
+      </td>
+
+
+      <!-- অংশ -->
+
+      <td>
+        ১.০০০
+      </td>
+
+
+      <!-- রাজস্ব থেকে
+           দাগের মধ্যে অংশ পর্যন্ত -->
+
+      <td colspan="7">
+        পরিবার পরিকল্পনা গ্রহণ করুন
+      </td>
+
+
+      <!-- ৮(ক) -->
+
+      <td>
+        মোট জমি:
+      </td>
+
+
+      <!-- ৮(খ)
+           শতাংশের মোট পরিমাণ -->
+
+      <td>
+        ${document.getElementById(
+          'in_my_land'
+        ).value}
+      </td>
+
+
+      <!-- ৯ নম্বর মন্তব্য -->
+
+      <td></td>
+
+    `;
+
+
+    tbody.appendChild(
+      footerTr
+    );
+
+  }
+
+
+  /* ========================================================
+     VERIFY MODE
+  ======================================================== */
+
+  function checkVerifyMode() {
+
+    var urlParams =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    if (
+      urlParams.get('verify') === 'true'
+    ) {
+
+      var khatianNo =
+        urlParams.get('khatian');
+
+
+      var savedKhatians =
+        JSON.parse(
+          localStorage.getItem(
+            'all_khatians'
+          ) || '{}'
+        );
+
+
+      var data =
+        savedKhatians[khatianNo];
+
+
+      document.getElementById(
+        'login_panel'
+      ).style.display = 'none';
+
+
+      document.getElementById(
+        'admin_panel'
+      ).style.display = 'none';
+
+
+      document.getElementById(
+        'document_view'
+      ).style.display = 'none';
+
+
+      document.getElementById(
+        'verification_view'
+      ).style.display = 'block';
+
+
+      if (data) {
+
+        document.getElementById(
+          'v_khatian'
+        ).textContent =
+          data.khatian || '';
+
+
+        document.getElementById(
+          'v_owner'
+        ).textContent =
+          data.owner || '';
+
+
+        document.getElementById(
+          'v_dag'
+        ).textContent =
+          (
+            data.dags &&
+            data.dags.length > 0
+          )
+            ? data.dags
+                .map(
+                  d => d.dag
+                )
+                .join(', ')
+            : '৪১৫০';
+
+
+        document.getElementById(
+          'v_survey'
+        ).textContent =
+          data.survey ||
+          'বি আর এস';
+
+
+        document.getElementById(
+          'v_mouza'
+        ).textContent =
+          data.mouza || '';
+
+
+        document.getElementById(
+          'v_upazila'
+        ).textContent =
+          data.upazila || '';
+
+
+        document.getElementById(
+          'v_district'
+        ).textContent =
+          data.district || '';
+
+
+        document.getElementById(
+          'v_division'
+        ).textContent =
+          data.division || '';
+
+
+        document.getElementById(
+          'v_date'
+        ).textContent =
+          data.date || '';
+
+      } else {
+
+        document.getElementById(
+          'v_khatian'
+        ).textContent =
+          khatianNo;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    return false;
+
+  }
+
+
+  /* ========================================================
+     SAVE KHATIAN
+  ======================================================== */
+
+  function saveKhatian() {
+
+    var currentUser = getCurrentUser();
+
+    if (!currentUser) {
+
+      alert('অনুগ্রহ করে আগে লগইন করুন।');
+
+      return;
+
+    }
+
+    if (
+      currentUser.role === 'subadmin' &&
+      currentUser.permission === 'view'
+    ) {
+
+      alert(
+        'আপনার অ্যাকাউন্টে খতিয়ান সংরক্ষণের অনুমতি নেই।'
+      );
+
+      return;
+
+    }
+          return;
+
+    }
+
+
+    var khatianData = {
+
+      division:
+        document.getElementById(
+          'in_division'
+        ).value,
+
+      district:
+        document.getElementById(
+          'in_district'
+        ).value,
+
+      upazila:
+        document.getElementById(
+          'in_upazila'
+        ).value,
+
+      mouza:
+        document.getElementById(
+          'in_mouza'
+        ).value,
+
+      survey:
+        document.getElementById(
+          'in_survey'
+        ).value,
+
+      jl:
+        document.getElementById(
+          'in_jl'
+        ).value,
+
+      khatian:
+        khatianNo,
+
+      owner:
+        document.getElementById(
+          'in_owner'
+        ).value,
+
+      my_land:
+        document.getElementById(
+          'in_my_land'
+        ).value,
+
+      date:
+        document.getElementById(
+          'in_date'
+        ).value,
+
+      seal_logo:
+        document.getElementById(
+          'in_seal_logo'
+        ).value,
+
+      qr_url:
+        document.getElementById(
+          'in_qr_url'
+        ).value,
+
+      dags:
+        getDagsFromForm()
+
+    };
+
+
+    var savedKhatians =
+      JSON.parse(
+        localStorage.getItem(
+          'all_khatians'
+        ) || '{}'
+      );
+
+
+    savedKhatians[khatianNo] =
+      khatianData;
+
+
+    localStorage.setItem(
+      'all_khatians',
+      JSON.stringify(
+        savedKhatians
+      )
+    );
+
+
+    alert(
+      'খতিয়ান নং ' +
+      khatianNo +
+      ' সফলভাবে সংরক্ষণ করা হয়েছে!'
+    );
+
+
+    renderList();
+
+    renderPreview();
+
+  }
+
+
+  /* ========================================================
+     EDIT
+  ======================================================== */
+
+  function editKhatian(key) {
+
+    var currentUser = getCurrentUser();
+
+    if (
+      currentUser &&
+      currentUser.role === 'subadmin' &&
+      currentUser.permission !== 'full'
+    ) {
+
+      alert(
+        'আপনার অ্যাকাউন্টে খতিয়ান এডিট করার অনুমতি নেই।'
+      );
+
+      return;
+
+    }
+
+
+    var savedKhatians =
+      JSON.parse(
+        localStorage.getItem(
+          'all_khatians'
+        ) || '{}'
+      );
+
+
+    var data =
+      savedKhatians[key];
+
+
+    if (data) {
+
+      document.getElementById(
+        'in_division'
+      ).value =
+        data.division || '';
+
+
+      document.getElementById(
+        'in_district'
+      ).value =
+        data.district || '';
+
+
+      document.getElementById(
+        'in_upazila'
+      ).value =
+        data.upazila || '';
+
+
+      document.getElementById(
+        'in_mouza'
+      ).value =
+        data.mouza || '';
+
+
+      document.getElementById(
+        'in_survey'
+      ).value =
+        data.survey ||
+        'বি আর এস';
+
+
+      document.getElementById(
+        'in_jl'
+      ).value =
+        data.jl || '';
+
+
+      document.getElementById(
+        'in_khatian'
+      ).value =
+        data.khatian || '';
+
+
+      document.getElementById(
+        'in_owner'
+      ).value =
+        data.owner || '';
+
+
+      document.getElementById(
+        'in_my_land'
+      ).value =
+        data.my_land || '';
+
+
+      document.getElementById(
+        'in_date'
+      ).value =
+        data.date || '';
+
+
+      document.getElementById(
+        'in_seal_logo'
+      ).value =
+        data.seal_logo ||
+        'DEFAULT_LOGO';
+
+
+      document.getElementById(
+        'in_qr_url'
+      ).value =
+        data.qr_url || '';
+
+
+      document.getElementById(
+        'dag_container'
+      ).innerHTML = '';
+
+
+      if (
+        data.dags &&
+        data.dags.length > 0
+      ) {
+
+        data.dags.forEach(
+          function(d) {
+
+            addDagRow(d);
+
+          }
+        );
+
+      } else {
+
+        initDefaultDags();
+
+      }
+
+
+      renderPreview();
+
+
+      window.scrollTo({
+
+        top: 0,
+
+        behavior: 'smooth'
+
+      });
+
+    }
+
+  }
+
+
+  /* ========================================================
+     PRINT
+  ======================================================== */
+
+  function printKhatian(key) {
+
+    payAndPrint(key);
+
+  }
+
+
+  /* ========================================================
+     DELETE
+  ======================================================== */
+
+  function deleteKhatian(key) {
+
+    var currentUser = getCurrentUser();
+
+    if (
+      !currentUser ||
+      currentUser.role !== 'master'
+    ) {
+
+      alert(
+        'শুধু মাস্টার এডমিন খতিয়ান মুছতে পারবেন।'
+      );
+
+      return;
+
+    }
+
+
+    if (
+      confirm(
+        'আপনি কি নিশ্চিত যে খতিয়ান নং ' +
+        key +
+        ' মুছে ফেলতে চান?'
+      )
+    ) {
+
+      var savedKhatians =
+        JSON.parse(
+          localStorage.getItem(
+            'all_khatians'
+          ) || '{}'
+        );
+
+
+      delete savedKhatians[key];
+
+
+      localStorage.setItem(
+        'all_khatians',
+        JSON.stringify(
+          savedKhatians
+        )
+      );
+
+
+      renderList();
+
+    }
+
+  }
+
+
+  /* ========================================================
+     RESET
+  ======================================================== */
+
+  function resetForm() {
+
+    document.getElementById(
+      'khatianForm'
+    ).reset();
+
+
+    document.getElementById(
+      'in_seal_logo'
+    ).value =
+      'DEFAULT_LOGO';
+
+
+    document.getElementById(
+      'in_qr_url'
+    ).value = '';
+
+
+    initDefaultDags();
+
+    renderPreview();
+
+  }
+
+
+  /* ========================================================
+     RENDER LIST
+  ======================================================== */
+
+  function renderList() {
+
+    var tbody =
+      document.getElementById(
+        'list_body'
+      );
+
+
+    tbody.innerHTML = '';
+
+
+    var savedKhatians =
+      JSON.parse(
+        localStorage.getItem(
+          'all_khatians'
+        ) || '{}'
+      );
+
+
+    var keys =
+      Object.keys(
+        savedKhatians
+      );
+
+
+    if (keys.length === 0) {
+
+      tbody.innerHTML =
+        '<tr>' +
+        '<td colspan="6">' +
+        'কোনো সংরক্ষিত খতিয়ান পাওয়া যায়নি।' +
+        '</td>' +
+        '</tr>';
+
+      return;
+
+    }
+
+
+    keys.forEach(
+      function(key) {
+
+        var item =
+          savedKhatians[key];
+
+
+        var tr =
+          document.createElement('tr');
+
+
+        tr.innerHTML =
+
+          '<td><b>' +
+          item.khatian +
+          '</b></td>' +
+
+          '<td>' +
+          item.mouza +
+          '</td>' +
+
+          '<td>' +
+          item.upazila +
+          '</td>' +
+
+          '<td>' +
+          item.district +
+          '</td>' +
+
+          '<td>' +
+          item.date +
+          '</td>' +
+
+          '<td>' +
+
+          '<button ' +
+          'class="btn-sm btn-edit" ' +
+          'style="' +
+          (((getCurrentUser() || {}).role === 'master' ||
+            (getCurrentUser() || {}).permission === 'full')
+            ? ''
+            : 'display:none;') +
+          '" ' +
+          'onclick="editKhatian(\'' +
+          key +
+          '\')">' +
+          'ইডিট' +
+          '</button>' +
+
+          '<button ' +
+          'class="btn-sm btn-prt" ' +
+          'onclick="printKhatian(\'' +
+          key +
+          '\')">' +
+          'ডাউনলোড ৳১০' +
+          '</button>' +
+
+          '<button ' +
+          'class="btn-sm btn-del" ' +
+          'style="' +
+          (((getCurrentUser() || {}).role === 'master')
+            ? ''
+            : 'display:none;') +
+          '" ' +
+          'onclick="deleteKhatian(\'' +
+          key +
+          '\')">' +
+          'ডিলিট' +
+          '</button>' +
+
+          '</td>';
+
+
+        tbody.appendChild(tr);
+
+      }
+    );
+
+  }
+
+
+  /* ========================================================
+     PAGE LOAD
+  ======================================================== */
+
+  window.onload =
+    function() {
+
+      if (!checkVerifyMode()) {
+
+        checkAuth();
+
+        initDefaultDags();
+
+        renderList();
+
+        loadWallet();
+
+        renderPreview();
+
+      }
+
+    };
 
 </script>
 
 </body>
 </html>
+
+
+    var khatianNo =
+      document.getElementById(
+        'in_khatian'
+      ).value.trim();
+
+
+    if (!khatianNo) {
+
+      alert(
+        'অনুগ্রহ করে খতিয়ান নম্বর দিন!'
+      );
+
+      return;
