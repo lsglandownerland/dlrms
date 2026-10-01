@@ -75,8 +75,8 @@ header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid 
 <script>
 'use strict';
 
-// 🔴 আপনার Render Backend API Service URL নিচে বসান:
-const API_BASE_URL = "https://YOUR-RENDER-SERVICE.onrender.com/api";
+// 🔴 আপনার Render Backend API Service URL নিচে বসান (যেমন: https://dlrms.onrender.com/api):
+const API_BASE_URL = "https://dlrms.onrender.com/api";
 
 const $=id=>document.getElementById(id);
 let token = localStorage.getItem('dlrms_token') || null;
@@ -108,8 +108,8 @@ async function apiFetch(endpoint, options={}) {
 async function render(){
   if(!currentUser) return;
   $('userInfo').textContent=`${currentUser.username} — ${currentUser.role==='master'?'Master Admin':'Sub-admin'}`;
-  $('balance').textContent=(currentUser.balance\vert{}\vert{}0).toLocaleString('bn-BD');$('statBalance').textContent='৳'+(currentUser.balance||0).toLocaleString('bn-BD');
-  const API_BASE_URL = "https://YOUR-RENDER-SERVICE.onrender.com/api";
+  $('balance').textContent=(currentUser.balance \vert{}\vert{} 0).toLocaleString('bn-BD');$('statBalance').textContent='৳'+(currentUser.balance || 0).toLocaleString('bn-BD');
+  
   $('adminBox').classList.toggle('hidden', currentUser.role !== 'master');
   
   await fetchRecords();
