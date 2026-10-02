@@ -165,7 +165,7 @@
     }
 
     /* =========================================================
-       EXACT IMAGE LAYOUT PREVIEW STYLES
+       KHATIAN PREVIEW & EMBEDDED OFFICIAL SEAL STYLES
     ========================================================= */
     .khatian-box {
       border: 2px solid #000;
@@ -228,21 +228,12 @@
       margin-top: 15px;
     }
 
-    .official-seal-wrapper {
-      position: relative;
-      width: 130px;
-      height: 130px;
-      border: 2px dashed #0c5460;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 11px;
-      font-weight: bold;
-      color: #0c5460;
+    /* REAL OFFICIAL SEAL SVG STYLE */
+    .official-seal-svg {
+      width: 120px;
+      height: 120px;
       margin: 0 auto;
+      display: block;
     }
 
     .qr-code { width: 90px; height: 90px; }
@@ -310,9 +301,8 @@
       </form>
     </div>
 
-    <!-- MASTER ADMIN ONLY: SUB-ADMIN & RECHARGE MANAGEMENT -->
+    <!-- MASTER ADMIN ONLY -->
     <div id="master_admin_controls" style="display:none;">
-      
       <div class="admin-section-box">
         <h4>নতুন সাব-এডমিন যোগ করুন</h4>
         <form id="subAdminForm" onsubmit="addSubAdmin(event)">
@@ -360,26 +350,25 @@
           <tbody id="recharge_list"></tbody>
         </table>
       </div>
-
     </div>
 
     <!-- KHATIAN FORM -->
     <form id="khatianForm" style="margin-top:20px;">
-      <h4>খতিয়ান তথ্য ফর্ম (নতুন লেআউট অনুযায়ী)</h4>
+      <h4>খতিয়ান তথ্য ফর্ম</h4>
 
       <div class="form-grid">
-        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৬৬৮"></div>
-        <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১"></div>
-        <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
-        <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী"></div>
-        <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
-        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
-        <div class="form-group"><label>জে, এল, নং:</label><input type="text" id="in_jl" value="২৩৪"></div>
-        <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -"></div>
+        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৬৬৮" oninput="renderPreview()"></div>
+        <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
+        <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
+        <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
+        <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
+        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর" oninput="renderPreview()"></div>
+        <div class="form-group"><label>জে, এল, নং:</label><input type="text" id="in_jl" value="২৩৪" oninput="renderPreview()"></div>
+        <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
 
-        <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা (লাইনের জন্য Enter ব্যবহার করুন):</label><textarea id="in_owner" rows="6" placeholder="মালিকের নাম ও বিবরণ লিখুন..."></textarea></div>
+        <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="5" placeholder="মালিকের নাম ও বিবরণ লিখুন..." oninput="renderPreview()"></textarea></div>
 
-        <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০"></div>
+        <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
 
         <div class="form-group full-width">
           <div class="dag-section">
@@ -389,12 +378,12 @@
           </div>
         </div>
 
-        <div class="form-group"><label>মোট জমি (শতাংশ):</label><input type="text" id="in_total_land_sum" placeholder="যেমন: ৮০০০"></div>
-        <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়"></div>
-        <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............."></div>
-        <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="২২-০৮-২০২০"></div>
-        <div class="form-group"><label>QR কোডের লিংক:</label><input type="url" id="in_qr_url" value="https://land.gov.bd/"></div>
-        <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে"></div>
+        <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
+        <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
+        <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
+        <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="২২-০৮-২০২০" oninput="renderPreview()"></div>
+        <div class="form-group"><label>QR কোডের লিংক:</label><input type="url" id="in_qr_url" value="https://land.gov.bd/" oninput="renderPreview()"></div>
+        <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
       </div>
 
       <div class="button-group">
@@ -424,7 +413,7 @@
       </div>
     </div>
 
-    <!-- PREVIEW AREA (EXACT ACCORDING TO IMAGE) -->
+    <!-- PREVIEW AREA -->
     <div id="preview_area" style="display:none; margin-top:30px;">
       <div class="khatian-box">
         
@@ -473,7 +462,7 @@
               <td></td>
               <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
               <td><b>মোট জমি:</b></td>
-              <td><b id="prev_total_land_sum">৮০০০</b></td>
+              <td><b id="prev_total_land_sum">০</b></td>
               <td></td>
             </tr>
           </tfoot>
@@ -488,12 +477,29 @@
             বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
           </div>
 
+          <!-- VECTOR OFFICIAL SEAL LOGO -->
           <div style="width: 30%; text-align: center;">
-            <div class="official-seal-wrapper">
-              জেলা রেকর্ড রুম<br>
-              জেলা প্রশাসকের কার্যালয়<br>
-              ★ নোয়াখালী ★
-            </div>
+            <svg class="official-seal-svg" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="66" fill="none" stroke="#0b7a3e" stroke-width="2" stroke-dasharray="4,2" />
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#0b7a3e" stroke-width="1.5" />
+              <circle cx="70" cy="70" r="42" fill="none" stroke="#0b7a3e" stroke-width="1" />
+              
+              <!-- Curved Top Text -->
+              <path id="textPathTop" d="M 22,70 A 48,48 0 1,1 118,70" fill="none" />
+              <text font-size="10" font-weight="bold" fill="#0b7a3e">
+                <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">জেলা রেকর্ড রুম</textPath>
+              </text>
+              
+              <!-- Center Official Logo Element -->
+              <circle cx="70" cy="70" r="14" fill="#0b7a3e" />
+              <polygon points="70,58 73,66 82,66 75,71 78,80 70,75 62,80 65,71 58,66 67,66" fill="#ffffff" />
+              
+              <!-- Curved Bottom Text -->
+              <path id="textPathBottom" d="M 118,70 A 48,48 0 0,1 22,70" fill="none" />
+              <text font-size="9" font-weight="bold" fill="#0b7a3e">
+                <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">★ নোয়াখালী ★</textPath>
+              </text>
+            </svg>
           </div>
 
           <div style="width: 35%; text-align: right;">
@@ -573,6 +579,34 @@
       loadWallet();
       renderList();
     }
+  }
+
+  /* NUMERAL CONVERTERS */
+  function toEnglishDigits(str) {
+    var bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return String(str || '').replace(/[০-৯]/g, function(w) { return bn.indexOf(w); });
+  }
+
+  function toBanglaDigits(num) {
+    var bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return String(num).replace(/[0-9]/g, function(w) { return bn[parseInt(w)]; });
+  }
+
+  /* CALCULATE TOTAL LAND AUTOMATICALLY */
+  function calculateTotalLand() {
+    var rows = document.querySelectorAll("#dag_container .dag-row");
+    var total = 0;
+    rows.forEach(function(row) {
+      var val = row.querySelector(".d_sh_per")?.value || "";
+      var engVal = parseFloat(toEnglishDigits(val));
+      if (!isNaN(engVal)) {
+        total += engVal;
+      }
+    });
+
+    var banglaTotal = toBanglaDigits(total);
+    document.getElementById("in_total_land_sum").value = banglaTotal;
+    document.getElementById("prev_total_land_sum").innerText = banglaTotal;
   }
 
   /* SUB-ADMIN MANAGEMENT */
@@ -754,7 +788,6 @@
   function initDefaultDags() {
     var container = document.getElementById("dag_container");
     if (container && container.children.length === 0) {
-      // Default sample rows as per image
       addDagRow({ share: "০.১৮৮", dagNo: "৪২৫৫", landClassAgri: "", landClassNonAgri: "বাড়ী", totalAcre: "", totalPercent: "৫৭০০", dagShare: "০.১৮৮", shareAcre: "০", sharePercent: "১০০০", comment: "" });
       addDagRow({ share: "০.২৫৮", dagNo: "৪২৫৭", landClassAgri: "", landClassNonAgri: "বাড়ী", totalAcre: "", totalPercent: "৫৮০০", dagShare: "০.২৫৮", shareAcre: "০", sharePercent: "১৫০০", comment: "" });
     }
@@ -774,16 +807,19 @@
       <input type="text" class="d_tot_per" placeholder="মোট শতাংশ" value="${escapeHtml(data.totalPercent || '')}">
       <input type="text" class="d_dag_share" placeholder="অত্র অংশ" value="${escapeHtml(data.dagShare || '')}">
       <input type="text" class="d_sh_acre" placeholder="অংশ একর" value="${escapeHtml(data.shareAcre || '')}">
-      <input type="text" class="d_sh_per" placeholder="অংশ শতাংশ" value="${escapeHtml(data.sharePercent || '')}">
+      <input type="text" class="d_sh_per" placeholder="অংশ শতাংশ" value="${escapeHtml(data.sharePercent || '')}" oninput="calculateTotalLand(); renderPreview();">
       <input type="text" class="d_comment" placeholder="মন্তব্য" value="${escapeHtml(data.comment || '')}">
       <button type="button" class="btn-sm btn-del" onclick="removeDagRow(this)">×</button>
     `;
     container.appendChild(row);
+    calculateTotalLand();
   }
 
   function removeDagRow(btn) {
     var row = btn.closest(".dag-row");
     if (row) row.remove();
+    calculateTotalLand();
+    renderPreview();
   }
 
   function getDagData() {
@@ -823,7 +859,7 @@
       resa: document.getElementById("in_resa")?.value.trim() || "-",
       owner: document.getElementById("in_owner")?.value || "",
       ownerShare: document.getElementById("in_owner_share")?.value.trim() || "",
-      totalLandSum: document.getElementById("in_total_land_sum")?.value.trim() || "",
+      totalLandSum: document.getElementById("in_total_land_sum")?.value.trim() || "০",
       note: document.getElementById("in_note")?.value.trim() || "",
       caseNote: document.getElementById("in_case_note")?.value.trim() || "",
       printDate: document.getElementById("in_print_date")?.value.trim() || "",
@@ -850,7 +886,7 @@
     else records.push(data);
 
     localStorage.setItem("khatianRecords", JSON.stringify(records));
-    alert("খতিয়ান সংরক্ষিত হয়েছে!");
+    alert("খতিয়ান সফলভাবে সংরক্ষিত হয়েছে!");
     renderList();
   }
 
@@ -895,7 +931,7 @@
     document.getElementById("in_resa").value = rec.resa || "-";
     document.getElementById("in_owner").value = rec.owner || "";
     document.getElementById("in_owner_share").value = rec.ownerShare || "";
-    document.getElementById("in_total_land_sum").value = rec.totalLandSum || "";
+    document.getElementById("in_total_land_sum").value = rec.totalLandSum || "০";
     document.getElementById("in_note").value = rec.note || "";
     document.getElementById("in_case_note").value = rec.caseNote || "";
     document.getElementById("in_print_date").value = rec.printDate || "";
@@ -920,6 +956,7 @@
   }
 
   function renderPreview() {
+    calculateTotalLand();
     var data = getFormData();
     var setTxt = (id, val, def) => { var el = document.getElementById(id); if (el) el.innerText = val || def || ""; };
 
@@ -948,7 +985,6 @@
     dags.forEach((dag, idx) => {
       var tr = document.createElement("tr");
 
-      // First Row combines Owner Details
       var ownerCell = idx === 0 
         ? `<td rowspan="${dags.length}" class="owner-td">${escapeHtml(data.owner)}</td>` 
         : '';
