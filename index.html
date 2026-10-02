@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>খতিয়ান অ্যাডমিন ও সাব-অ্যাডমিন সিস্টেম</title>
+  <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম</title>
 
   <style>
     * {
@@ -20,7 +20,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       background: #fff;
       padding: 20px;
@@ -84,13 +84,17 @@
     }
 
     .dag-row {
-      display: flex;
-      gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(10, 1fr) 30px;
+      gap: 5px;
       margin-top: 8px;
       align-items: center;
     }
 
-    .dag-row input { flex: 1; }
+    .dag-row input {
+      font-size: 11px;
+      padding: 4px;
+    }
 
     .button-group {
       display: flex;
@@ -128,15 +132,13 @@
     .btn-prt { background-color: #17a2b8; }
     .btn-del { background-color: #dc3545; }
 
-    .record-table, .meta-table, .main-table {
+    .record-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
 
-    .record-table th, .record-table td,
-    .meta-table td,
-    .main-table th, .main-table td {
+    .record-table th, .record-table td {
       border: 1px solid #333;
       padding: 6px;
       text-align: center;
@@ -144,28 +146,6 @@
     }
 
     .record-table th { background-color: #e9ecef; }
-
-    .khatian-box {
-      border: 2px solid #000;
-      padding: 20px;
-      margin-top: 30px;
-      background: #fff;
-    }
-
-    .top-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #000;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-    }
-
-    .seal-logo { width: 70px; height: auto; }
-    .khatian-header { text-align: center; font-size: 16px; font-weight: bold; }
-    .bottom-section { margin-top: 15px; }
-    .footer-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; }
-    .qr-code { width: 90px; height: 90px; }
 
     .bkash-box {
       background-color: #e2136e;
@@ -183,6 +163,89 @@
       border-radius: 6px;
       margin-top: 25px;
     }
+
+    /* =========================================================
+       EXACT IMAGE LAYOUT PREVIEW STYLES
+    ========================================================= */
+    .khatian-box {
+      border: 2px solid #000;
+      padding: 15px;
+      margin-top: 30px;
+      background: #fff;
+      font-size: 13px;
+      color: #000;
+    }
+
+    .khatian-top-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .page-number-top {
+      float: right;
+      font-weight: bold;
+    }
+
+    .meta-line {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .khatian-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #000;
+    }
+
+    .khatian-table th, .khatian-table td {
+      border: 1px solid #000;
+      padding: 4px 5px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    .khatian-table th {
+      font-weight: bold;
+      background-color: #fff;
+    }
+
+    .owner-td {
+      text-align: left !important;
+      white-space: pre-line;
+      line-height: 1.3;
+    }
+
+    .footer-note-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .official-seal-wrapper {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      border: 2px dashed #0c5460;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 11px;
+      font-weight: bold;
+      color: #0c5460;
+      margin: 0 auto;
+    }
+
+    .qr-code { width: 90px; height: 90px; }
 
     @media print {
       body * { visibility: hidden; }
@@ -250,7 +313,6 @@
     <!-- MASTER ADMIN ONLY: SUB-ADMIN & RECHARGE MANAGEMENT -->
     <div id="master_admin_controls" style="display:none;">
       
-      <!-- CREATE SUB ADMIN -->
       <div class="admin-section-box">
         <h4>নতুন সাব-এডমিন যোগ করুন</h4>
         <form id="subAdminForm" onsubmit="addSubAdmin(event)">
@@ -281,7 +343,6 @@
         </table>
       </div>
 
-      <!-- RECHARGE REQUESTS LIST -->
       <div class="admin-section-box">
         <h4>রিচার্জ অনুরোধসমূহ (বিকাশ)</h4>
         <table class="record-table">
@@ -304,38 +365,34 @@
 
     <!-- KHATIAN FORM -->
     <form id="khatianForm" style="margin-top:20px;">
-      <h4>খতিয়ান তথ্য ফর্ম</h4>
+      <h4>খতিয়ান তথ্য ফর্ম (নতুন লেআউট অনুযায়ী)</h4>
 
       <div class="form-grid">
-        <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" placeholder="যেমন: ঢাকা"></div>
-        <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" placeholder="যেমন: ঢাকা"></div>
-        <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" placeholder="যেমন: ধানমন্ডি"></div>
-        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" placeholder="যেমন: ধানমন্ডি"></div>
-        <div class="form-group"><label>সার্ভে টাইপ:</label><input type="text" id="in_survey" placeholder="যেমন: বিএস / আরএস"></div>
-        <div class="form-group"><label>জে. এল. নং:</label><input type="text" id="in_jl" placeholder="যেমন: ১২"></div>
-        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ১০১"></div>
-        <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১"></div>
-        <div class="form-group"><label>দলিল/মামলা নং:</label><input type="text" id="in_case_no" placeholder="দলিল/মামলা নং"></div>
-        <div class="form-group"><label>সন:</label><input type="text" id="in_year" placeholder="সন"></div>
-        <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" placeholder="তারিখ"></div>
-        <div class="form-group full-width"><label>মালিক / রায়তের নাম:</label><textarea id="in_owner" rows="2"></textarea></div>
-        <div class="form-group full-width"><label>পিতা / স্বামী / অভিভাবকের নাম:</label><textarea id="in_guardian" rows="2"></textarea></div>
-        <div class="form-group full-width"><label>ঠিকানা:</label><textarea id="in_address" rows="2"></textarea></div>
-        <div class="form-group"><label>জাতীয় পরিচয়পত্র / পরিচিতি:</label><input type="text" id="in_nid"></div>
-        <div class="form-group"><label>হিস্যা:</label><input type="text" id="in_share" placeholder="যেমন: ১/২"></div>
-        <div class="form-group"><label>মোট জমির পরিমাণ:</label><input type="text" id="in_total_land" placeholder="যেমন: ০.০২৫০"></div>
-        <div class="form-group"><label>জমির শ্রেণি:</label><input type="text" id="in_land_class" placeholder="যেমন: ভিটি / পুকুর"></div>
+        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৬৬৮"></div>
+        <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১"></div>
+        <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম"></div>
+        <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী"></div>
+        <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ"></div>
+        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর"></div>
+        <div class="form-group"><label>জে, এল, নং:</label><input type="text" id="in_jl" value="২৩৪"></div>
+        <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -"></div>
+
+        <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা (লাইনের জন্য Enter ব্যবহার করুন):</label><textarea id="in_owner" rows="6" placeholder="মালিকের নাম ও বিবরণ লিখুন..."></textarea></div>
+
+        <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০"></div>
 
         <div class="form-group full-width">
           <div class="dag-section">
-            <h4>দাগের বিস্তারিত তথ্য</h4>
+            <h4>দাগ ও জমির বিবরণ</h4>
             <button type="button" class="btn-add-dag" onclick="addDagRow()">+ নতুন দাগ যোগ করুন</button>
             <div id="dag_container"></div>
           </div>
         </div>
 
-        <div class="form-group full-width"><label>নোট / পরিবর্তন:</label><textarea id="in_note" rows="2"></textarea></div>
-        <div class="form-group full-width"><label>মকদ্দমা সংক্রান্ত তথ্য:</label><textarea id="in_case_note" rows="2"></textarea></div>
+        <div class="form-group"><label>মোট জমি (শতাংশ):</label><input type="text" id="in_total_land_sum" placeholder="যেমন: ৮০০০"></div>
+        <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়"></div>
+        <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............."></div>
+        <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="২২-০৮-২০২০"></div>
         <div class="form-group"><label>QR কোডের লিংক:</label><input type="url" id="in_qr_url" value="https://land.gov.bd/"></div>
         <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে"></div>
       </div>
@@ -356,7 +413,6 @@
             <tr>
               <th>ক্রমিক</th>
               <th>খতিয়ান নং</th>
-              <th>মালিকের নাম</th>
               <th>মৌজা</th>
               <th>মোট জমি</th>
               <th>তারিখ</th>
@@ -368,93 +424,84 @@
       </div>
     </div>
 
-    <!-- PREVIEW AREA -->
+    <!-- PREVIEW AREA (EXACT ACCORDING TO IMAGE) -->
     <div id="preview_area" style="display:none; margin-top:30px;">
       <div class="khatian-box">
-        <div class="top-header">
-          <div style="width:90px;"><img id="preview_logo" class="seal-logo" src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="Logo"></div>
-          <div class="khatian-header">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার<br>ভূমি মন্ত্রণালয়<br><span id="preview_survey_title">খতিয়ান</span></div>
-          <div class="page-no">পৃষ্ঠা: <span id="preview_page">১</span></div>
+        
+        <div class="page-number-top">পৃষ্ঠা নং: <span id="prev_page">১ এর ১</span></div>
+        <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৬৬৮</span></div>
+
+        <div class="meta-line">
+          <div>বিভাগ: <span id="prev_division">চট্টগ্রাম</span></div>
+          <div>জেলা: <span id="prev_district">নোয়াখালী</span></div>
+          <div>উপজেলা/থানা: <span id="prev_upazila">বেগমগঞ্জ</span></div>
+          <div>মৌজা: <span id="prev_mouza">অনন্তপুর</span></div>
+          <div>জে, এল, নং: <span id="prev_jl">২৩৪</span></div>
+          <div>রে: সা: নং: <span id="prev_resa">-</span></div>
         </div>
 
-        <table class="meta-table">
-          <tr>
-            <td>বিভাগ: <span id="preview_division"></span></td>
-            <td>জেলা: <span id="preview_district"></span></td>
-            <td>উপজেলা/থানা: <span id="preview_upazila"></span></td>
-          </tr>
-          <tr>
-            <td>মৌজা: <span id="preview_mouza"></span></td>
-            <td>জে. এল. নং: <span id="preview_jl"></span></td>
-            <td>খতিয়ান নং: <span id="preview_khatian"></span></td>
-          </tr>
-        </table>
-
-        <table class="main-table">
+        <table class="khatian-table">
           <thead>
             <tr>
-              <th rowspan="2">মালিকের নাম ও ঠিকানা</th>
-              <th rowspan="2">ক্রমিক</th>
-              <th rowspan="2">দাগ নং</th>
-              <th rowspan="2">জমির শ্রেণি</th>
-              <th colspan="2">দাগের বিবরণ</th>
-              <th colspan="2">খতিয়ানে জমি</th>
-              <th rowspan="2">হিস্যা</th>
-              <th colspan="2">জমির পরিমাণ</th>
-              <th rowspan="2">মন্তব্য</th>
+              <th rowspan="2" style="width: 22%;">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</th>
+              <th rowspan="2" style="width: 6%;">অংশ</th>
+              <th rowspan="2" style="width: 6%;">রাজস্ব</th>
+              <th rowspan="2" style="width: 6%;">দাগ</th>
+              <th colspan="2" style="width: 14%;">জমির শ্রেণী</th>
+              <th colspan="2" style="width: 14%;">দাগের মোট পরিমাণ</th>
+              <th rowspan="2" style="width: 10%;">দাগের মধ্যে অত্র খতিয়ানের অংশ</th>
+              <th colspan="2" style="width: 14%;">অংশ অনুযায়ী জমির পরিমাণ</th>
+              <th rowspan="2" style="width: 8%;">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</th>
             </tr>
             <tr>
-              <th>মোট</th><th>অংশ</th>
-              <th>একর</th><th>শতাংশ</th>
-              <th>একর</th><th>শতাংশ</th>
+              <th>কৃষি ৫(ক)</th>
+              <th>অকৃষি ৫(খ)</th>
+              <th>একর ৬(ক)</th>
+              <th>শতাংশ ৬(খ)</th>
+              <th>একর ৮(ক)</th>
+              <th>শতাংশ ৮(খ)</th>
             </tr>
           </thead>
-          <tbody id="preview_table_body"></tbody>
+          <tbody id="prev_table_body"></tbody>
           <tfoot>
             <tr>
-              <td colspan="4">মোট</td>
-              <td colspan="2"><span id="preview_total_land">০</span></td>
-              <td colspan="2">-</td>
-              <td><span id="preview_total_share">-</span></td>
-              <td colspan="2"><span id="preview_total_percent">০</span></td>
-              <td>-</td>
+              <td class="owner-td" style="font-size: 11px;">
+                <span id="prev_note">............ ধারামতে নোট বা পরিবর্তন মায়</span><br>
+                <span id="prev_case_note">মোকদ্দমা নং ............ এবং সন .............</span>
+              </td>
+              <td><b id="prev_owner_share">১.০০০</b></td>
+              <td></td>
+              <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
+              <td><b>মোট জমি:</b></td>
+              <td><b id="prev_total_land_sum">৮০০০</b></td>
+              <td></td>
             </tr>
           </tfoot>
         </table>
 
-        <div style="margin-top:12px; border:1px solid #000; padding:8px; font-size:13px;">
-          <b>মালিক / রায়তের তথ্য:</b>
-          <div style="margin-top:5px;">নাম: <span id="preview_owner"></span></div>
-          <div style="margin-top:4px;">পিতা / স্বামী / অভিভাবক: <span id="preview_guardian"></span></div>
-          <div style="margin-top:4px;">ঠিকানা: <span id="preview_address"></span></div>
+        <div style="margin-top: 10px; font-size: 12px;">
+          মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="prev_print_date">২২-০৮-২০২০</span>
         </div>
 
-        <div class="bottom-section">
-          <div class="bottom-note">
-            <div><span id="preview_note">............ ধারামতে নোট বা পরিবর্তন মায়</span></div>
-            <div style="margin-top:4px;"><span id="preview_case_note">মকদ্দমা নং ............. এবং সন ...............</span></div>
+        <div class="footer-note-section">
+          <div style="font-size: 13px; font-weight: bold; width: 35%;">
+            বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
           </div>
 
-          <div class="footer-flex">
-            <div style="width:30%;">
-              <div style="font-size:12px;">যাচাই করতে QR কোড স্ক্যান করুন</div>
-              <img id="preview_qr" class="qr-code" src="" alt="QR Code">
-            </div>
-            <div style="width:40%; text-align:center;">
-              <img class="seal-logo" src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="Seal">
-              <div style="font-size:12px; font-weight:bold;">অনুমোদিত রেকর্ড</div>
-            </div>
-            <div style="width:30%; text-align:right; font-size:12px;">
-              প্রস্তুতকারক/কর্তৃপক্ষের স্বাক্ষর<br><br><br>____________________
+          <div style="width: 30%; text-align: center;">
+            <div class="official-seal-wrapper">
+              জেলা রেকর্ড রুম<br>
+              জেলা প্রশাসকের কার্যালয়<br>
+              ★ নোয়াখালী ★
             </div>
           </div>
 
-          <div style="margin-top:15px; padding-top:6px; border-top:1px solid #999; font-size:11px; text-align:center;">
-            মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="preview_print_date"></span>
+          <div style="width: 35%; text-align: right;">
+            <img id="preview_qr" class="qr-code" src="" alt="QR Code">
           </div>
         </div>
 
-        <div class="button-group" style="margin-top:15px;">
+        <div class="button-group" style="margin-top:20px;">
           <button type="button" class="btn btn-print" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
           <button type="button" class="btn btn-reset" onclick="closePreview()">প্রিভিউ বন্ধ করুন</button>
         </div>
@@ -474,7 +521,6 @@
     var user = document.getElementById("username").value.trim();
     var pass = document.getElementById("password").value;
 
-    // Admin Login Check
     if (user === "admin" && pass === "12345") {
       sessionStorage.setItem("isLoggedIn", "true");
       sessionStorage.setItem("loggedInUser", "admin");
@@ -483,7 +529,6 @@
       return;
     }
 
-    // Sub-Admin Login Check
     var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
     var foundSub = subAdmins.find(sa => sa.username === user && sa.password === pass);
 
@@ -530,7 +575,7 @@
     }
   }
 
-  /* SUB-ADMIN MANAGEMENT (ADMIN ONLY) */
+  /* SUB-ADMIN MANAGEMENT */
   function addSubAdmin(e) {
     e.preventDefault();
     var user = document.getElementById("sub_username").value.trim();
@@ -545,7 +590,6 @@
     subAdmins.push({ username: user, password: pass });
     localStorage.setItem("subAdmins", JSON.stringify(subAdmins));
 
-    // Initialize balance
     var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
     balances[user] = 0;
     localStorage.setItem("userBalances", JSON.stringify(balances));
@@ -583,17 +627,16 @@
     renderSubAdmins();
   }
 
-  /* WALLET & RECHARGE SYSTEM */
+  /* RECHARGE & WALLET */
   function loadWallet() {
     var role = sessionStorage.getItem("userRole");
     var user = sessionStorage.getItem("loggedInUser");
-    var bal = 0;
 
     if (role === "admin") {
       document.getElementById("wallet_balance").innerText = "অসীমিত (Admin)";
     } else {
       var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
-      bal = balances[user] || 0;
+      var bal = balances[user] || 0;
       document.getElementById("wallet_balance").innerText = "৳ " + bal;
     }
   }
@@ -707,10 +750,14 @@
     }
   }
 
-  /* KHATIAN LOGIC */
+  /* KHATIAN LOGIC & DAGS */
   function initDefaultDags() {
     var container = document.getElementById("dag_container");
-    if (container && container.children.length === 0) addDagRow();
+    if (container && container.children.length === 0) {
+      // Default sample rows as per image
+      addDagRow({ share: "০.১৮৮", dagNo: "৪২৫৫", landClassAgri: "", landClassNonAgri: "বাড়ী", totalAcre: "", totalPercent: "৫৭০০", dagShare: "০.১৮৮", shareAcre: "০", sharePercent: "১০০০", comment: "" });
+      addDagRow({ share: "০.২৫৮", dagNo: "৪২৫৭", landClassAgri: "", landClassNonAgri: "বাড়ী", totalAcre: "", totalPercent: "৫৮০০", dagShare: "০.২৫৮", shareAcre: "০", sharePercent: "১৫০০", comment: "" });
+    }
   }
 
   function addDagRow(data) {
@@ -719,12 +766,16 @@
     var row = document.createElement("div");
     row.className = "dag-row";
     row.innerHTML = `
-      <input type="text" class="dag_no" placeholder="দাগ নং" value="${escapeHtml(data.dagNo || '')}">
-      <input type="text" class="dag_class" placeholder="জমির শ্রেণি" value="${escapeHtml(data.landClass || '')}">
-      <input type="text" class="dag_total" placeholder="মোট" value="${escapeHtml(data.total || '')}">
-      <input type="text" class="dag_khatian_land" placeholder="খতিয়ানে" value="${escapeHtml(data.khatianLand || '')}">
-      <input type="text" class="dag_share" placeholder="হিস্যা" value="${escapeHtml(data.share || '')}">
-      <input type="text" class="dag_comment" placeholder="মন্তব্য" value="${escapeHtml(data.comment || '')}">
+      <input type="text" class="d_share" placeholder="অংশ" value="${escapeHtml(data.share || '')}">
+      <input type="text" class="d_no" placeholder="দাগ" value="${escapeHtml(data.dagNo || '')}">
+      <input type="text" class="d_agri" placeholder="কৃষি" value="${escapeHtml(data.landClassAgri || '')}">
+      <input type="text" class="d_nonagri" placeholder="অকৃষি" value="${escapeHtml(data.landClassNonAgri || '')}">
+      <input type="text" class="d_tot_acre" placeholder="মোট একর" value="${escapeHtml(data.totalAcre || '')}">
+      <input type="text" class="d_tot_per" placeholder="মোট শতাংশ" value="${escapeHtml(data.totalPercent || '')}">
+      <input type="text" class="d_dag_share" placeholder="অত্র অংশ" value="${escapeHtml(data.dagShare || '')}">
+      <input type="text" class="d_sh_acre" placeholder="অংশ একর" value="${escapeHtml(data.shareAcre || '')}">
+      <input type="text" class="d_sh_per" placeholder="অংশ শতাংশ" value="${escapeHtml(data.sharePercent || '')}">
+      <input type="text" class="d_comment" placeholder="মন্তব্য" value="${escapeHtml(data.comment || '')}">
       <button type="button" class="btn-sm btn-del" onclick="removeDagRow(this)">×</button>
     `;
     container.appendChild(row);
@@ -733,7 +784,6 @@
   function removeDagRow(btn) {
     var row = btn.closest(".dag-row");
     if (row) row.remove();
-    initDefaultDags();
   }
 
   function getDagData() {
@@ -741,12 +791,16 @@
     var list = [];
     rows.forEach(function(row) {
       list.push({
-        dagNo: row.querySelector(".dag_no")?.value.trim() || "",
-        landClass: row.querySelector(".dag_class")?.value.trim() || "",
-        total: row.querySelector(".dag_total")?.value.trim() || "",
-        khatianLand: row.querySelector(".dag_khatian_land")?.value.trim() || "",
-        share: row.querySelector(".dag_share")?.value.trim() || "",
-        comment: row.querySelector(".dag_comment")?.value.trim() || ""
+        share: row.querySelector(".d_share")?.value.trim() || "",
+        dagNo: row.querySelector(".d_no")?.value.trim() || "",
+        landClassAgri: row.querySelector(".d_agri")?.value.trim() || "",
+        landClassNonAgri: row.querySelector(".d_nonagri")?.value.trim() || "",
+        totalAcre: row.querySelector(".d_tot_acre")?.value.trim() || "",
+        totalPercent: row.querySelector(".d_tot_per")?.value.trim() || "",
+        dagShare: row.querySelector(".d_dag_share")?.value.trim() || "",
+        shareAcre: row.querySelector(".d_sh_acre")?.value.trim() || "",
+        sharePercent: row.querySelector(".d_sh_per")?.value.trim() || "",
+        comment: row.querySelector(".d_comment")?.value.trim() || ""
       });
     });
     return list;
@@ -759,26 +813,20 @@
   function getFormData() {
     return {
       id: document.getElementById("in_record_id")?.value.trim() || "",
+      khatian: document.getElementById("in_khatian")?.value.trim() || "",
+      page: document.getElementById("in_page")?.value.trim() || "",
       division: document.getElementById("in_division")?.value.trim() || "",
       district: document.getElementById("in_district")?.value.trim() || "",
       upazila: document.getElementById("in_upazila")?.value.trim() || "",
       mouza: document.getElementById("in_mouza")?.value.trim() || "",
-      survey: document.getElementById("in_survey")?.value.trim() || "",
       jl: document.getElementById("in_jl")?.value.trim() || "",
-      khatian: document.getElementById("in_khatian")?.value.trim() || "",
-      page: document.getElementById("in_page")?.value.trim() || "১",
-      caseNo: document.getElementById("in_case_no")?.value.trim() || "",
-      year: document.getElementById("in_year")?.value.trim() || "",
-      date: document.getElementById("in_date")?.value.trim() || "",
-      owner: document.getElementById("in_owner")?.value.trim() || "",
-      guardian: document.getElementById("in_guardian")?.value.trim() || "",
-      address: document.getElementById("in_address")?.value.trim() || "",
-      nid: document.getElementById("in_nid")?.value.trim() || "",
-      share: document.getElementById("in_share")?.value.trim() || "",
-      totalLand: document.getElementById("in_total_land")?.value.trim() || "",
-      landClass: document.getElementById("in_land_class")?.value.trim() || "",
+      resa: document.getElementById("in_resa")?.value.trim() || "-",
+      owner: document.getElementById("in_owner")?.value || "",
+      ownerShare: document.getElementById("in_owner_share")?.value.trim() || "",
+      totalLandSum: document.getElementById("in_total_land_sum")?.value.trim() || "",
       note: document.getElementById("in_note")?.value.trim() || "",
       caseNote: document.getElementById("in_case_note")?.value.trim() || "",
+      printDate: document.getElementById("in_print_date")?.value.trim() || "",
       qrUrl: document.getElementById("in_qr_url")?.value.trim() || "https://land.gov.bd/",
       dags: getDagData()
     };
@@ -811,17 +859,16 @@
     if (!tbody) return;
 
     var records = JSON.parse(localStorage.getItem("khatianRecords") || "[]");
-    tbody.innerHTML = records.length === 0 ? `<tr><td colspan="7">কোনো রেকর্ড নেই</td></tr>` : "";
+    tbody.innerHTML = records.length === 0 ? `<tr><td colspan="6">কোনো রেকর্ড নেই</td></tr>` : "";
 
     records.forEach((rec, idx) => {
       var tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${idx + 1}</td>
         <td>${escapeHtml(rec.khatian)}</td>
-        <td>${escapeHtml(rec.owner)}</td>
         <td>${escapeHtml(rec.mouza)}</td>
-        <td>${escapeHtml(rec.totalLand)}</td>
-        <td>${escapeHtml(rec.date)}</td>
+        <td>${escapeHtml(rec.totalLandSum)}</td>
+        <td>${escapeHtml(rec.printDate)}</td>
         <td>
           <button class="btn-sm btn-edit" onclick="loadKhatian('${rec.id}')">এডিট</button>
           <button class="btn-sm btn-prt" onclick="loadKhatian('${rec.id}'); payAndPrint();">প্রিন্ট</button>
@@ -838,26 +885,20 @@
     if (!rec) return;
 
     document.getElementById("in_record_id").value = rec.id || "";
+    document.getElementById("in_khatian").value = rec.khatian || "";
+    document.getElementById("in_page").value = rec.page || "";
     document.getElementById("in_division").value = rec.division || "";
     document.getElementById("in_district").value = rec.district || "";
     document.getElementById("in_upazila").value = rec.upazila || "";
     document.getElementById("in_mouza").value = rec.mouza || "";
-    document.getElementById("in_survey").value = rec.survey || "";
     document.getElementById("in_jl").value = rec.jl || "";
-    document.getElementById("in_khatian").value = rec.khatian || "";
-    document.getElementById("in_page").value = rec.page || "১";
-    document.getElementById("in_case_no").value = rec.caseNo || "";
-    document.getElementById("in_year").value = rec.year || "";
-    document.getElementById("in_date").value = rec.date || "";
+    document.getElementById("in_resa").value = rec.resa || "-";
     document.getElementById("in_owner").value = rec.owner || "";
-    document.getElementById("in_guardian").value = rec.guardian || "";
-    document.getElementById("in_address").value = rec.address || "";
-    document.getElementById("in_nid").value = rec.nid || "";
-    document.getElementById("in_share").value = rec.share || "";
-    document.getElementById("in_total_land").value = rec.totalLand || "";
-    document.getElementById("in_land_class").value = rec.landClass || "";
+    document.getElementById("in_owner_share").value = rec.ownerShare || "";
+    document.getElementById("in_total_land_sum").value = rec.totalLandSum || "";
     document.getElementById("in_note").value = rec.note || "";
     document.getElementById("in_case_note").value = rec.caseNote || "";
+    document.getElementById("in_print_date").value = rec.printDate || "";
     document.getElementById("in_qr_url").value = rec.qrUrl || "https://land.gov.bd/";
 
     var container = document.getElementById("dag_container");
@@ -882,49 +923,52 @@
     var data = getFormData();
     var setTxt = (id, val, def) => { var el = document.getElementById(id); if (el) el.innerText = val || def || ""; };
 
-    setTxt("preview_survey_title", data.survey ? data.survey + " খতিয়ান" : "খতিয়ান");
-    setTxt("preview_page", data.page, "১");
-    setTxt("preview_division", data.division, "-");
-    setTxt("preview_district", data.district, "-");
-    setTxt("preview_upazila", data.upazila, "-");
-    setTxt("preview_mouza", data.mouza, "-");
-    setTxt("preview_jl", data.jl, "-");
-    setTxt("preview_khatian", data.khatian, "-");
-    setTxt("preview_owner", data.owner, "-");
-    setTxt("preview_guardian", data.guardian, "-");
-    setTxt("preview_address", data.address, "-");
-    setTxt("preview_note", data.note, "............ ধারামতে নোট বা পরিবর্তন মায়");
-    setTxt("preview_case_note", data.caseNote, "মকদ্দমা নং ............. এবং সন ...............");
-    setTxt("preview_print_date", new Date().toLocaleDateString("bn-BD"));
+    setTxt("prev_page", data.page, "১ এর ১");
+    setTxt("prev_khatian", data.khatian, "-");
+    setTxt("prev_division", data.division, "-");
+    setTxt("prev_district", data.district, "-");
+    setTxt("prev_upazila", data.upazila, "-");
+    setTxt("prev_mouza", data.mouza, "-");
+    setTxt("prev_jl", data.jl, "-");
+    setTxt("prev_resa", data.resa, "-");
+
+    setTxt("prev_note", data.note);
+    setTxt("prev_case_note", data.caseNote);
+    setTxt("prev_owner_share", data.ownerShare, "১.০০০");
+    setTxt("prev_total_land_sum", data.totalLandSum, "০");
+    setTxt("prev_print_date", data.printDate, new Date().toLocaleDateString("bn-BD"));
 
     document.getElementById("preview_qr").src = QR_API + encodeURIComponent(data.qrUrl);
 
-    var tbody = document.getElementById("preview_table_body");
+    var tbody = document.getElementById("prev_table_body");
     tbody.innerHTML = "";
-    var dags = data.dags.length ? data.dags : [{ dagNo: "-", landClass: "-", total: "০", khatianLand: "০", share: "-", comment: "-" }];
+
+    var dags = data.dags.length ? data.dags : [{}];
 
     dags.forEach((dag, idx) => {
       var tr = document.createElement("tr");
+
+      // First Row combines Owner Details
+      var ownerCell = idx === 0 
+        ? `<td rowspan="${dags.length}" class="owner-td">${escapeHtml(data.owner)}</td>` 
+        : '';
+
       tr.innerHTML = `
-        ${idx === 0 ? `<td rowspan="${dags.length}">${escapeHtml(data.owner)}<br><small>${escapeHtml(data.address)}</small></td>` : ''}
-        <td>${idx + 1}</td>
-        <td>${escapeHtml(dag.dagNo)}</td>
-        <td>${escapeHtml(dag.landClass)}</td>
-        <td>${escapeHtml(dag.total)}</td>
-        <td>-</td>
-        <td>${escapeHtml(dag.khatianLand)}</td>
-        <td>-</td>
+        ${ownerCell}
         <td>${escapeHtml(dag.share)}</td>
-        <td>${escapeHtml(dag.khatianLand)}</td>
-        <td>-</td>
+        <td></td>
+        <td>${escapeHtml(dag.dagNo)}</td>
+        <td>${escapeHtml(dag.landClassAgri)}</td>
+        <td>${escapeHtml(dag.landClassNonAgri)}</td>
+        <td>${escapeHtml(dag.totalAcre)}</td>
+        <td>${escapeHtml(dag.totalPercent)}</td>
+        <td>${escapeHtml(dag.dagShare)}</td>
+        <td>${escapeHtml(dag.shareAcre)}</td>
+        <td>${escapeHtml(dag.sharePercent)}</td>
         <td>${escapeHtml(dag.comment)}</td>
       `;
       tbody.appendChild(tr);
     });
-
-    setTxt("preview_total_land", data.totalLand, "০");
-    setTxt("preview_total_share", data.share, "-");
-    setTxt("preview_total_percent", data.totalLand, "০");
 
     document.getElementById("preview_area").style.display = "block";
   }
@@ -936,7 +980,7 @@
   function resetKhatianForm() {
     document.getElementById("khatianForm").reset();
     document.getElementById("dag_container").innerHTML = "";
-    addDagRow();
+    initDefaultDags();
     closePreview();
   }
 
