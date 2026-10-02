@@ -164,11 +164,11 @@
       margin-top: 25px;
     }
 
-    /* KHATIAN PREVIEW STYLES - A4 SIZE ADJUSTMENT */
+    /* KHATIAN PREVIEW STYLES (OUTER BORDER REMOVED) */
     .khatian-box {
-      border: 2px solid #000;
-      padding: 20px;
-      margin: 20px auto;
+      border: none; /* খতিয়ানের বাইরের আয়তাকার ঘরটি তুলে দেওয়া হলো */
+      padding: 10px;
+      margin: 0 auto;
       background: #fff;
       font-size: 14px;
       color: #000;
@@ -220,7 +220,6 @@
       background-color: #fff;
     }
 
-    /* FLEX COLUMN TO ALIGN NUMBERS PERFECTLY AT THE BOTTOM */
     .th-container {
       display: flex;
       flex-direction: column;
@@ -257,7 +256,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     .official-logo-img {
@@ -274,7 +273,7 @@
     @media print {
       @page {
         size: A4 landscape;
-        margin: 10mm;
+        margin: 5mm;
       }
       body {
         background: none;
@@ -290,10 +289,10 @@
         margin: 0;
       }
       .khatian-box {
-        border: 2px solid #000;
+        border: none !important;
         width: 100%;
         max-width: 100%;
-        padding: 15px;
+        padding: 0;
       }
       .button-group { display: none !important; }
     }
@@ -526,12 +525,12 @@
               </th>
             </tr>
             <tr>
-              <th>কৃষি ৫(ক)</th>
-              <th>অকৃষি ৫(খ)</th>
-              <th>একর ৬(ক)</th>
-              <th>শতাংশ ৬(খ)</th>
-              <th>একর ৮(ক)</th>
-              <th>শতাংশ ৮(খ)</th>
+              <th>কৃষি<br>৫(ক)</th>
+              <th>অকৃষি<br>৫(খ)</th>
+              <th>একর<br>৬(ক)</th>
+              <th>শতাংশ<br>৬(খ)</th>
+              <th>একর<br>৮(ক)</th>
+              <th>শতাংশ<br>৮(খ)</th>
             </tr>
           </thead>
           <tbody id="prev_table_body"></tbody>
@@ -560,7 +559,6 @@
             বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
           </div>
 
-          <!-- ORIGINAL LOGO PNG IMAGE -->
           <div style="width: 30%; text-align: center;">
             <img src="logo.png" alt="অফিসিয়াল সীল" class="official-logo-img">
           </div>
