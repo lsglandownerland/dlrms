@@ -164,9 +164,9 @@
       margin-top: 25px;
     }
 
-    /* KHATIAN PREVIEW STYLES (OUTER BORDER REMOVED) */
+    /* KHATIAN PREVIEW STYLES */
     .khatian-box {
-      border: none; /* খতিয়ানের বাইরের আয়তাকার ঘরটি তুলে দেওয়া হলো */
+      border: none;
       padding: 10px;
       margin: 0 auto;
       background: #fff;
@@ -198,7 +198,6 @@
       font-size: 15px;
     }
 
-    /* TABLE LAYOUT FOR PERFECT ALIGNMENT */
     .khatian-table {
       width: 100%;
       border-collapse: collapse;
@@ -242,7 +241,6 @@
       margin-top: 5px;
       display: block;
       width: 100%;
-      border-top: 1px solid transparent;
     }
 
     .owner-td {
@@ -269,7 +267,6 @@
 
     .qr-code { width: 90px; height: 90px; }
 
-    /* PRINT SPECIFIC STYLES FOR A4 */
     @media print {
       @page {
         size: A4 landscape;
@@ -409,16 +406,16 @@
       <h4>খতিয়ান তথ্য ফর্ম</h4>
 
       <div class="form-grid">
-        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৬৬৮" oninput="renderPreview()"></div>
+        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৪৮৫" oninput="renderPreview()"></div>
         <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
         <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
         <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
         <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
-        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="অনন্তপুর" oninput="renderPreview()"></div>
-        <div class="form-group"><label>জে, এল, নং:</label><input type="text" id="in_jl" value="২৩৪" oninput="renderPreview()"></div>
+        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর" oninput="renderPreview()"></div>
+        <div class="form-group"><label>সার্ভে / জে এল নং:</label><input type="text" id="in_jl" value="বি আর এস" oninput="renderPreview()"></div>
         <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
 
-        <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="5" placeholder="মালিকের নাম ও বিবরণ লিখুন..." oninput="renderPreview()"></textarea></div>
+        <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="4" placeholder="যেমন: দং নজির আহম্মদ..." oninput="renderPreview()"></textarea></div>
 
         <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
 
@@ -433,8 +430,7 @@
         <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
         <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
         <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
-        <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="২২-০৮-২০২০" oninput="renderPreview()"></div>
-        <div class="form-group"><label>QR কোডের লিংক:</label><input type="url" id="in_qr_url" value="https://land.gov.bd/" oninput="renderPreview()"></div>
+        <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="১৮ সেপ্টেম্বর, ২০২৬" oninput="renderPreview()"></div>
         <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
       </div>
 
@@ -470,14 +466,14 @@
       <div class="khatian-box">
         
         <div class="page-number-top">পৃষ্ঠা নং: <span id="prev_page">১ এর ১</span></div>
-        <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৬৬৮</span></div>
+        <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৪৮৫</span></div>
 
         <div class="meta-line">
           <div>বিভাগ: <span id="prev_division">চট্টগ্রাম</span></div>
           <div>জেলা: <span id="prev_district">নোয়াখালী</span></div>
           <div>উপজেলা/থানা: <span id="prev_upazila">বেগমগঞ্জ</span></div>
-          <div>মৌজা: <span id="prev_mouza">অনন্তপুর</span></div>
-          <div>জে, এল, নং: <span id="prev_jl">২৩৪</span></div>
+          <div>মৌজা: <span id="prev_mouza">আলাদিনগর</span></div>
+          <div>জে, এল, নং: <span id="prev_jl">বি আর এস</span></div>
           <div>রে: সা: নং: <span id="prev_resa">-</span></div>
         </div>
 
@@ -551,7 +547,7 @@
         </table>
 
         <div style="margin-top: 10px; font-size: 12px;">
-          মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="prev_print_date">২২-০৮-২০২০</span>
+          মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="prev_print_date">১৮ সেপ্টেম্বর, ২০২৬</span>
         </div>
 
         <div class="footer-note-section">
@@ -653,7 +649,6 @@
     return String(num).replace(/[0-9]/g, function(w) { return bn[parseInt(w)]; });
   }
 
-  /* CALCULATE TOTAL LAND AUTOMATICALLY */
   function calculateTotalLand() {
     var rows = document.querySelectorAll("#dag_container .dag-row");
     var total = 0;
@@ -849,8 +844,7 @@
   function initDefaultDags() {
     var container = document.getElementById("dag_container");
     if (container && container.children.length === 0) {
-      addDagRow({ share: "০.১৮৮", dagNo: "৪২৫৫", landClassAgri: "", landClassNonAgri: "বাড়ী", totalAcre: "", totalPercent: "৫৭০০", dagShare: "০.১৮৮", shareAcre: "০", sharePercent: "১০০০", comment: "" });
-      addDagRow({ share: "০.২৫৮", dagNo: "৪২৫৭", landClassAgri: "", landClassNonAgri: "বাড়ী", totalAcre: "", totalPercent: "৫৮০০", dagShare: "০.২৫৮", shareAcre: "০", sharePercent: "১৫০০", comment: "" });
+      addDagRow({ share: "", dagNo: "৪১৫০", landClassAgri: "", landClassNonAgri: "", totalAcre: "", totalPercent: "", dagShare: "", shareAcre: "", sharePercent: "", comment: "" });
     }
   }
 
@@ -861,7 +855,7 @@
     row.className = "dag-row";
     row.innerHTML = `
       <input type="text" class="d_share" placeholder="অংশ" value="${escapeHtml(data.share || '')}">
-      <input type="text" class="d_no" placeholder="দাগ" value="${escapeHtml(data.dagNo || '')}">
+      <input type="text" class="d_no" placeholder="দাগ" value="${escapeHtml(data.dagNo || '')}" oninput="renderPreview()">
       <input type="text" class="d_agri" placeholder="কৃষি" value="${escapeHtml(data.landClassAgri || '')}">
       <input type="text" class="d_nonagri" placeholder="অকৃষি" value="${escapeHtml(data.landClassNonAgri || '')}">
       <input type="text" class="d_tot_acre" placeholder="মোট একর" value="${escapeHtml(data.totalAcre || '')}">
@@ -924,9 +918,27 @@
       note: document.getElementById("in_note")?.value.trim() || "",
       caseNote: document.getElementById("in_case_note")?.value.trim() || "",
       printDate: document.getElementById("in_print_date")?.value.trim() || "",
-      qrUrl: document.getElementById("in_qr_url")?.value.trim() || "https://land.gov.bd/",
       dags: getDagData()
     };
+  }
+
+  /* DYNAMIC QR CODE LINK CREATOR */
+  function generateQRUrl(data) {
+    var origin = window.location.origin + window.location.pathname.replace("index.html", "");
+    var baseUrl = origin + "view.html";
+
+    var params = new URLSearchParams({
+      k: data.khatian,
+      m: data.owner,
+      d: (data.dags[0] && data.dags[0].dagNo) ? data.dags[0].dagNo : "",
+      s: data.jl,
+      mz: data.mouza,
+      u: data.upazila + " রাজস্ব সার্কেল",
+      dt: data.district,
+      dv: data.division
+    });
+
+    return baseUrl + "?" + params.toString();
   }
 
   function saveKhatian() {
@@ -996,7 +1008,6 @@
     document.getElementById("in_note").value = rec.note || "";
     document.getElementById("in_case_note").value = rec.caseNote || "";
     document.getElementById("in_print_date").value = rec.printDate || "";
-    document.getElementById("in_qr_url").value = rec.qrUrl || "https://land.gov.bd/";
 
     var container = document.getElementById("dag_container");
     container.innerHTML = "";
@@ -1034,9 +1045,10 @@
     setTxt("prev_case_note", data.caseNote);
     setTxt("prev_owner_share", data.ownerShare, "১.০০০");
     setTxt("prev_total_land_sum", data.totalLandSum, "০");
-    setTxt("prev_print_date", data.printDate, new Date().toLocaleDateString("bn-BD"));
+    setTxt("prev_print_date", data.printDate, "১৮ সেপ্টেম্বর, ২০২৬");
 
-    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(data.qrUrl);
+    var dynamicQrLink = generateQRUrl(data);
+    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(dynamicQrLink);
 
     var tbody = document.getElementById("prev_table_body");
     tbody.innerHTML = "";
