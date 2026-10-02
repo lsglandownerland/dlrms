@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>খতিয়ান অ্যাডমিন সিস্টেম</title>
+  <title>খতিয়ান অ্যাডমিন ও সাব-অ্যাডমিন সিস্টেম</title>
 
   <style>
-    /* Global & Typography */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -36,7 +35,6 @@
       padding-bottom: 5px;
     }
 
-    /* Form Layout */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -78,7 +76,6 @@
       border-color: #007bff;
     }
 
-    /* Dag Section */
     .dag-section {
       background: #f9f9f9;
       padding: 15px;
@@ -93,11 +90,8 @@
       align-items: center;
     }
 
-    .dag-row input {
-      flex: 1;
-    }
+    .dag-row input { flex: 1; }
 
-    /* Buttons */
     .button-group {
       display: flex;
       gap: 10px;
@@ -134,7 +128,6 @@
     .btn-prt { background-color: #17a2b8; }
     .btn-del { background-color: #dc3545; }
 
-    /* Tables */
     .record-table, .meta-table, .main-table {
       width: 100%;
       border-collapse: collapse;
@@ -150,11 +143,8 @@
       font-size: 13px;
     }
 
-    .record-table th {
-      background-color: #e9ecef;
-    }
+    .record-table th { background-color: #e9ecef; }
 
-    /* Preview Specific Styling */
     .khatian-box {
       border: 2px solid #000;
       padding: 20px;
@@ -171,34 +161,29 @@
       margin-bottom: 10px;
     }
 
-    .seal-logo {
-      width: 70px;
-      height: auto;
+    .seal-logo { width: 70px; height: auto; }
+    .khatian-header { text-align: center; font-size: 16px; font-weight: bold; }
+    .bottom-section { margin-top: 15px; }
+    .footer-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; }
+    .qr-code { width: 90px; height: 90px; }
+
+    .bkash-box {
+      background-color: #e2136e;
+      color: white;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
     }
 
-    .khatian-header {
-      text-align: center;
-      font-size: 16px;
-      font-weight: bold;
+    .admin-section-box {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 25px;
     }
 
-    .bottom-section {
-      margin-top: 15px;
-    }
-
-    .footer-flex {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-top: 20px;
-    }
-
-    .qr-code {
-      width: 90px;
-      height: 90px;
-    }
-
-    /* Print styling */
     @media print {
       body * { visibility: hidden; }
       #preview_area, #preview_area * { visibility: visible; }
@@ -211,134 +196,136 @@
 
 <div class="container">
 
-  <!-- =========================================================
-       ADMIN LOGIN / CONTROL PANEL (সিস্টেম অ্যাক্সেস)
-  ========================================================= -->
+  <!-- LOGIN PANEL -->
   <div id="login_panel" style="max-width:400px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius:6px; background:#fafafa;">
     <h4 style="text-align:center;">সিস্টেম লগইন</h4>
     <form onsubmit="handleLogin(event)">
       <div class="form-group" style="margin-bottom:10px;">
         <label>ব্যবহারকারীর নাম:</label>
-        <input type="text" id="username" required placeholder="admin">
+        <input type="text" id="username" required placeholder="admin বা সাব-এডমিন ইউজারনেম">
       </div>
       <div class="form-group" style="margin-bottom:15px;">
         <label>পাসওয়ার্ড:</label>
-        <input type="password" id="password" required placeholder="12345">
+        <input type="password" id="password" required placeholder="পাসওয়ার্ড দিন">
       </div>
       <button type="submit" class="btn btn-print" style="width:100%;">লগইন করুন</button>
     </form>
   </div>
 
-
-  <!-- =========================================================
-       MAIN ADMIN PANEL
-  ========================================================= -->
+  <!-- MAIN APP PANEL -->
   <div id="admin_panel" style="display:none;">
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:10px; border-radius:5px;">
+    <!-- HEADER / USER INFO -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
       <div>
-        <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance">৳ 0</span>
+        <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
+        <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
       </div>
       <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
     </div>
 
+    <!-- SUB-ADMIN RECHARGE SECTION -->
+    <div id="subadmin_recharge_area" class="admin-section-box" style="display:none; margin-bottom:20px;">
+      <div class="bkash-box">
+        <strong>বিকাশ রিচার্জ নির্দেশিকা:</strong><br>
+        বিকাশ পারসোনাল নম্বর: <strong>01833013604</strong> (Send Money)<br>
+        টাকা পাঠানোর পর নিচের ফর্মে টাকার পরিমাণ এবং Transaction ID লিখে সাবমিট করুন।
+      </div>
+      <h4>ওয়ালেট রিচার্জের অনুরোধ পাঠান</h4>
+      <form onsubmit="requestRecharge(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>টাকার পরিমাণ (৳):</label>
+            <input type="number" id="recharge_amount" required placeholder="যেমন: ১০০">
+          </div>
+          <div class="form-group">
+            <label>Transaction ID (TrxID):</label>
+            <input type="text" id="recharge_trxn" required placeholder="যেমন: B8A9XX123">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-save">অনুরোধ পাঠান</button>
+      </form>
+    </div>
+
+    <!-- MASTER ADMIN ONLY: SUB-ADMIN & RECHARGE MANAGEMENT -->
+    <div id="master_admin_controls" style="display:none;">
+      
+      <!-- CREATE SUB ADMIN -->
+      <div class="admin-section-box">
+        <h4>নতুন সাব-এডমিন যোগ করুন</h4>
+        <form id="subAdminForm" onsubmit="addSubAdmin(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>ইউজারনেম:</label>
+              <input type="text" id="sub_username" required placeholder="যেমন: user1">
+            </div>
+            <div class="form-group">
+              <label>পাসওয়ার্ড:</label>
+              <input type="password" id="sub_password" required placeholder="পাসওয়ার্ড">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-print">সাব-এডমিন তৈরি করুন</button>
+        </form>
+
+        <h4 style="margin-top:15px;">সাব-এডমিনদের তালিকা</h4>
+        <table class="record-table">
+          <thead>
+            <tr>
+              <th>ক্রমিক</th>
+              <th>ইউজারনেম</th>
+              <th>বর্তমান ব্যালেন্স</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="subadmin_list"></tbody>
+        </table>
+      </div>
+
+      <!-- RECHARGE REQUESTS LIST -->
+      <div class="admin-section-box">
+        <h4>রিচার্জ অনুরোধসমূহ (বিকাশ)</h4>
+        <table class="record-table">
+          <thead>
+            <tr>
+              <th>ক্রমিক</th>
+              <th>ইউজারনেম</th>
+              <th>পরিমাণ</th>
+              <th>TrxID</th>
+              <th>স্ট্যাটাস</th>
+              <th>তারিখ</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="recharge_list"></tbody>
+        </table>
+      </div>
+
+    </div>
+
     <!-- KHATIAN FORM -->
-    <form id="khatianForm">
+    <form id="khatianForm" style="margin-top:20px;">
       <h4>খতিয়ান তথ্য ফর্ম</h4>
 
       <div class="form-grid">
+        <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" placeholder="যেমন: ঢাকা"></div>
+        <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" placeholder="যেমন: ঢাকা"></div>
+        <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" placeholder="যেমন: ধানমন্ডি"></div>
+        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" placeholder="যেমন: ধানমন্ডি"></div>
+        <div class="form-group"><label>সার্ভে টাইপ:</label><input type="text" id="in_survey" placeholder="যেমন: বিএস / আরএস"></div>
+        <div class="form-group"><label>জে. এল. নং:</label><input type="text" id="in_jl" placeholder="যেমন: ১২"></div>
+        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ১০১"></div>
+        <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১"></div>
+        <div class="form-group"><label>দলিল/মামলা নং:</label><input type="text" id="in_case_no" placeholder="দলিল/মামলা নং"></div>
+        <div class="form-group"><label>সন:</label><input type="text" id="in_year" placeholder="সন"></div>
+        <div class="form-group"><label>তারিখ:</label><input type="text" id="in_date" placeholder="তারিখ"></div>
+        <div class="form-group full-width"><label>মালিক / রায়তের নাম:</label><textarea id="in_owner" rows="2"></textarea></div>
+        <div class="form-group full-width"><label>পিতা / স্বামী / অভিভাবকের নাম:</label><textarea id="in_guardian" rows="2"></textarea></div>
+        <div class="form-group full-width"><label>ঠিকানা:</label><textarea id="in_address" rows="2"></textarea></div>
+        <div class="form-group"><label>জাতীয় পরিচয়পত্র / পরিচিতি:</label><input type="text" id="in_nid"></div>
+        <div class="form-group"><label>হিস্যা:</label><input type="text" id="in_share" placeholder="যেমন: ১/২"></div>
+        <div class="form-group"><label>মোট জমির পরিমাণ:</label><input type="text" id="in_total_land" placeholder="যেমন: ০.০২৫০"></div>
+        <div class="form-group"><label>জমির শ্রেণি:</label><input type="text" id="in_land_class" placeholder="যেমন: ভিটি / পুকুর"></div>
 
-        <div class="form-group">
-          <label>বিভাগ:</label>
-          <input type="text" id="in_division" placeholder="যেমন: ঢাকা">
-        </div>
-
-        <div class="form-group">
-          <label>জেলা:</label>
-          <input type="text" id="in_district" placeholder="যেমন: ঢাকা">
-        </div>
-
-        <div class="form-group">
-          <label>উপজেলা/থানা:</label>
-          <input type="text" id="in_upazila" placeholder="যেমন: ধানমন্ডি">
-        </div>
-
-        <div class="form-group">
-          <label>মৌজা:</label>
-          <input type="text" id="in_mouza" placeholder="যেমন: ধানমন্ডি">
-        </div>
-
-        <div class="form-group">
-          <label>সার্ভে টাইপ:</label>
-          <input type="text" id="in_survey" placeholder="যেমন: বিএস / আরএস">
-        </div>
-
-        <div class="form-group">
-          <label>জে. এল. নং:</label>
-          <input type="text" id="in_jl" placeholder="যেমন: ১২">
-        </div>
-
-        <div class="form-group">
-          <label>খতিয়ান নং:</label>
-          <input type="text" id="in_khatian" placeholder="যেমন: ১০১">
-        </div>
-
-        <div class="form-group">
-          <label>পৃষ্ঠা নং:</label>
-          <input type="text" id="in_page" value="১">
-        </div>
-
-        <div class="form-group">
-          <label>দলিল/মামলা নং:</label>
-          <input type="text" id="in_case_no" placeholder="দলিল/মামলা নং">
-        </div>
-
-        <div class="form-group">
-          <label>সন:</label>
-          <input type="text" id="in_year" placeholder="সন">
-        </div>
-
-        <div class="form-group">
-          <label>তারিখ:</label>
-          <input type="text" id="in_date" placeholder="তারিখ">
-        </div>
-
-        <div class="form-group full-width">
-          <label>মালিক / রায়তের নাম:</label>
-          <textarea id="in_owner" rows="2" placeholder="মালিকের নাম লিখুন"></textarea>
-        </div>
-
-        <div class="form-group full-width">
-          <label>পিতা / স্বামী / অভিভাবকের নাম:</label>
-          <textarea id="in_guardian" rows="2" placeholder="পিতা / স্বামী / অভিভাবকের নাম"></textarea>
-        </div>
-
-        <div class="form-group full-width">
-          <label>ঠিকানা:</label>
-          <textarea id="in_address" rows="2" placeholder="গ্রাম, ডাকঘর, উপজেলা, জেলা"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>জাতীয় পরিচয়পত্র / পরিচিতি:</label>
-          <input type="text" id="in_nid" placeholder="NID নম্বর">
-        </div>
-
-        <div class="form-group">
-          <label>হিস্যা:</label>
-          <input type="text" id="in_share" placeholder="যেমন: ১/২">
-        </div>
-
-        <div class="form-group">
-          <label>মোট জমির পরিমাণ:</label>
-          <input type="text" id="in_total_land" placeholder="যেমন: ০.০২৫০">
-        </div>
-
-        <div class="form-group">
-          <label>জমির শ্রেণি:</label>
-          <input type="text" id="in_land_class" placeholder="যেমন: ভিটি / পুকুর">
-        </div>
-
-        <!-- DAG SECTION -->
         <div class="form-group full-width">
           <div class="dag-section">
             <h4>দাগের বিস্তারিত তথ্য</h4>
@@ -347,29 +334,12 @@
           </div>
         </div>
 
-        <div class="form-group full-width">
-          <label>নোট / পরিবর্তন:</label>
-          <textarea id="in_note" rows="2" placeholder="............ ধারামতে নোট বা পরিবর্তন মায়"></textarea>
-        </div>
-
-        <div class="form-group full-width">
-          <label>মকদ্দমা সংক্রান্ত তথ্য:</label>
-          <textarea id="in_case_note" rows="2" placeholder="মকদ্দমা নং ............. এবং সন ..............."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>QR কোডের লিংক:</label>
-          <input type="url" id="in_qr_url" value="https://land.gov.bd/">
-        </div>
-
-        <div class="form-group">
-          <label>রেকর্ড আইডি:</label>
-          <input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে">
-        </div>
-
+        <div class="form-group full-width"><label>নোট / পরিবর্তন:</label><textarea id="in_note" rows="2"></textarea></div>
+        <div class="form-group full-width"><label>মকদ্দমা সংক্রান্ত তথ্য:</label><textarea id="in_case_note" rows="2"></textarea></div>
+        <div class="form-group"><label>QR কোডের লিংক:</label><input type="url" id="in_qr_url" value="https://land.gov.bd/"></div>
+        <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে"></div>
       </div>
 
-      <!-- FORM BUTTONS -->
       <div class="button-group">
         <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
         <button type="button" class="btn btn-save" onclick="saveKhatian()">খতিয়ান সংরক্ষণ করুন</button>
@@ -401,22 +371,12 @@
     <!-- PREVIEW AREA -->
     <div id="preview_area" style="display:none; margin-top:30px;">
       <div class="khatian-box">
-        
         <div class="top-header">
-          <div style="width:90px;">
-            <img id="preview_logo" class="seal-logo" src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="Logo">
-          </div>
-          <div class="khatian-header">
-            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার<br>
-            ভূমি মন্ত্রণালয়<br>
-            <span id="preview_survey_title">খতিয়ান</span>
-          </div>
-          <div class="page-no">
-            পৃষ্ঠা: <span id="preview_page">১</span>
-          </div>
+          <div style="width:90px;"><img id="preview_logo" class="seal-logo" src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="Logo"></div>
+          <div class="khatian-header">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার<br>ভূমি মন্ত্রণালয়<br><span id="preview_survey_title">খতিয়ান</span></div>
+          <div class="page-no">পৃষ্ঠা: <span id="preview_page">১</span></div>
         </div>
 
-        <!-- META TABLE -->
         <table class="meta-table">
           <tr>
             <td>বিভাগ: <span id="preview_division"></span></td>
@@ -430,7 +390,6 @@
           </tr>
         </table>
 
-        <!-- MAIN TABLE -->
         <table class="main-table">
           <thead>
             <tr>
@@ -463,7 +422,6 @@
           </tfoot>
         </table>
 
-        <!-- OWNER INFO -->
         <div style="margin-top:12px; border:1px solid #000; padding:8px; font-size:13px;">
           <b>মালিক / রায়তের তথ্য:</b>
           <div style="margin-top:5px;">নাম: <span id="preview_owner"></span></div>
@@ -471,7 +429,6 @@
           <div style="margin-top:4px;">ঠিকানা: <span id="preview_address"></span></div>
         </div>
 
-        <!-- BOTTOM NOTE & FOOTER -->
         <div class="bottom-section">
           <div class="bottom-note">
             <div><span id="preview_note">............ ধারামতে নোট বা পরিবর্তন মায়</span></div>
@@ -483,16 +440,12 @@
               <div style="font-size:12px;">যাচাই করতে QR কোড স্ক্যান করুন</div>
               <img id="preview_qr" class="qr-code" src="" alt="QR Code">
             </div>
-
             <div style="width:40%; text-align:center;">
               <img class="seal-logo" src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="Seal">
               <div style="font-size:12px; font-weight:bold;">অনুমোদিত রেকর্ড</div>
             </div>
-
             <div style="width:30%; text-align:right; font-size:12px;">
-              প্রস্তুতকারক/কর্তৃপক্ষের স্বাক্ষর
-              <br><br><br>
-              ____________________
+              প্রস্তুতকারক/কর্তৃপক্ষের স্বাক্ষর<br><br><br>____________________
             </div>
           </div>
 
@@ -501,9 +454,8 @@
           </div>
         </div>
 
-        <!-- PREVIEW BUTTONS -->
         <div class="button-group" style="margin-top:15px;">
-          <button type="button" class="btn btn-print" onclick="payAndPrint()">৳১০ দিয়ে ডাউনলোড / প্রিন্ট</button>
+          <button type="button" class="btn btn-print" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
           <button type="button" class="btn btn-reset" onclick="closePreview()">প্রিভিউ বন্ধ করুন</button>
         </div>
 
@@ -513,22 +465,32 @@
   </div>
 </div>
 
-<!-- =========================================================
-     JAVASCRIPT LOGICS
-========================================================= -->
 <script>
   var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
 
-  /* AUTHENTICATION */
+  /* AUTHENTICATION LOGIC */
   function handleLogin(e) {
     e.preventDefault();
     var user = document.getElementById("username").value.trim();
     var pass = document.getElementById("password").value;
 
+    // Admin Login Check
     if (user === "admin" && pass === "12345") {
-      sessionStorage.setItem("isAdminLoggedIn", "true");
+      sessionStorage.setItem("isLoggedIn", "true");
       sessionStorage.setItem("loggedInUser", "admin");
       sessionStorage.setItem("userRole", "admin");
+      checkAuth();
+      return;
+    }
+
+    // Sub-Admin Login Check
+    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
+    var foundSub = subAdmins.find(sa => sa.username === user && sa.password === pass);
+
+    if (foundSub) {
+      sessionStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem("loggedInUser", user);
+      sessionStorage.setItem("userRole", "subadmin");
       checkAuth();
     } else {
       alert("ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!");
@@ -541,23 +503,214 @@
   }
 
   function checkAuth() {
-    var logged = sessionStorage.getItem("isAdminLoggedIn") === "true";
+    var logged = sessionStorage.getItem("isLoggedIn") === "true";
+    var role = sessionStorage.getItem("userRole");
+    var username = sessionStorage.getItem("loggedInUser");
+
     document.getElementById("login_panel").style.display = logged ? "none" : "block";
     document.getElementById("admin_panel").style.display = logged ? "block" : "none";
 
     if (logged) {
+      document.getElementById("display_username").innerText = username;
+      document.getElementById("display_role").innerText = role === "admin" ? "অ্যাডমিন" : "সাব-অ্যাডমিন";
+
+      if (role === "admin") {
+        document.getElementById("master_admin_controls").style.display = "block";
+        document.getElementById("subadmin_recharge_area").style.display = "none";
+        renderSubAdmins();
+        renderRechargeRequests();
+      } else {
+        document.getElementById("master_admin_controls").style.display = "none";
+        document.getElementById("subadmin_recharge_area").style.display = "block";
+      }
+
       initDefaultDags();
       loadWallet();
       renderList();
     }
   }
 
-  /* DAG MANAGEMENT */
+  /* SUB-ADMIN MANAGEMENT (ADMIN ONLY) */
+  function addSubAdmin(e) {
+    e.preventDefault();
+    var user = document.getElementById("sub_username").value.trim();
+    var pass = document.getElementById("sub_password").value;
+
+    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
+    if (subAdmins.some(sa => sa.username === user) || user === "admin") {
+      alert("এই ব্যবহারকারীর নাম ইতোমধ্যে নিবন্ধিত!");
+      return;
+    }
+
+    subAdmins.push({ username: user, password: pass });
+    localStorage.setItem("subAdmins", JSON.stringify(subAdmins));
+
+    // Initialize balance
+    var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
+    balances[user] = 0;
+    localStorage.setItem("userBalances", JSON.stringify(balances));
+
+    alert("সাব-এডমিন সফলভাবে তৈরি হয়েছে!");
+    document.getElementById("subAdminForm").reset();
+    renderSubAdmins();
+  }
+
+  function renderSubAdmins() {
+    var tbody = document.getElementById("subadmin_list");
+    if (!tbody) return;
+    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
+    var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
+
+    tbody.innerHTML = subAdmins.length === 0 ? `<tr><td colspan="4">কোনো সাব-এডমিন নেই</td></tr>` : "";
+
+    subAdmins.forEach((sa, idx) => {
+      var tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${escapeHtml(sa.username)}</td>
+        <td>৳ ${balances[sa.username] || 0}</td>
+        <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${sa.username}')">মুছুন</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function deleteSubAdmin(user) {
+    if (!confirm("আপনি কি নিশ্চিত এই সাব-এডমিন মুছে ফেলতে চান?")) return;
+    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
+    subAdmins = subAdmins.filter(sa => sa.username !== user);
+    localStorage.setItem("subAdmins", JSON.stringify(subAdmins));
+    renderSubAdmins();
+  }
+
+  /* WALLET & RECHARGE SYSTEM */
+  function loadWallet() {
+    var role = sessionStorage.getItem("userRole");
+    var user = sessionStorage.getItem("loggedInUser");
+    var bal = 0;
+
+    if (role === "admin") {
+      document.getElementById("wallet_balance").innerText = "অসীমিত (Admin)";
+    } else {
+      var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
+      bal = balances[user] || 0;
+      document.getElementById("wallet_balance").innerText = "৳ " + bal;
+    }
+  }
+
+  function requestRecharge(e) {
+    e.preventDefault();
+    var amount = parseFloat(document.getElementById("recharge_amount").value);
+    var trxnId = document.getElementById("recharge_trxn").value.trim();
+    var user = sessionStorage.getItem("loggedInUser");
+
+    if (!amount || amount <= 0 || !trxnId) {
+      alert("সঠিক পরিমাণ এবং ট্রানজেকশন আইডি দিন।");
+      return;
+    }
+
+    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
+    requests.push({
+      id: "REQ-" + Date.now(),
+      username: user,
+      amount: amount,
+      trxnId: trxnId,
+      status: "pending",
+      date: new Date().toLocaleString("bn-BD")
+    });
+
+    localStorage.setItem("rechargeRequests", JSON.stringify(requests));
+    alert("আপনার রিচার্জের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে ব্যালেন্স যুক্ত হবে।");
+    document.getElementById("recharge_amount").value = "";
+    document.getElementById("recharge_trxn").value = "";
+  }
+
+  function renderRechargeRequests() {
+    var tbody = document.getElementById("recharge_list");
+    if (!tbody) return;
+
+    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
+    tbody.innerHTML = requests.length === 0 ? `<tr><td colspan="7">কোনো অনুরোধ নেই</td></tr>` : "";
+
+    requests.forEach((req, idx) => {
+      var tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${escapeHtml(req.username)}</td>
+        <td>৳ ${req.amount}</td>
+        <td>${escapeHtml(req.trxnId)}</td>
+        <td>${req.status === "pending" ? "<span style='color:orange;'>অপেক্ষমাণ</span>" : req.status === "approved" ? "<span style='color:green;'>অনুমোদিত</span>" : "<span style='color:red;'>বাতিল</span>"}</td>
+        <td>${req.date}</td>
+        <td>
+          ${req.status === "pending" ? `
+            <button class="btn-sm btn-save" onclick="approveRecharge('${req.id}')">অনুমোদন</button>
+            <button class="btn-sm btn-del" onclick="rejectRecharge('${req.id}')">বাতিল</button>
+          ` : "-"}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function approveRecharge(reqId) {
+    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
+    var req = requests.find(r => r.id === reqId);
+
+    if (req && req.status === "pending") {
+      req.status = "approved";
+      var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
+      balances[req.username] = (balances[req.username] || 0) + req.amount;
+
+      localStorage.setItem("userBalances", JSON.stringify(balances));
+      localStorage.setItem("rechargeRequests", JSON.stringify(requests));
+
+      alert("অনুরোধ অনুমোদন করা হয়েছে এবং টাকা যোগ করা হয়েছে!");
+      renderRechargeRequests();
+      renderSubAdmins();
+    }
+  }
+
+  function rejectRecharge(reqId) {
+    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
+    var req = requests.find(r => r.id === reqId);
+
+    if (req && req.status === "pending") {
+      req.status = "rejected";
+      localStorage.setItem("rechargeRequests", JSON.stringify(requests));
+      alert("অনুরোধ বাতিল করা হয়েছে।");
+      renderRechargeRequests();
+    }
+  }
+
+  function payAndPrint() {
+    var role = sessionStorage.getItem("userRole");
+    var user = sessionStorage.getItem("loggedInUser");
+
+    if (role === "admin") {
+      window.print();
+      return;
+    }
+
+    var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
+    var bal = balances[user] || 0;
+
+    if (bal < 10) {
+      alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳১০)। অনুগ্রহ করে রিচার্জ করুন।");
+      return;
+    }
+
+    if (confirm("প্রিন্ট বা ডাউনলোড করার জন্য আপনার অ্যাকাউন্ট থেকে ৳১০ কাটা হবে। নিশ্চিত?")) {
+      balances[user] = bal - 10;
+      localStorage.setItem("userBalances", JSON.stringify(balances));
+      loadWallet();
+      window.print();
+    }
+  }
+
+  /* KHATIAN LOGIC */
   function initDefaultDags() {
     var container = document.getElementById("dag_container");
-    if (container && container.children.length === 0) {
-      addDagRow();
-    }
+    if (container && container.children.length === 0) addDagRow();
   }
 
   function addDagRow(data) {
@@ -603,7 +756,6 @@
     return String(val || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
-  /* FORM DATA & SAVE */
   function getFormData() {
     return {
       id: document.getElementById("in_record_id")?.value.trim() || "",
@@ -654,7 +806,6 @@
     renderList();
   }
 
-  /* LIST & PREVIEW */
   function renderList() {
     var tbody = document.getElementById("khatian_list");
     if (!tbody) return;
@@ -789,34 +940,6 @@
     closePreview();
   }
 
-  /* WALLET & PRINT */
-  function loadWallet() {
-    var bal = localStorage.getItem("walletBalance") || "100";
-    document.getElementById("wallet_balance").innerText = "৳ " + bal;
-  }
-
-  function payAndPrint() {
-    var role = sessionStorage.getItem("userRole");
-    if (role === "admin") {
-      window.print();
-      return;
-    }
-
-    var bal = parseFloat(localStorage.getItem("walletBalance") || "0");
-    if (bal < 10) {
-      alert("পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳১০)।");
-      return;
-    }
-
-    if (confirm("প্রিন্ট করতে ৳১০ কাটা হবে। নিশ্চিত?")) {
-      bal -= 10;
-      localStorage.setItem("walletBalance", bal.toString());
-      loadWallet();
-      window.print();
-    }
-  }
-
-  // Initialize
   document.addEventListener("DOMContentLoaded", checkAuth);
 </script>
 
