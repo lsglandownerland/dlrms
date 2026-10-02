@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
     * {
@@ -16,12 +17,12 @@
     body {
       background-color: #f4f6f9;
       color: #333;
-      padding: 20px;
     }
 
-    .container {
+    /* INDEX PAGE STYLES */
+    .app-container {
       max-width: 1100px;
-      margin: 0 auto;
+      margin: 20px auto;
       background: #fff;
       padding: 20px;
       border-radius: 8px;
@@ -267,15 +268,104 @@
 
     .qr-code { width: 90px; height: 90px; }
 
+    /* VIEW PAGE STYLES */
+    .top-bar {
+      background-color: #4a7c59;
+      color: #fff;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+    }
+
+    .nav-bar {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .logo-img { height: 45px; }
+
+    .khatian-card {
+      background: #fff;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 8px;
+    }
+    .khatian-title {
+      color: #0d5c3a;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: bold;
+    }
+    .info-row {
+      display: flex;
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: #333;
+    }
+    .info-label { width: 110px; font-weight: bold; }
+    .info-colon { margin-right: 10px; font-weight: bold; }
+    .info-value { flex: 1; }
+
+    .footer-section {
+      background-color: #e8f5e9;
+      padding: 25px 20px;
+      margin-top: 40px;
+      border-top: 3px solid #81c784;
+    }
+    .section-title {
+      color: #1b5e20;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .link-item {
+      color: #2e7d32;
+      text-decoration: none;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-logos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .partner-logos { display: flex; gap: 10px; align-items: center; }
+    .partner-logos img { height: 40px; }
+    .social-icons { display: flex; gap: 10px; }
+    .social-icon {
+      width: 35px; height: 35px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px; text-decoration: none;
+    }
+    .bg-fb { background: #1877f2; }
+    .bg-x { background: #000; }
+    .bg-insta { background: #e4405f; }
+    .bg-yt { background: #ff0000; }
+    .playstore-btn { margin-top: 20px; height: 45px; }
+
     @media print {
       @page {
         size: A4 landscape;
         margin: 5mm;
       }
-      body {
-        background: none;
-        padding: 0;
-      }
+      body { background: none; padding: 0; }
       body * { visibility: hidden; }
       #preview_area, #preview_area * { visibility: visible; }
       #preview_area {
@@ -297,286 +387,398 @@
 </head>
 <body>
 
-<div class="container">
+  <!-- ==================== PAGE 1: PUBLIC VIEW PAGE (WHEN QR IS SCANNED) ==================== -->
+  <div id="public_view_page" style="display:none;">
+    <div class="top-bar" id="top_date_bar">লোড হচ্ছে...</div>
 
-  <!-- LOGIN PANEL -->
-  <div id="login_panel" style="max-width:400px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius:6px; background:#fafafa;">
-    <h4 style="text-align:center;">সিস্টেম লগইন</h4>
-    <form onsubmit="handleLogin(event)">
-      <div class="form-group" style="margin-bottom:10px;">
-        <label>ব্যবহারকারীর নাম:</label>
-        <input type="text" id="username" required placeholder="admin বা সাব-এডমিন ইউজারনেম">
+    <div class="nav-bar">
+      <img src="https://land.gov.bd/sites/default/files/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div style="font-size: 20px; color: #1b5e20;">
+        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-ellipsis-v" style="margin-left: 15px;"></i>
       </div>
-      <div class="form-group" style="margin-bottom:15px;">
-        <label>পাসওয়ার্ড:</label>
-        <input type="password" id="password" required placeholder="পাসওয়ার্ড দিন">
-      </div>
-      <button type="submit" class="btn btn-print" style="width:100%;">লগইন করুন</button>
-    </form>
-  </div>
-
-  <!-- MAIN APP PANEL -->
-  <div id="admin_panel" style="display:none;">
-
-    <!-- HEADER / USER INFO -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
-      <div>
-        <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
-        <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
-      </div>
-      <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
     </div>
 
-    <!-- SUB-ADMIN RECHARGE SECTION -->
-    <div id="subadmin_recharge_area" class="admin-section-box" style="display:none; margin-bottom:20px;">
-      <div class="bkash-box">
-        <strong>বিকাশ রিচার্জ নির্দেশিকা:</strong><br>
-        বিকাশ পারসোনাল নম্বর: <strong>01833013604</strong> (Send Money)<br>
-        টাকা পাঠানোর পর নিচের ফর্মে টাকার পরিমাণ এবং Transaction ID লিখে সাবমিট করুন।
+    <div class="khatian-card">
+      <div class="khatian-title">খতিয়ান নং - <span id="view_khatian">-</span></div>
+
+      <div class="info-row"><div class="info-label">মালিক</div><div class="info-colon">:</div><div class="info-value" id="view_owner">-</div></div>
+      <div class="info-row"><div class="info-label">দাগ নং</div><div class="info-colon">:</div><div class="info-value" id="view_dag">-</div></div>
+      <div class="info-row"><div class="info-label">সার্ভে</div><div class="info-colon">:</div><div class="info-value" id="view_survey">বি আর এস</div></div>
+      <div class="info-row"><div class="info-label">মৌজা</div><div class="info-colon">:</div><div class="info-value" id="view_mouza">-</div></div>
+      <div class="info-row"><div class="info-label">উপজেলা</div><div class="info-colon">:</div><div class="info-value" id="view_upazila">-</div></div>
+      <div class="info-row"><div class="info-label">জেলা</div><div class="info-colon">:</div><div class="info-value" id="view_district">-</div></div>
+      <div class="info-row"><div class="info-label">বিভাগ</div><div class="info-colon">:</div><div class="info-value" id="view_division">-</div></div>
+      <div class="info-row"><div class="info-label">তারিখ</div><div class="info-colon">:</div><div class="info-value" id="view_date">-</div></div>
+    </div>
+
+    <div class="footer-section">
+      <div class="section-title">গুরুত্বপূর্ণ লিংক</div>
+      <div class="links-grid">
+        <a href="#" class="link-item">► বাংলাদেশ জাতীয় তথ্য বাতায়ন</a>
+        <a href="#" class="link-item">► সাপোর্ট টিকেট</a>
+        <a href="#" class="link-item">► ভূমি মন্ত্রণালয়</a>
+        <a href="#" class="link-item">► গোপনীয়তা নীতি</a>
+        <a href="#" class="link-item">► তথ্য অধিদপ্তর (পিআইডি)</a>
+        <a href="#" class="link-item">► সাধারণ জিজ্ঞাসা</a>
+        <a href="#" class="link-item">► অভিযোগ প্রতিকার ব্যবস্থা</a>
+        <a href="#" class="link-item">► যোগাযোগ</a>
       </div>
-      <h4>ওয়ালেট রিচার্জের অনুরোধ পাঠান</h4>
-      <form onsubmit="requestRecharge(event)">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>টাকার পরিমাণ (৳):</label>
-            <input type="number" id="recharge_amount" required placeholder="যেমন: ১০০">
-          </div>
-          <div class="form-group">
-            <label>Transaction ID (TrxID):</label>
-            <input type="text" id="recharge_trxn" required placeholder="যেমন: B8A9XX123">
+
+      <div class="footer-logos">
+        <div>
+          <div style="font-weight: bold; color: #1b5e20; margin-bottom: 8px;">পরিকল্পনা ও বাস্তবায়নে</div>
+          <div class="partner-logos">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="Gov">
+            <span style="font-size: 11px; font-weight: bold; color: #2e7d32;">জনবান্ধব ভূমি সেবা অটোমেশন</span>
           </div>
         </div>
-        <button type="submit" class="btn btn-save">অনুরোধ পাঠান</button>
+
+        <div>
+          <div style="font-weight: bold; color: #1b5e20; margin-bottom: 8px;">সামাজিক যোগাযোগ</div>
+          <div class="social-icons">
+            <a href="#" class="social-icon bg-fb"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon bg-x"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" class="social-icon bg-insta"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon bg-yt"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="playstore-btn">
+    </div>
+  </div>
+
+
+  <!-- ==================== PAGE 2: ADMIN / SYSTEM MANAGEMENT PAGE ==================== -->
+  <div id="main_app_page" class="app-container" style="display:none;">
+
+    <!-- LOGIN PANEL -->
+    <div id="login_panel" style="max-width:400px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius:6px; background:#fafafa;">
+      <h4 style="text-align:center;">সিস্টেম লগইন</h4>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>ব্যবহারকারীর নাম:</label>
+          <input type="text" id="username" required placeholder="admin বা সাব-এডমিন ইউজারনেম">
+        </div>
+        <div class="form-group" style="margin-bottom:15px;">
+          <label>পাসওয়ার্ড:</label>
+          <input type="password" id="password" required placeholder="পাসওয়ার্ড দিন">
+        </div>
+        <button type="submit" class="btn btn-print" style="width:100%;">লগইন করুন</button>
       </form>
     </div>
 
-    <!-- MASTER ADMIN ONLY -->
-    <div id="master_admin_controls" style="display:none;">
-      <div class="admin-section-box">
-        <h4>নতুন সাব-এডমিন যোগ করুন</h4>
-        <form id="subAdminForm" onsubmit="addSubAdmin(event)">
+    <!-- MAIN APP PANEL -->
+    <div id="admin_panel" style="display:none;">
+
+      <!-- HEADER / USER INFO -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
+        <div>
+          <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
+          <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
+        </div>
+        <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
+      </div>
+
+      <!-- SUB-ADMIN RECHARGE SECTION -->
+      <div id="subadmin_recharge_area" class="admin-section-box" style="display:none; margin-bottom:20px;">
+        <div class="bkash-box">
+          <strong>বিকাশ রিচার্জ নির্দেশিকা:</strong><br>
+          বিকাশ পারসোনাল নম্বর: <strong>01833013604</strong> (Send Money)<br>
+          টাকা পাঠানোর পর নিচের ফর্মে টাকার পরিমাণ এবং Transaction ID লিখে সাবমিট করুন।
+        </div>
+        <h4>ওয়ালেট রিচার্জের অনুরোধ পাঠান</h4>
+        <form onsubmit="requestRecharge(event)">
           <div class="form-grid">
             <div class="form-group">
-              <label>ইউজারনেম:</label>
-              <input type="text" id="sub_username" required placeholder="যেমন: user1">
+              <label>টাকার পরিমাণ (৳):</label>
+              <input type="number" id="recharge_amount" required placeholder="যেমন: ১০০">
             </div>
             <div class="form-group">
-              <label>পাসওয়ার্ড:</label>
-              <input type="password" id="sub_password" required placeholder="পাসওয়ার্ড">
+              <label>Transaction ID (TrxID):</label>
+              <input type="text" id="recharge_trxn" required placeholder="যেমন: B8A9XX123">
             </div>
           </div>
-          <button type="submit" class="btn btn-print">সাব-এডমিন তৈরি করুন</button>
+          <button type="submit" class="btn btn-save">অনুরোধ পাঠান</button>
         </form>
-
-        <h4 style="margin-top:15px;">সাব-এডমিনদের তালিকা</h4>
-        <table class="record-table">
-          <thead>
-            <tr>
-              <th>ক্রমিক</th>
-              <th>ইউজারনেম</th>
-              <th>বর্তমান ব্যালেন্স</th>
-              <th>অ্যাকশন</th>
-            </tr>
-          </thead>
-          <tbody id="subadmin_list"></tbody>
-        </table>
       </div>
 
-      <div class="admin-section-box">
-        <h4>রিচার্জ অনুরোধসমূহ (বিকাশ)</h4>
-        <table class="record-table">
-          <thead>
-            <tr>
-              <th>ক্রমিক</th>
-              <th>ইউজারনেম</th>
-              <th>পরিমাণ</th>
-              <th>TrxID</th>
-              <th>স্ট্যাটাস</th>
-              <th>তারিখ</th>
-              <th>অ্যাকশন</th>
-            </tr>
-          </thead>
-          <tbody id="recharge_list"></tbody>
-        </table>
+      <!-- MASTER ADMIN ONLY -->
+      <div id="master_admin_controls" style="display:none;">
+        <div class="admin-section-box">
+          <h4>নতুন সাব-এডমিন যোগ করুন</h4>
+          <form id="subAdminForm" onsubmit="addSubAdmin(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>ইউজারনেম:</label>
+                <input type="text" id="sub_username" required placeholder="যেমন: user1">
+              </div>
+              <div class="form-group">
+                <label>পাসওয়ার্ড:</label>
+                <input type="password" id="sub_password" required placeholder="পাসওয়ার্ড">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-print">সাব-এডমিন তৈরি করুন</button>
+          </form>
+
+          <h4 style="margin-top:15px;">সাব-এডমিনদের তালিকা</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ইউজারনেম</th>
+                <th>বর্তমান ব্যালেন্স</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="subadmin_list"></tbody>
+          </table>
+        </div>
+
+        <div class="admin-section-box">
+          <h4>রিচার্জ অনুরোধসমূহ (বিকাশ)</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ইউজারনেম</th>
+                <th>পরিমাণ</th>
+                <th>TrxID</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="recharge_list"></tbody>
+          </table>
+        </div>
       </div>
+
+      <!-- KHATIAN FORM -->
+      <form id="khatianForm" style="margin-top:20px;">
+        <h4>খতিয়ান তথ্য ফর্ম</h4>
+
+        <div class="form-grid">
+          <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৪৮৫" oninput="renderPreview()"></div>
+          <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
+          <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
+          <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
+          <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
+          <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর" oninput="renderPreview()"></div>
+          <div class="form-group"><label>সার্ভে / জে এল নং:</label><input type="text" id="in_jl" value="বি আর এস" oninput="renderPreview()"></div>
+          <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
+
+          <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="4" placeholder="যেমন: দং নজির আহম্মদ..." oninput="renderPreview()"></textarea></div>
+
+          <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
+
+          <div class="form-group full-width">
+            <div class="dag-section">
+              <h4>দাগ ও জমির বিবরণ</h4>
+              <button type="button" class="btn-add-dag" onclick="addDagRow()">+ নতুন দাগ যোগ করুন</button>
+              <div id="dag_container"></div>
+            </div>
+          </div>
+
+          <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
+          <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
+          <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
+          <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="১৮ সেপ্টেম্বর, ২০২৬" oninput="renderPreview()"></div>
+          <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
+          <button type="button" class="btn btn-save" onclick="saveKhatian()">খতিয়ান সংরক্ষণ করুন</button>
+          <button type="button" class="btn btn-reset" onclick="resetKhatianForm()">ফরম রিসেট</button>
+        </div>
+      </form>
+
+      <!-- SAVED KHATIAN LIST -->
+      <div class="list-section" style="margin-top:30px;">
+        <h4>সংরক্ষিত খতিয়ানের তালিকা</h4>
+        <div style="overflow-x:auto;">
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>খতিয়ান নং</th>
+                <th>মৌজা</th>
+                <th>মোট জমি</th>
+                <th>তারিখ</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="khatian_list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PREVIEW AREA -->
+      <div id="preview_area" style="display:none; margin-top:30px;">
+        <div class="khatian-box">
+          
+          <div class="page-number-top">পৃষ্ঠা নং: <span id="prev_page">১ এর ১</span></div>
+          <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৪৮৫</span></div>
+
+          <div class="meta-line">
+            <div>বিভাগ: <span id="prev_division">চট্টগ্রাম</span></div>
+            <div>জেলা: <span id="prev_district">নোয়াখালী</span></div>
+            <div>উপজেলা/থানা: <span id="prev_upazila">বেগমগঞ্জ</span></div>
+            <div>মৌজা: <span id="prev_mouza">আলাদিনগর</span></div>
+            <div>জে, এল, নং: <span id="prev_jl">বি আর এস</span></div>
+            <div>রে: সা: নং: <span id="prev_resa">-</span></div>
+          </div>
+
+          <table class="khatian-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width: 25%;">
+                  <div class="th-container">
+                    <div class="th-label">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</div>
+                    <div class="th-num">(১)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 6%;">
+                  <div class="th-container">
+                    <div class="th-label">অংশ</div>
+                    <div class="th-num">(২)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 6%;">
+                  <div class="th-container">
+                    <div class="th-label">রাজস্ব</div>
+                    <div class="th-num">(৩)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 7%;">
+                  <div class="th-container">
+                    <div class="th-label">দাগ</div>
+                    <div class="th-num">(৪)</div>
+                  </div>
+                </th>
+                <th colspan="2" style="width: 14%;">জমির শ্রেণী</th>
+                <th colspan="2" style="width: 14%;">দাগের মোট পরিমাণ</th>
+                <th rowspan="2" style="width: 10%;">
+                  <div class="th-container">
+                    <div class="th-label">দাগের মধ্যে অত্র খতিয়ানের অংশ</div>
+                    <div class="th-num">(৭)</div>
+                  </div>
+                </th>
+                <th colspan="2" style="width: 10%;">অংশ অনুযায়ী জমির পরিমাণ</th>
+                <th rowspan="2" style="width: 8%;">
+                  <div class="th-container">
+                    <div class="th-label">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</div>
+                    <div class="th-num">(৯)</div>
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th>কৃষি<br>৫(ক)</th>
+                <th>অকৃষি<br>৫(খ)</th>
+                <th>একর<br>৬(ক)</th>
+                <th>শতাংশ<br>৬(খ)</th>
+                <th>একর<br>৮(ক)</th>
+                <th>শতাংশ<br>৮(খ)</th>
+              </tr>
+            </thead>
+            <tbody id="prev_table_body"></tbody>
+            <tfoot>
+              <tr>
+                <td class="owner-td" style="font-size: 11px;">
+                  <span id="prev_note">............ ধারামতে নোট বা পরিবর্তন মায়</span><br>
+                  <span id="prev_case_note">মোকদ্দমা নং ............ এবং সন .............</span>
+                </td>
+                <td><b id="prev_owner_share">১.০০০</b></td>
+                <td></td>
+                <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
+                <td><b>মোট জমি:</b></td>
+                <td><b id="prev_total_land_sum">০</b></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top: 10px; font-size: 12px;">
+            মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="prev_print_date">১৮ সেপ্টেম্বর, ২০২৬</span>
+          </div>
+
+          <div class="footer-note-section">
+            <div style="font-size: 13px; font-weight: bold; width: 35%;">
+              বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
+            </div>
+
+            <div style="width: 30%; text-align: center;">
+              <img src="logo.png" alt="অফিসিয়াল সীল" class="official-logo-img">
+            </div>
+
+            <div style="width: 35%; text-align: right;">
+              <img id="preview_qr" class="qr-code" src="" alt="QR Code">
+            </div>
+          </div>
+
+          <div class="button-group" style="margin-top:20px;">
+            <button type="button" class="btn btn-print" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
+            <button type="button" class="btn btn-reset" onclick="closePreview()">প্রিভিউ বন্ধ করুন</button>
+          </div>
+
+        </div>
+      </div>
+
     </div>
-
-    <!-- KHATIAN FORM -->
-    <form id="khatianForm" style="margin-top:20px;">
-      <h4>খতিয়ান তথ্য ফর্ম</h4>
-
-      <div class="form-grid">
-        <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৪৮৫" oninput="renderPreview()"></div>
-        <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
-        <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
-        <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
-        <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
-        <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর" oninput="renderPreview()"></div>
-        <div class="form-group"><label>সার্ভে / জে এল নং:</label><input type="text" id="in_jl" value="বি আর এস" oninput="renderPreview()"></div>
-        <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
-
-        <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="4" placeholder="যেমন: দং নজির আহম্মদ..." oninput="renderPreview()"></textarea></div>
-
-        <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
-
-        <div class="form-group full-width">
-          <div class="dag-section">
-            <h4>দাগ ও জমির বিবরণ</h4>
-            <button type="button" class="btn-add-dag" onclick="addDagRow()">+ নতুন দাগ যোগ করুন</button>
-            <div id="dag_container"></div>
-          </div>
-        </div>
-
-        <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
-        <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
-        <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
-        <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="১৮ সেপ্টেম্বর, ২০২৬" oninput="renderPreview()"></div>
-        <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
-      </div>
-
-      <div class="button-group">
-        <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
-        <button type="button" class="btn btn-save" onclick="saveKhatian()">খতিয়ান সংরক্ষণ করুন</button>
-        <button type="button" class="btn btn-reset" onclick="resetKhatianForm()">ফরম রিসেট</button>
-      </div>
-    </form>
-
-    <!-- SAVED KHATIAN LIST -->
-    <div class="list-section" style="margin-top:30px;">
-      <h4>সংরক্ষিত খতিয়ানের তালিকা</h4>
-      <div style="overflow-x:auto;">
-        <table class="record-table">
-          <thead>
-            <tr>
-              <th>ক্রমিক</th>
-              <th>খতিয়ান নং</th>
-              <th>মৌজা</th>
-              <th>মোট জমি</th>
-              <th>তারিখ</th>
-              <th>অ্যাকশন</th>
-            </tr>
-          </thead>
-          <tbody id="khatian_list"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PREVIEW AREA -->
-    <div id="preview_area" style="display:none; margin-top:30px;">
-      <div class="khatian-box">
-        
-        <div class="page-number-top">পৃষ্ঠা নং: <span id="prev_page">১ এর ১</span></div>
-        <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৪৮৫</span></div>
-
-        <div class="meta-line">
-          <div>বিভাগ: <span id="prev_division">চট্টগ্রাম</span></div>
-          <div>জেলা: <span id="prev_district">নোয়াখালী</span></div>
-          <div>উপজেলা/থানা: <span id="prev_upazila">বেগমগঞ্জ</span></div>
-          <div>মৌজা: <span id="prev_mouza">আলাদিনগর</span></div>
-          <div>জে, এল, নং: <span id="prev_jl">বি আর এস</span></div>
-          <div>রে: সা: নং: <span id="prev_resa">-</span></div>
-        </div>
-
-        <table class="khatian-table">
-          <thead>
-            <tr>
-              <th rowspan="2" style="width: 25%;">
-                <div class="th-container">
-                  <div class="th-label">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</div>
-                  <div class="th-num">(১)</div>
-                </div>
-              </th>
-              <th rowspan="2" style="width: 6%;">
-                <div class="th-container">
-                  <div class="th-label">অংশ</div>
-                  <div class="th-num">(২)</div>
-                </div>
-              </th>
-              <th rowspan="2" style="width: 6%;">
-                <div class="th-container">
-                  <div class="th-label">রাজস্ব</div>
-                  <div class="th-num">(৩)</div>
-                </div>
-              </th>
-              <th rowspan="2" style="width: 7%;">
-                <div class="th-container">
-                  <div class="th-label">দাগ</div>
-                  <div class="th-num">(৪)</div>
-                </div>
-              </th>
-              <th colspan="2" style="width: 14%;">জমির শ্রেণী</th>
-              <th colspan="2" style="width: 14%;">দাগের মোট পরিমাণ</th>
-              <th rowspan="2" style="width: 10%;">
-                <div class="th-container">
-                  <div class="th-label">দাগের মধ্যে অত্র খতিয়ানের অংশ</div>
-                  <div class="th-num">(৭)</div>
-                </div>
-              </th>
-              <th colspan="2" style="width: 10%;">অংশ অনুযায়ী জমির পরিমাণ</th>
-              <th rowspan="2" style="width: 8%;">
-                <div class="th-container">
-                  <div class="th-label">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</div>
-                  <div class="th-num">(৯)</div>
-                </div>
-              </th>
-            </tr>
-            <tr>
-              <th>কৃষি<br>৫(ক)</th>
-              <th>অকৃষি<br>৫(খ)</th>
-              <th>একর<br>৬(ক)</th>
-              <th>শতাংশ<br>৬(খ)</th>
-              <th>একর<br>৮(ক)</th>
-              <th>শতাংশ<br>৮(খ)</th>
-            </tr>
-          </thead>
-          <tbody id="prev_table_body"></tbody>
-          <tfoot>
-            <tr>
-              <td class="owner-td" style="font-size: 11px;">
-                <span id="prev_note">............ ধারামতে নোট বা পরিবর্তন মায়</span><br>
-                <span id="prev_case_note">মোকদ্দমা নং ............ এবং সন .............</span>
-              </td>
-              <td><b id="prev_owner_share">১.০০০</b></td>
-              <td></td>
-              <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
-              <td><b>মোট জমি:</b></td>
-              <td><b id="prev_total_land_sum">০</b></td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <div style="margin-top: 10px; font-size: 12px;">
-          মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="prev_print_date">১৮ সেপ্টেম্বর, ২০২৬</span>
-        </div>
-
-        <div class="footer-note-section">
-          <div style="font-size: 13px; font-weight: bold; width: 35%;">
-            বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
-          </div>
-
-          <div style="width: 30%; text-align: center;">
-            <img src="logo.png" alt="অফিসিয়াল সীল" class="official-logo-img">
-          </div>
-
-          <div style="width: 35%; text-align: right;">
-            <img id="preview_qr" class="qr-code" src="" alt="QR Code">
-          </div>
-        </div>
-
-        <div class="button-group" style="margin-top:20px;">
-          <button type="button" class="btn btn-print" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
-          <button type="button" class="btn btn-reset" onclick="closePreview()">প্রিভিউ বন্ধ করুন</button>
-        </div>
-
-      </div>
-    </div>
-
   </div>
-</div>
 
 <script>
   var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
+
+  /* ROUTING & INITIALIZATION */
+  window.addEventListener("DOMContentLoaded", function() {
+    var params = new URLSearchParams(window.location.search);
+    
+    // Check if parameters exist (QR Scanned)
+    if (params.has("k") || params.has("m")) {
+      document.getElementById("public_view_page").style.display = "block";
+      document.getElementById("main_app_page").style.display = "none";
+      loadPublicViewData(params);
+    } else {
+      document.getElementById("public_view_page").style.display = "none";
+      document.getElementById("main_app_page").style.display = "block";
+      checkAuth();
+    }
+  });
+
+  /* PUBLIC VIEW LOGIC */
+  function loadPublicViewData(params) {
+    document.getElementById("view_khatian").innerText = params.get("k") || "-";
+    document.getElementById("view_owner").innerText = params.get("m") || "-";
+    document.getElementById("view_dag").innerText = params.get("d") || "-";
+    document.getElementById("view_survey").innerText = params.get("s") || "বি আর এস";
+    document.getElementById("view_mouza").innerText = params.get("mz") || "-";
+    document.getElementById("view_upazila").innerText = params.get("u") || "-";
+    document.getElementById("view_district").innerText = params.get("dt") || "-";
+    document.getElementById("view_division").innerText = params.get("dv") || "-";
+
+    var dateObj = getBanglaTodayDate();
+    document.getElementById("view_date").innerText = dateObj.fullDate;
+    document.getElementById("top_date_bar").innerText = dateObj.topBarDate;
+  }
+
+  function getBanglaTodayDate() {
+    var months = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+    var days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
+    
+    var now = new Date();
+    var dayName = days[now.getDay()];
+    var dateNum = toBanglaDigits(now.getDate());
+    var monthName = months[now.getMonth()];
+    var yearNum = toBanglaDigits(now.getFullYear());
+
+    return {
+      fullDate: dateNum + " " + monthName + ", " + yearNum,
+      topBarDate: dayName + ", " + dateNum + " " + monthName + " " + yearNum
+    };
+  }
 
   /* AUTHENTICATION LOGIC */
   function handleLogin(e) {
@@ -607,7 +809,7 @@
 
   function handleLogout() {
     sessionStorage.clear();
-    location.reload();
+    location.href = window.location.pathname;
   }
 
   function checkAuth() {
@@ -922,20 +1124,19 @@
     };
   }
 
-  /* DYNAMIC QR CODE LINK CREATOR */
+  /* DYNAMIC SINGLE-PAGE QR LINK CREATOR */
   function generateQRUrl(data) {
-    var origin = window.location.origin + window.location.pathname.replace("index.html", "");
-    var baseUrl = origin + "view.html";
+    var baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
 
     var params = new URLSearchParams({
-      k: data.khatian,
-      m: data.owner,
-      d: (data.dags[0] && data.dags[0].dagNo) ? data.dags[0].dagNo : "",
-      s: data.jl,
-      mz: data.mouza,
-      u: data.upazila + " রাজস্ব সার্কেল",
-      dt: data.district,
-      dv: data.division
+      k: data.khatian || "",
+      m: data.owner || "",
+      d: (data.dags && data.dags[0] && data.dags[0].dagNo) ? data.dags[0].dagNo : "",
+      s: data.jl || "",
+      mz: data.mouza || "",
+      u: (data.upazila || "") + " রাজস্ব সার্কেল",
+      dt: data.district || "",
+      dv: data.division || ""
     });
 
     return baseUrl + "?" + params.toString();
@@ -1092,8 +1293,6 @@
     initDefaultDags();
     closePreview();
   }
-
-  document.addEventListener("DOMContentLoaded", checkAuth);
 </script>
 
 </body>
