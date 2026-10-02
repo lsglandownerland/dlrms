@@ -164,19 +164,22 @@
       margin-top: 25px;
     }
 
-    /* KHATIAN PREVIEW STYLES */
+    /* KHATIAN PREVIEW STYLES - A4 SIZE ADJUSTMENT */
     .khatian-box {
       border: 2px solid #000;
-      padding: 15px;
-      margin-top: 30px;
+      padding: 20px;
+      margin: 20px auto;
       background: #fff;
-      font-size: 13px;
+      font-size: 14px;
       color: #000;
+      width: 100%;
+      max-width: 950px;
+      box-sizing: border-box;
     }
 
     .khatian-top-title {
       text-align: center;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: bold;
       margin-bottom: 5px;
     }
@@ -184,28 +187,32 @@
     .page-number-top {
       float: right;
       font-weight: bold;
+      font-size: 14px;
     }
 
     .meta-line {
       display: flex;
       justify-content: space-between;
       font-weight: bold;
-      margin-bottom: 8px;
-      font-size: 14px;
+      margin-bottom: 10px;
+      font-size: 15px;
     }
 
+    /* TABLE LAYOUT FOR PERFECT ALIGNMENT */
     .khatian-table {
       width: 100%;
       border-collapse: collapse;
-      border: 1px solid #000;
+      border: 2px solid #000;
+      table-layout: fixed;
     }
 
     .khatian-table th, .khatian-table td {
       border: 1px solid #000;
-      padding: 4px 5px;
+      padding: 6px 3px;
       text-align: center;
       vertical-align: middle;
       font-size: 13px;
+      word-wrap: break-word;
     }
 
     .khatian-table th {
@@ -213,23 +220,49 @@
       background-color: #fff;
     }
 
+    /* FLEX COLUMN TO ALIGN NUMBERS PERFECTLY AT THE BOTTOM */
+    .th-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 80px;
+      box-sizing: border-box;
+    }
+
+    .th-label {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .th-num {
+      font-weight: bold;
+      margin-top: 5px;
+      display: block;
+      width: 100%;
+      border-top: 1px solid transparent;
+    }
+
     .owner-td {
       text-align: left !important;
       white-space: pre-line;
-      line-height: 1.3;
+      line-height: 1.4;
+      padding-left: 8px !important;
     }
 
     .footer-note-section {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 15px;
+      margin-top: 20px;
     }
 
-    /* ORIGINAL LOGO IMAGE STYLE */
     .official-logo-img {
-      width: 110px;
-      height: 110px;
+      width: 100px;
+      height: 100px;
       object-fit: contain;
       margin: 0 auto;
       display: block;
@@ -237,11 +270,32 @@
 
     .qr-code { width: 90px; height: 90px; }
 
+    /* PRINT SPECIFIC STYLES FOR A4 */
     @media print {
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
+      body {
+        background: none;
+        padding: 0;
+      }
       body * { visibility: hidden; }
       #preview_area, #preview_area * { visibility: visible; }
-      #preview_area { position: absolute; left: 0; top: 0; width: 100%; }
-      .button-group { display: none; }
+      #preview_area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+      }
+      .khatian-box {
+        border: 2px solid #000;
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+      }
+      .button-group { display: none !important; }
     }
   </style>
 </head>
@@ -431,29 +485,45 @@
         <table class="khatian-table">
           <thead>
             <tr>
-              <th rowspan="2" style="width: 22%;">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা<br>
-              
-             
-                (১) </th>
-              <th rowspan="2" style="width: 6%;">অংশ<br>
-              
-              
-                (২)</th>
-              <th rowspan="2" style="width: 6%;">রাজস্ব<br>
-              
-                (৩)</th>
-             <th rowspan="2" style="width: 6%;">দাগ<br> 
-              
-               
-               (৪) </th>
+              <th rowspan="2" style="width: 25%;">
+                <div class="th-container">
+                  <div class="th-label">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</div>
+                  <div class="th-num">(১)</div>
+                </div>
+              </th>
+              <th rowspan="2" style="width: 6%;">
+                <div class="th-container">
+                  <div class="th-label">অংশ</div>
+                  <div class="th-num">(২)</div>
+                </div>
+              </th>
+              <th rowspan="2" style="width: 6%;">
+                <div class="th-container">
+                  <div class="th-label">রাজস্ব</div>
+                  <div class="th-num">(৩)</div>
+                </div>
+              </th>
+              <th rowspan="2" style="width: 7%;">
+                <div class="th-container">
+                  <div class="th-label">দাগ</div>
+                  <div class="th-num">(৪)</div>
+                </div>
+              </th>
               <th colspan="2" style="width: 14%;">জমির শ্রেণী</th>
               <th colspan="2" style="width: 14%;">দাগের মোট পরিমাণ</th>
-              <th rowspan="2" style="width: 10%;">দাগের মধ্যে অত্র খতিয়ানের অংশ</th>
-              <th colspan="2" style="width: 14%;">অংশ অনুযায়ী জমির পরিমাণ</th>
-              <th rowspan="2" style="width: 8%;">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য <br>
-
-                
-              (৯) </th>
+              <th rowspan="2" style="width: 10%;">
+                <div class="th-container">
+                  <div class="th-label">দাগের মধ্যে অত্র খতিয়ানের অংশ</div>
+                  <div class="th-num">(৭)</div>
+                </div>
+              </th>
+              <th colspan="2" style="width: 10%;">অংশ অনুযায়ী জমির পরিমাণ</th>
+              <th rowspan="2" style="width: 8%;">
+                <div class="th-container">
+                  <div class="th-label">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</div>
+                  <div class="th-num">(৯)</div>
+                </div>
+              </th>
             </tr>
             <tr>
               <th>কৃষি ৫(ক)</th>
