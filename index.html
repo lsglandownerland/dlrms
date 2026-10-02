@@ -6,6 +6,10 @@
   <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -19,7 +23,6 @@
       color: #333;
     }
 
-    /* INDEX PAGE STYLES */
     .app-container {
       max-width: 1100px;
       margin: 20px auto;
@@ -165,7 +168,6 @@
       margin-top: 25px;
     }
 
-    /* KHATIAN PREVIEW STYLES */
     .khatian-box {
       border: none;
       padding: 10px;
@@ -268,7 +270,6 @@
 
     .qr-code { width: 90px; height: 90px; }
 
-    /* VIEW PAGE STYLES */
     .top-bar {
       background-color: #4a7c59;
       color: #fff;
@@ -365,6 +366,27 @@
     .bg-yt { background: #ff0000; }
     .playstore-btn { margin-top: 20px; height: 45px; }
 
+    .app-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .nav-tab-btn {
+      padding: 8px 16px;
+      background: #e9ecef;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .nav-tab-btn.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
     @media print {
       @page {
         size: A4 landscape;
@@ -392,7 +414,7 @@
 </head>
 <body>
 
-  <!-- ==================== PAGE 1: PUBLIC VIEW PAGE (WHEN QR IS SCANNED) ==================== -->
+  <!-- ==================== PUBLIC VIEW PAGE ==================== -->
   <div id="public_view_page" style="display:none;">
     <div class="top-bar">
       <span id="top_eng_date">ইংরেজি: লোড হচ্ছে...</span>
@@ -459,7 +481,7 @@
   </div>
 
 
-  <!-- ==================== PAGE 2: ADMIN / SYSTEM MANAGEMENT PAGE ==================== -->
+  <!-- ==================== ADMIN / SYSTEM MANAGEMENT PAGE ==================== -->
   <div id="main_app_page" class="app-container" style="display:none;">
 
     <!-- LOGIN PANEL -->
@@ -481,13 +503,21 @@
     <!-- MAIN APP PANEL -->
     <div id="admin_panel" style="display:none;">
 
-      <!-- HEADER / USER INFO -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
         <div>
           <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
           <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
         </div>
         <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
+      </div>
+
+      <div class="app-nav">
+        <button type="button" class="nav-tab-btn active" id="tab_khatian_btn" onclick="switchTab('khatian_section')">
+          <i class="fas fa-file-alt"></i> খতিয়ান ব্যবস্থাপনা
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_bhumisheba_btn" onclick="switchTab('bhumisheba_section')">
+          <i class="fas fa-globe"></i> ভূমি সেবা পোর্টাল
+        </button>
       </div>
 
       <!-- SUB-ADMIN RECHARGE SECTION -->
@@ -564,70 +594,92 @@
         </div>
       </div>
 
-      <!-- KHATIAN FORM -->
-      <form id="khatianForm" style="margin-top:20px;">
-        <h4>খতিয়ান তথ্য ফর্ম</h4>
+      <!-- KHATIAN TAB SECTION -->
+      <div id="khatian_section">
+        <form id="khatianForm" style="margin-top:20px;">
+          <h4>খতিয়ান তথ্য ফর্ম</h4>
 
-        <div class="form-grid">
-          <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৪৮৫" oninput="renderPreview()"></div>
-          <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
-          <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
-          <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
-          <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
-          <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর" oninput="renderPreview()"></div>
-          <div class="form-group"><label>সার্ভে / জে এল নং:</label><input type="text" id="in_jl" value="বি আর এস" oninput="renderPreview()"></div>
-          <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
+          <div class="form-grid">
+            <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৪৮৫" oninput="renderPreview()"></div>
+            <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
+            <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
+            <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
+            <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
+            <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর" oninput="renderPreview()"></div>
+            <div class="form-group"><label>সার্ভে / জে এল নং:</label><input type="text" id="in_jl" value="বি আর এস" oninput="renderPreview()"></div>
+            <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
 
-          <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="4" placeholder="যেমন: দং নজির আহম্মদ..." oninput="renderPreview()"></textarea></div>
+            <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="4" placeholder="যেমন: দং নজির আহম্মদ..." oninput="renderPreview()"></textarea></div>
 
-          <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
+            <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
 
-          <div class="form-group full-width">
-            <div class="dag-section">
-              <h4>দাগ ও জমির বিবরণ</h4>
-              <button type="button" class="btn-add-dag" onclick="addDagRow()">+ নতুন দাগ যোগ করুন</button>
-              <div id="dag_container"></div>
+            <div class="form-group full-width">
+              <div class="dag-section">
+                <h4>দাগ ও জমির বিবরণ</h4>
+                <button type="button" class="btn-add-dag" onclick="addDagRow()">+ নতুন দাগ যোগ করুন</button>
+                <div id="dag_container"></div>
+              </div>
             </div>
+
+            <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
+            <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
+            <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
+            <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="১৮ সেপ্টেম্বর, ২০২৬" oninput="renderPreview()"></div>
+            <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
           </div>
 
-          <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
-          <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
-          <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
-          <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="১৮ সেপ্টেম্বর, ২০২৬" oninput="renderPreview()"></div>
-          <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
-        </div>
+          <div class="button-group">
+            <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
+            <button type="button" class="btn btn-save" onclick="saveKhatian()">খতিয়ান সংরক্ষণ করুন</button>
+            <button type="button" class="btn btn-reset" onclick="resetKhatianForm()">ফরম রিসেট</button>
+          </div>
+        </form>
 
-        <div class="button-group">
-          <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
-          <button type="button" class="btn btn-save" onclick="saveKhatian()">খতিয়ান সংরক্ষণ করুন</button>
-          <button type="button" class="btn btn-reset" onclick="resetKhatianForm()">ফরম রিসেট</button>
+        <div class="list-section" style="margin-top:30px;">
+          <h4>সংরক্ষিত খতিয়ানের তালিকা</h4>
+          <div style="overflow-x:auto;">
+            <table class="record-table">
+              <thead>
+                <tr>
+                  <th>ক্রমিক</th>
+                  <th>খতিয়ান নং</th>
+                  <th>মৌজা</th>
+                  <th>মোট জমি</th>
+                  <th>তারিখ</th>
+                  <th>অ্যাকশন</th>
+                </tr>
+              </thead>
+              <tbody id="khatian_list"></tbody>
+            </table>
+          </div>
         </div>
-      </form>
+      </div>
 
-      <!-- SAVED KHATIAN LIST -->
-      <div class="list-section" style="margin-top:30px;">
-        <h4>সংরক্ষিত খতিয়ানের তালিকা</h4>
-        <div style="overflow-x:auto;">
-          <table class="record-table">
-            <thead>
-              <tr>
-                <th>ক্রমিক</th>
-                <th>খতিয়ান নং</th>
-                <th>মৌজা</th>
-                <th>মোট জমি</th>
-                <th>তারিখ</th>
-                <th>অ্যাকশন</th>
-              </tr>
-            </thead>
-            <tbody id="khatian_list"></tbody>
-          </table>
+      <!-- BHUMISHEBA TAB SECTION -->
+      <div id="bhumisheba_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-globe"></i> ভূমি সেবা অনলাইন পোর্টাল</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div id="bhumisheba_notice" style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">এই সেবাটি সাব-এডমিনদের ব্যবহার করতে প্রতিবার ওয়ালেট থেকে <strong>৫০</strong> টাকা চার্জ হিসেবে কাটা হবে।</p>
+          </div>
+          
+          <div id="bhumisheba_action_area" style="margin-bottom: 15px;">
+            <button type="button" onclick="accessBhumishebaService()" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+              <i class="fas fa-check-circle"></i> চার্জ প্রদান করে সেবা চালু করুন
+            </button>
+          </div>
+
+          <div id="bhumisheba_iframe_container" style="display: none; margin-top: 15px;">
+            <iframe id="bhumisheba_frame" src="" style="width: 100%; height: 750px; border: 1px solid #ccc; border-radius: 8px;"></iframe>
+          </div>
         </div>
       </div>
 
       <!-- PREVIEW AREA -->
       <div id="preview_area" style="display:none; margin-top:30px;">
         <div class="khatian-box">
-          
           <div class="page-number-top">পৃষ্ঠা নং: <span id="prev_page">১ এর ১</span></div>
           <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৪৮৫</span></div>
 
@@ -739,13 +791,30 @@
   </div>
 
 <script>
-  var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
+  // ==================== FIREBASE CONFIGURATION ====================
+  // আপনার ফায়ারবেস কনফিগারেশন আপডেট করুন (Firebase Console থেকে প্রাপ্ত)
+  var firebaseConfig = {
+    apiKey: "AIzaSyDummyApiKeyForYourProject123",
+    authDomain: "your-app.firebaseapp.com",
+    databaseURL: "https://your-app-default-rtdb.firebaseio.com",
+    projectId: "your-app",
+    storageBucket: "your-app.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:abcdef123456"
+  };
 
-  /* ROUTING & INITIALIZATION */
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  var db = firebase.database();
+
+  var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
+  var bhumishebaFee = 50;
+
   window.addEventListener("DOMContentLoaded", function() {
     var params = new URLSearchParams(window.location.search);
     
-    // Check if parameters exist (QR Scanned)
     if (params.has("k") || params.has("m")) {
       document.getElementById("public_view_page").style.display = "block";
       document.getElementById("main_app_page").style.display = "none";
@@ -757,7 +826,57 @@
     }
   });
 
-  /* PUBLIC VIEW LOGIC */
+  function switchTab(sectionId) {
+    document.getElementById("khatian_section").style.display = "none";
+    document.getElementById("bhumisheba_section").style.display = "none";
+    
+    document.getElementById("tab_khatian_btn").classList.remove("active");
+    document.getElementById("tab_bhumisheba_btn").classList.remove("active");
+
+    document.getElementById(sectionId).style.display = "block";
+    
+    if (sectionId === 'khatian_section') {
+      document.getElementById("tab_khatian_btn").classList.add("active");
+    } else if (sectionId === 'bhumisheba_section') {
+      document.getElementById("tab_bhumisheba_btn").classList.add("active");
+    }
+  }
+
+  function accessBhumishebaService() {
+    var role = sessionStorage.getItem("userRole");
+    var user = sessionStorage.getItem("loggedInUser");
+
+    if (role === "subadmin") {
+      db.ref("users/" + user).once("value").then(snapshot => {
+        var userData = snapshot.val() || {};
+        var bal = userData.balance || 0;
+
+        if (bal < bhumishebaFee) {
+          alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজনীয় চার্জ: ৳" + bhumishebaFee);
+          return;
+        }
+
+        if (confirm("ভূমি সেবা পোর্টাল ব্যবহার করতে আপনার ওয়ালেট থেকে ৳" + bhumishebaFee + " কাটা হবে। আপনি কি নিশ্চিত?")) {
+          var newBal = bal - bhumishebaFee;
+          db.ref("users/" + user + "/balance").set(newBal).then(() => {
+            loadWallet();
+            alert("আপনার ওয়ালেট থেকে ৳" + bhumishebaFee + " সফলভাবে কাটা হয়েছে।");
+            loadBhumishebaFrame();
+          });
+        }
+      });
+    } else {
+      loadBhumishebaFrame();
+    }
+  }
+
+  function loadBhumishebaFrame() {
+    var iframe = document.getElementById('bhumisheba_frame');
+    iframe.src = "https://app.bhumisheba.com/pages/home.php";
+    document.getElementById('bhumisheba_iframe_container').style.display = "block";
+    document.getElementById('bhumisheba_action_area').style.display = "none";
+  }
+
   function loadPublicViewData(params) {
     document.getElementById("view_khatian").innerText = params.get("k") || "-";
     document.getElementById("view_owner").innerText = params.get("m") || "-";
@@ -774,11 +893,9 @@
     document.getElementById("top_bangla_date").innerText = "বাংলা: " + dateObj.topBanglaBar;
   }
 
-  /* DATE CALCULATION (ENGLISH & BANGLA CALENDAR) */
   function getBanglaAndEnglishDate() {
     var engMonths = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
     var engDays = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
-    
     var banMonths = ["বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ", "ভাদ্র", "আশ্বিন", "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"];
 
     var now = new Date();
@@ -790,32 +907,29 @@
     var engDayBn = toBanglaDigits(engDayNum);
     var engYearBn = toBanglaDigits(engYear);
 
-    // Dynamic Bangla Date Calculation (Official BD Calendar Revised standard)
     var bDay, bMonthIdx, bYear;
     bYear = (monthIdx < 3 || (monthIdx === 3 && engDayNum < 14)) ? engYear - 594 : engYear - 593;
 
-    // Approximated BD Calendar Days logic
     var dayOfYear = Math.floor((now - new Date(engYear, 0, 0)) / (1000 * 60 * 60 * 24));
-    // April 14 is 1st Boishakh (Day 104 in non-leap year)
     var isLeap = (engYear % 4 === 0 && engYear % 100 !== 0) || (engYear % 400 === 0);
     var boishakhStart = isLeap ? 105 : 104;
 
     if (dayOfYear >= boishakhStart) {
       var diff = dayOfYear - boishakhStart;
-      if (diff < 31) { bMonthIdx = 0; bDay = diff + 1; } // Boishakh (31)
-      else if (diff < 62) { bMonthIdx = 1; bDay = diff - 31 + 1; } // Jaishtha (31)
-      else if (diff < 93) { bMonthIdx = 2; bDay = diff - 62 + 1; } // Ashar (31)
-      else if (diff < 124) { bMonthIdx = 3; bDay = diff - 93 + 1; } // Shrabon (31)
-      else if (diff < 155) { bMonthIdx = 4; bDay = diff - 124 + 1; } // Bhadra (31)
-      else if (diff < 186) { bMonthIdx = 5; bDay = diff - 155 + 1; } // Ashwin (31)
-      else if (diff < 216) { bMonthIdx = 6; bDay = diff - 186 + 1; } // Kartik (30)
-      else if (diff < 246) { bMonthIdx = 7; bDay = diff - 216 + 1; } // Agrahayan (30)
-      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 246 + 1; } // Poush (30)
-      else if (diff < 306) { bMonthIdx = 9; bDay = diff - 276 + 1; } // Magh (30)
+      if (diff < 31) { bMonthIdx = 0; bDay = diff + 1; }
+      else if (diff < 62) { bMonthIdx = 1; bDay = diff - 31 + 1; }
+      else if (diff < 93) { bMonthIdx = 2; bDay = diff - 62 + 1; }
+      else if (diff < 124) { bMonthIdx = 3; bDay = diff - 93 + 1; }
+      else if (diff < 155) { bMonthIdx = 4; bDay = diff - 124 + 1; }
+      else if (diff < 186) { bMonthIdx = 5; bDay = diff - 155 + 1; }
+      else if (diff < 216) { bMonthIdx = 6; bDay = diff - 186 + 1; }
+      else if (diff < 246) { bMonthIdx = 7; bDay = diff - 216 + 1; }
+      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 246 + 1; }
+      else if (diff < 306) { bMonthIdx = 9; bDay = diff - 276 + 1; }
       else {
         var falgunDays = isLeap ? 30 : 29;
-        if (diff < 306 + falgunDays) { bMonthIdx = 10; bDay = diff - 306 + 1; } // Falgun
-        else { bMonthIdx = 11; bDay = diff - (306 + falgunDays) + 1; } // Choitra
+        if (diff < 306 + falgunDays) { bMonthIdx = 10; bDay = diff - 306 + 1; }
+        else { bMonthIdx = 11; bDay = diff - (306 + falgunDays) + 1; }
       }
     } else {
       var prevYearLeap = ((engYear - 1) % 4 === 0 && (engYear - 1) % 100 !== 0) || ((engYear - 1) % 400 === 0);
@@ -841,7 +955,7 @@
     };
   }
 
-  /* AUTHENTICATION LOGIC */
+  /* FIREBASE LOGIN SYSTEM */
   function handleLogin(e) {
     e.preventDefault();
     var user = document.getElementById("username").value.trim();
@@ -855,17 +969,17 @@
       return;
     }
 
-    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
-    var foundSub = subAdmins.find(sa => sa.username === user && sa.password === pass);
-
-    if (foundSub) {
-      sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("loggedInUser", user);
-      sessionStorage.setItem("userRole", "subadmin");
-      checkAuth();
-    } else {
-      alert("ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!");
-    }
+    db.ref("users/" + user).once("value").then(snapshot => {
+      var userData = snapshot.val();
+      if (userData && userData.password === pass) {
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("loggedInUser", user);
+        sessionStorage.setItem("userRole", "subadmin");
+        checkAuth();
+      } else {
+        alert("ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!");
+      }
+    });
   }
 
   function handleLogout() {
@@ -901,7 +1015,6 @@
     }
   }
 
-  /* NUMERAL CONVERTERS */
   function toEnglishDigits(str) {
     var bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
     return String(str || '').replace(/[০-৯]/g, function(w) { return bn.indexOf(w); });
@@ -928,59 +1041,63 @@
     document.getElementById("prev_total_land_sum").innerText = banglaTotal;
   }
 
-  /* SUB-ADMIN MANAGEMENT */
+  /* SUB-ADMIN FIREBASE ACTIONS */
   function addSubAdmin(e) {
     e.preventDefault();
     var user = document.getElementById("sub_username").value.trim();
     var pass = document.getElementById("sub_password").value;
 
-    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
-    if (subAdmins.some(sa => sa.username === user) || user === "admin") {
-      alert("এই ব্যবহারকারীর নাম ইতোমধ্যে নিবন্ধিত!");
+    if (user === "admin") {
+      alert("এই ব্যবহারকারীর নাম রিজার্ভ করা আছে!");
       return;
     }
 
-    subAdmins.push({ username: user, password: pass });
-    localStorage.setItem("subAdmins", JSON.stringify(subAdmins));
-
-    var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
-    balances[user] = 0;
-    localStorage.setItem("userBalances", JSON.stringify(balances));
-
-    alert("সাব-এডমিন সফলভাবে তৈরি হয়েছে!");
-    document.getElementById("subAdminForm").reset();
-    renderSubAdmins();
+    db.ref("users/" + user).set({
+      username: user,
+      password: pass,
+      balance: 0
+    }).then(() => {
+      alert("সাব-এডমিন সফলভাবে ডাটাবেসে তৈরি হয়েছে!");
+      document.getElementById("subAdminForm").reset();
+      renderSubAdmins();
+    });
   }
 
   function renderSubAdmins() {
     var tbody = document.getElementById("subadmin_list");
     if (!tbody) return;
-    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
-    var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
 
-    tbody.innerHTML = subAdmins.length === 0 ? `<tr><td colspan="4">কোনো সাব-এডমিন নেই</td></tr>` : "";
+    db.ref("users").on("value", snapshot => {
+      var users = snapshot.val() || {};
+      tbody.innerHTML = "";
+      var keys = Object.keys(users);
 
-    subAdmins.forEach((sa, idx) => {
-      var tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${idx + 1}</td>
-        <td>${escapeHtml(sa.username)}</td>
-        <td>৳ ${balances[sa.username] || 0}</td>
-        <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${sa.username}')">মুছুন</button></td>
-      `;
-      tbody.appendChild(tr);
+      if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4">কোনো সাব-এডমিন নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      for (var u in users) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>${escapeHtml(users[u].username)}</td>
+          <td>৳ ${users[u].balance || 0}</td>
+          <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${users[u].username}')">মুছুন</button></td>
+        `;
+        tbody.appendChild(tr);
+      }
     });
   }
 
   function deleteSubAdmin(user) {
     if (!confirm("আপনি কি নিশ্চিত এই সাব-এডমিন মুছে ফেলতে চান?")) return;
-    var subAdmins = JSON.parse(localStorage.getItem("subAdmins") || "[]");
-    subAdmins = subAdmins.filter(sa => sa.username !== user);
-    localStorage.setItem("subAdmins", JSON.stringify(subAdmins));
-    renderSubAdmins();
+    db.ref("users/" + user).remove().then(() => {
+      renderSubAdmins();
+    });
   }
 
-  /* RECHARGE & WALLET */
   function loadWallet() {
     var role = sessionStorage.getItem("userRole");
     var user = sessionStorage.getItem("loggedInUser");
@@ -988,9 +1105,10 @@
     if (role === "admin") {
       document.getElementById("wallet_balance").innerText = "অসীমিত (Admin)";
     } else {
-      var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
-      var bal = balances[user] || 0;
-      document.getElementById("wallet_balance").innerText = "৳ " + bal;
+      db.ref("users/" + user).on("value", snapshot => {
+        var userData = snapshot.val() || {};
+        document.getElementById("wallet_balance").innerText = "৳ " + (userData.balance || 0);
+      });
     }
   }
 
@@ -1005,77 +1123,74 @@
       return;
     }
 
-    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
-    requests.push({
-      id: "REQ-" + Date.now(),
+    var reqId = "REQ-" + Date.now();
+    db.ref("recharges/" + reqId).set({
+      id: reqId,
       username: user,
       amount: amount,
       trxnId: trxnId,
       status: "pending",
       date: new Date().toLocaleString("bn-BD")
+    }).then(() => {
+      alert("আপনার রিচার্জের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে ব্যালেন্স যুক্ত হবে।");
+      document.getElementById("recharge_amount").value = "";
+      document.getElementById("recharge_trxn").value = "";
     });
-
-    localStorage.setItem("rechargeRequests", JSON.stringify(requests));
-    alert("আপনার রিচার্জের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে ব্যালেন্স যুক্ত হবে।");
-    document.getElementById("recharge_amount").value = "";
-    document.getElementById("recharge_trxn").value = "";
   }
 
   function renderRechargeRequests() {
     var tbody = document.getElementById("recharge_list");
     if (!tbody) return;
 
-    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
-    tbody.innerHTML = requests.length === 0 ? `<tr><td colspan="7">কোনো অনুরোধ নেই</td></tr>` : "";
+    db.ref("recharges").on("value", snapshot => {
+      var requests = snapshot.val() || {};
+      tbody.innerHTML = "";
+      var keys = Object.keys(requests);
 
-    requests.forEach((req, idx) => {
-      var tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${idx + 1}</td>
-        <td>${escapeHtml(req.username)}</td>
-        <td>৳ ${req.amount}</td>
-        <td>${escapeHtml(req.trxnId)}</td>
-        <td>${req.status === "pending" ? "<span style='color:orange;'>অপেক্ষমাণ</span>" : req.status === "approved" ? "<span style='color:green;'>অনুমোদিত</span>" : "<span style='color:red;'>বাতিল</span>"}</td>
-        <td>${req.date}</td>
-        <td>
-          ${req.status === "pending" ? `
-            <button class="btn-sm btn-save" onclick="approveRecharge('${req.id}')">অনুমোদন</button>
-            <button class="btn-sm btn-del" onclick="rejectRecharge('${req.id}')">বাতিল</button>
-          ` : "-"}
-        </td>
-      `;
-      tbody.appendChild(tr);
+      if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7">কোনো অনুরোধ নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      for (var k in requests) {
+        var req = requests[k];
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>${escapeHtml(req.username)}</td>
+          <td>৳ ${req.amount}</td>
+          <td>${escapeHtml(req.trxnId)}</td>
+          <td>${req.status === "pending" ? "<span style='color:orange;'>অপেক্ষমাণ</span>" : req.status === "approved" ? "<span style='color:green;'>অনুমোদিত</span>" : "<span style='color:red;'>বাতিল</span>"}</td>
+          <td>${req.date}</td>
+          <td>
+            ${req.status === "pending" ? `
+              <button class="btn-sm btn-save" onclick="approveRecharge('${req.id}', '${req.username}',${req.amount})">অনুমোদন</button>
+              <button class="btn-sm btn-del" onclick="rejectRecharge('${req.id}')">বাতিল</button>
+            ` : "-"}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
     });
   }
 
-  function approveRecharge(reqId) {
-    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
-    var req = requests.find(r => r.id === reqId);
+  function approveRecharge(reqId, user, amount) {
+    db.ref("users/" + user + "/balance").once("value").then(snapshot => {
+      var currentBal = snapshot.val() || 0;
+      var newBal = currentBal + amount;
 
-    if (req && req.status === "pending") {
-      req.status = "approved";
-      var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
-      balances[req.username] = (balances[req.username] || 0) + req.amount;
-
-      localStorage.setItem("userBalances", JSON.stringify(balances));
-      localStorage.setItem("rechargeRequests", JSON.stringify(requests));
-
-      alert("অনুরোধ অনুমোদন করা হয়েছে এবং টাকা যোগ করা হয়েছে!");
-      renderRechargeRequests();
-      renderSubAdmins();
-    }
+      db.ref("users/" + user + "/balance").set(newBal);
+      db.ref("recharges/" + reqId + "/status").set("approved").then(() => {
+        alert("অনুরোধ অনুমোদন করা হয়েছে এবং টাকা যোগ করা হয়েছে!");
+      });
+    });
   }
 
   function rejectRecharge(reqId) {
-    var requests = JSON.parse(localStorage.getItem("rechargeRequests") || "[]");
-    var req = requests.find(r => r.id === reqId);
-
-    if (req && req.status === "pending") {
-      req.status = "rejected";
-      localStorage.setItem("rechargeRequests", JSON.stringify(requests));
+    db.ref("recharges/" + reqId + "/status").set("rejected").then(() => {
       alert("অনুরোধ বাতিল করা হয়েছে।");
-      renderRechargeRequests();
-    }
+    });
   }
 
   function payAndPrint() {
@@ -1087,23 +1202,24 @@
       return;
     }
 
-    var balances = JSON.parse(localStorage.getItem("userBalances") || "{}");
-    var bal = balances[user] || 0;
+    db.ref("users/" + user + "/balance").once("value").then(snapshot => {
+      var bal = snapshot.val() || 0;
 
-    if (bal < 10) {
-      alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳১০)। অনুগ্রহ করে রিচার্জ করুন।");
-      return;
-    }
+      if (bal < 10) {
+        alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳১০)। অনুগ্রহ করে রিচার্জ করুন।");
+        return;
+      }
 
-    if (confirm("প্রিন্ট বা ডাউনলোড করার জন্য আপনার অ্যাকাউন্ট থেকে ৳১০ কাটা হবে। নিশ্চিত?")) {
-      balances[user] = bal - 10;
-      localStorage.setItem("userBalances", JSON.stringify(balances));
-      loadWallet();
-      window.print();
-    }
+      if (confirm("প্রিন্ট বা ডাউনলোড করার জন্য আপনার অ্যাকাউন্ট থেকে ৳১০ কাটা হবে। নিশ্চিত?")) {
+        var newBal = bal - 10;
+        db.ref("users/" + user + "/balance").set(newBal).then(() => {
+          loadWallet();
+          window.print();
+        });
+      }
+    });
   }
 
-  /* KHATIAN LOGIC & DAGS */
   function initDefaultDags() {
     var container = document.getElementById("dag_container");
     if (container && container.children.length === 0) {
@@ -1185,10 +1301,8 @@
     };
   }
 
-  /* DYNAMIC SINGLE-PAGE QR LINK CREATOR */
   function generateQRUrl(data) {
     var baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-
     var params = new URLSearchParams({
       k: data.khatian || "",
       m: data.owner || "",
@@ -1215,78 +1329,84 @@
       document.getElementById("in_record_id").value = data.id;
     }
 
-    var records = JSON.parse(localStorage.getItem("khatianRecords") || "[]");
-    var idx = records.findIndex(r => r.id === data.id);
-    if (idx >= 0) records[idx] = data;
-    else records.push(data);
-
-    localStorage.setItem("khatianRecords", JSON.stringify(records));
-    alert("খতিয়ান সফলভাবে সংরক্ষিত হয়েছে!");
-    renderList();
+    db.ref("khatians/" + data.id).set(data).then(() => {
+      alert("খতিয়ান সফলভাবে অনলাইনে সংরক্ষিত হয়েছে!");
+      renderList();
+    });
   }
 
   function renderList() {
     var tbody = document.getElementById("khatian_list");
     if (!tbody) return;
 
-    var records = JSON.parse(localStorage.getItem("khatianRecords") || "[]");
-    tbody.innerHTML = records.length === 0 ? `<tr><td colspan="6">কোনো রেকর্ড নেই</td></tr>` : "";
+    db.ref("khatians").on("value", snapshot => {
+      var records = snapshot.val() || {};
+      tbody.innerHTML = "";
+      var keys = Object.keys(records);
 
-    records.forEach((rec, idx) => {
-      var tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${idx + 1}</td>
-        <td>${escapeHtml(rec.khatian)}</td>
-        <td>${escapeHtml(rec.mouza)}</td>
-        <td>${escapeHtml(rec.totalLandSum)}</td>
-        <td>${escapeHtml(rec.printDate)}</td>
-        <td>
-          <button class="btn-sm btn-edit" onclick="loadKhatian('${rec.id}')">এডিট</button>
-          <button class="btn-sm btn-prt" onclick="loadKhatian('${rec.id}'); payAndPrint();">প্রিন্ট</button>
-          <button class="btn-sm btn-del" onclick="deleteKhatian('${rec.id}')">মুছুন</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+      if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6">কোনো রেকর্ড নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      for (var k in records) {
+        var rec = records[k];
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>${escapeHtml(rec.khatian)}</td>
+          <td>${escapeHtml(rec.mouza)}</td>
+          <td>${escapeHtml(rec.totalLandSum)}</td>
+          <td>${escapeHtml(rec.printDate)}</td>
+          <td>
+            <button class="btn-sm btn-edit" onclick="loadKhatian('${rec.id}')">এডিট</button>
+            <button class="btn-sm btn-prt" onclick="loadKhatian('${rec.id}'); payAndPrint();">প্রিন্ট</button>
+            <button class="btn-sm btn-del" onclick="deleteKhatian('${rec.id}')">মুছুন</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
     });
   }
 
   function loadKhatian(id) {
-    var records = JSON.parse(localStorage.getItem("khatianRecords") || "[]");
-    var rec = records.find(r => r.id === id);
-    if (!rec) return;
+    db.ref("khatians/" + id).once("value").then(snapshot => {
+      var rec = snapshot.val();
+      if (!rec) return;
 
-    document.getElementById("in_record_id").value = rec.id || "";
-    document.getElementById("in_khatian").value = rec.khatian || "";
-    document.getElementById("in_page").value = rec.page || "";
-    document.getElementById("in_division").value = rec.division || "";
-    document.getElementById("in_district").value = rec.district || "";
-    document.getElementById("in_upazila").value = rec.upazila || "";
-    document.getElementById("in_mouza").value = rec.mouza || "";
-    document.getElementById("in_jl").value = rec.jl || "";
-    document.getElementById("in_resa").value = rec.resa || "-";
-    document.getElementById("in_owner").value = rec.owner || "";
-    document.getElementById("in_owner_share").value = rec.ownerShare || "";
-    document.getElementById("in_total_land_sum").value = rec.totalLandSum || "০";
-    document.getElementById("in_note").value = rec.note || "";
-    document.getElementById("in_case_note").value = rec.caseNote || "";
-    document.getElementById("in_print_date").value = rec.printDate || "";
+      document.getElementById("in_record_id").value = rec.id || "";
+      document.getElementById("in_khatian").value = rec.khatian || "";
+      document.getElementById("in_page").value = rec.page || "";
+      document.getElementById("in_division").value = rec.division || "";
+      document.getElementById("in_district").value = rec.district || "";
+      document.getElementById("in_upazila").value = rec.upazila || "";
+      document.getElementById("in_mouza").value = rec.mouza || "";
+      document.getElementById("in_jl").value = rec.jl || "";
+      document.getElementById("in_resa").value = rec.resa || "-";
+      document.getElementById("in_owner").value = rec.owner || "";
+      document.getElementById("in_owner_share").value = rec.ownerShare || "";
+      document.getElementById("in_total_land_sum").value = rec.totalLandSum || "০";
+      document.getElementById("in_note").value = rec.note || "";
+      document.getElementById("in_case_note").value = rec.caseNote || "";
+      document.getElementById("in_print_date").value = rec.printDate || "";
 
-    var container = document.getElementById("dag_container");
-    container.innerHTML = "";
-    if (rec.dags && rec.dags.length) {
-      rec.dags.forEach(d => addDagRow(d));
-    } else {
-      addDagRow();
-    }
-    renderPreview();
+      var container = document.getElementById("dag_container");
+      container.innerHTML = "";
+      if (rec.dags && rec.dags.length) {
+        rec.dags.forEach(d => addDagRow(d));
+      } else {
+        addDagRow();
+      }
+      renderPreview();
+    });
   }
 
   function deleteKhatian(id) {
     if (!confirm("মুছে ফেলতে চান?")) return;
-    var records = JSON.parse(localStorage.getItem("khatianRecords") || "[]");
-    records = records.filter(r => r.id !== id);
-    localStorage.setItem("khatianRecords", JSON.stringify(records));
-    renderList();
+    db.ref("khatians/" + id).remove().then(() => {
+      renderList();
+    });
   }
 
   function renderPreview() {
