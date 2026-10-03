@@ -551,16 +551,19 @@
 <script>
   // ==================== FIREBASE CONFIGURATION ====================
   var firebaseConfig = {
-    apiKey: "AIzaSyDBPuA4web1HgfPCAvfcyUq7w1IWX11S6I",
-    authDomain: "land-management-21042.firebaseapp.com",
-    databaseURL: "https://land-management-21042-default-rtdb.firebaseio.com",
-    projectId: "land-management-21042",
-    storageBucket: "land-management-21042.firebasestorage.app",
-    messagingSenderId: "64550140691",
-    appId: "1:64550140691:web:d609e86eb982e9346f38e6"
+    apiKey: "YOUR_ACTUAL_API_KEY_HERE",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
   };
 
   // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
