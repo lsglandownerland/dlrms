@@ -106,7 +106,7 @@
 </head>
 <body>
 
-  <!-- ==================== PUBLIC VIEW PAGE ==================== -->
+  <!-- PUBLIC VIEW PAGE -->
   <div id="public_view_page" style="display:none;">
     <div class="top-bar">
       <span id="top_eng_date">ইংরেজি: লোড হচ্ছে...</span>
@@ -173,7 +173,7 @@
   </div>
 
 
-  <!-- ==================== ADMIN / SYSTEM MANAGEMENT PAGE ==================== -->
+  <!-- ADMIN / SYSTEM MANAGEMENT PAGE -->
   <div id="main_app_page" class="app-container" style="display:none;">
 
     <!-- SECURED LOGIN PANEL -->
@@ -256,8 +256,6 @@
 
       <!-- MASTER ADMIN CONTROLS -->
       <div id="master_admin_controls" style="display:none;">
-        
-        <!-- ADMIN PRICE/FEE CONTROL SECTION -->
         <div class="admin-section-box">
           <h4><i class="fas fa-cog"></i> সেবা মূল্য ও ফি সেটিং (Admin Only)</h4>
           <form onsubmit="saveServicePrices(event)">
@@ -591,7 +589,6 @@
     }
   });
 
-  /* REAL FIREBASE AUTH LISTENER */
   function initAuthListener() {
     auth.onAuthStateChanged(user => {
       if (user) {
@@ -630,7 +627,6 @@
     });
   }
 
-  /* SECURED LOGIN */
   function handleSecureLogin(e) {
     e.preventDefault();
     var email = document.getElementById("login_email").value.trim();
@@ -646,14 +642,12 @@
     auth.signOut();
   }
 
-  /* SECURED SUB-ADMIN CREATION (FIREBASE AUTH) */
   function addSecureSubAdmin(e) {
     e.preventDefault();
     var name = document.getElementById("sub_name").value.trim();
     var email = document.getElementById("sub_email").value.trim();
     var password = document.getElementById("sub_password").value;
 
-    // Create user in secondary Firebase Auth instance to avoid logging out current admin
     var secondaryApp = firebase.initializeApp(firebaseConfig, "Secondary");
     secondaryApp.auth().createUserWithEmailAndPassword(email, password)
       .then(res => {
@@ -948,7 +942,7 @@
     var engDayBn = toBanglaDigits(engDayNum);
     var engYearBn = toBanglaDigits(engYear);
 
-    var bDay = 18, bMonthIdx = 5, bYear = 1433; // Default Fallback Bangla Date calculation logic
+    var bDay = 18, bMonthIdx = 5, bYear = 1433;
     return {
       engFullDate: engDayBn + " " + engMonths[monthIdx] + ", " + engYearBn,
       topEngBar: dayName + ", " + engDayBn + " " + engMonths[monthIdx] + " " + engYearBn,
