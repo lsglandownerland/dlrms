@@ -420,6 +420,25 @@
     }
     .modal-close:hover { color: #000; }
 
+    .filter-btn-group {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .filter-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid #007bff;
+      background: #fff;
+      color: #007bff;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .filter-btn.active {
+      background: #007bff;
+      color: #fff;
+    }
+
     @media print {
       @page {
         size: A4 landscape;
@@ -595,8 +614,27 @@
         </div>
       </div>
 
-      <!-- MASTER ADMIN ONLY -->
+      <!-- MASTER ADMIN CONTROLS -->
       <div id="master_admin_controls" style="display:none;">
+        
+        <!-- ADMIN PRICE/FEE CONTROL SECTION -->
+        <div class="admin-section-box">
+          <h4><i class="fas fa-cog"></i> সেবা মূল্য ও ফি সেটিং (Admin Only)</h4>
+          <form onsubmit="saveServicePrices(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>খতিয়ান প্রিন্ট/ডাউনলোড ফি (৳):</label>
+                <input type="number" id="setting_print_fee" required placeholder="যেমন: ১০">
+              </div>
+              <div class="form-group">
+                <label>ভূমি সেবা অনলাইন পোর্টাল চার্জ (৳):</label>
+                <input type="number" id="setting_bhumisheba_fee" required placeholder="যেমন: ৫০">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-save"><i class="fas fa-check"></i> মূল্য সেভ করুন</button>
+          </form>
+        </div>
+
         <div class="admin-section-box">
           <h4>নতুন সাব-এডমিন যোগ করুন</h4>
           <form id="subAdminForm" onsubmit="addSubAdmin(event)">
@@ -628,7 +666,7 @@
         </div>
 
         <div class="admin-section-box">
-          <h4>রিচার্জ অনুরোধসমূহ (বিকাশ)</h4>
+          <h4>রিচার্জ অনুরোধসমূহ (বিকাশ) - এডমিন ভিউ</h4>
           <table class="record-table">
             <thead>
               <tr>
@@ -645,6 +683,30 @@
             <tbody id="recharge_list"></tbody>
           </table>
         </div>
+      </div>
+
+      <!-- SUBADMIN RECHARGE HISTORY SECTION -->
+      <div id="subadmin_recharge_history" class="admin-section-box" style="display:none;">
+        <h4>আমার রিচার্জের অনুরোধসমূহ</h4>
+        <div class="filter-btn-group">
+          <button class="filter-btn active" onclick="filterSubadminRecharges('all', this)">সবগুলো</button>
+          <button class="filter-btn" onclick="filterSubadminRecharges('pending', this)">অপেক্ষমাণ (Pending)</button>
+          <button class="filter-btn" onclick="filterSubadminRecharges('approved', this)">সফল (Approved)</button>
+          <button class="filter-btn" onclick="filterSubadminRecharges('rejected', this)">বাতিল (Rejected)</button>
+        </div>
+        <table class="record-table">
+          <thead>
+            <tr>
+              <th>ক্রমিক</th>
+              <th>পরিমাণ</th>
+              <th>TrxID</th>
+              <th>স্ক্রিনশট</th>
+              <th>স্ট্যাটাস</th>
+              <th>তারিখ</th>
+            </tr>
+          </thead>
+          <tbody id="subadmin_recharge_list"></tbody>
+        </table>
       </div>
 
       <!-- KHATIAN TAB SECTION -->
@@ -715,7 +777,7 @@
           <hr style="margin: 15px 0;">
           
           <div id="bhumisheba_notice" style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
-            <p style="margin: 0;">এই সেবাটি সাব-এডমিনদের ব্যবহার করতে প্রতিবার ওয়ালেট থেকে <strong>৫০</strong> টাকা চার্জ হিসেবে কাটা হবে।</p>
+            <p style="margin: 0;">এই সেবাটি সাব-এডমিনদের ব্যবহার করতে প্রতিবার ওয়ালেট থেকে <strong id="bhumisheba_fee_text">৫০</strong> টাকা চার্জ হিসেবে কাটা হবে।</p>
           </div>
           
           <div id="bhumisheba_action_area" style="margin-bottom: 15px;">
@@ -833,7 +895,7 @@
           </div>
 
           <div class="button-group" style="margin-top:20px;">
-            <button type="button" class="btn btn-print" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
+            <button type="button" class="btn btn-print" id="btn_print_action" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
             <button type="button" class="btn btn-reset" onclick="closePreview()">প্রিভিউ বন্ধ করুন</button>
           </div>
 
@@ -863,7 +925,11 @@
   var db = firebase.database();
 
   var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
+  
+  // Dynamic Service Prices
   var bhumishebaFee = 50;
+  var printFee = 10;
+  var currentFilterStatus = 'all';
 
   window.addEventListener("DOMContentLoaded", function() {
     var params = new URLSearchParams(window.location.search);
@@ -875,9 +941,50 @@
     } else {
       document.getElementById("public_view_page").style.display = "none";
       document.getElementById("main_app_page").style.display = "block";
+      listenToServiceSettings();
       checkAuth();
     }
   });
+
+  /* DYNAMIC SERVICE PRICES LISTENERS */
+  function listenToServiceSettings() {
+    db.ref("settings/prices").on("value", snapshot => {
+      var prices = snapshot.val();
+      if (prices) {
+        if (prices.bhumishebaFee !== undefined) bhumishebaFee = parseFloat(prices.bhumishebaFee);
+        if (prices.printFee !== undefined) printFee = parseFloat(prices.printFee);
+      }
+      
+      // Update UI texts
+      document.getElementById("bhumisheba_fee_text").innerText = bhumishebaFee;
+      var printBtn = document.getElementById("btn_print_action");
+      if(printBtn) printBtn.innerText = "ডাউনলোড / প্রিন্ট করুন (৳" + printFee + ")";
+
+      // Update input fields for Admin
+      var setPrint = document.getElementById("setting_print_fee");
+      var setBhumisheba = document.getElementById("setting_bhumisheba_fee");
+      if(setPrint && !setPrint.value) setPrint.value = printFee;
+      if(setBhumisheba && !setBhumisheba.value) setBhumisheba.value = bhumishebaFee;
+    });
+  }
+
+  function saveServicePrices(e) {
+    e.preventDefault();
+    var newPrintFee = parseFloat(document.getElementById("setting_print_fee").value);
+    var newBhumishebaFee = parseFloat(document.getElementById("setting_bhumisheba_fee").value);
+
+    if (isNaN(newPrintFee) || isNaN(newBhumishebaFee)) {
+      alert("সঠিক টাকার পরিমাণ টাইপ করুন!");
+      return;
+    }
+
+    db.ref("settings/prices").set({
+      printFee: newPrintFee,
+      bhumishebaFee: newBhumishebaFee
+    }).then(() => {
+      alert("সেবা মূল্য সফলভাবে আপডেট করা হয়েছে!");
+    });
+  }
 
   function openRechargeModal() {
     document.getElementById("recharge_modal").style.display = "flex";
@@ -1072,12 +1179,15 @@
 
       if (role === "admin") {
         document.getElementById("master_admin_controls").style.display = "block";
+        document.getElementById("subadmin_recharge_history").style.display = "none";
         document.getElementById("subadmin_recharge_btn").style.display = "none";
         renderSubAdmins();
         renderRechargeRequests();
       } else {
         document.getElementById("master_admin_controls").style.display = "none";
+        document.getElementById("subadmin_recharge_history").style.display = "block";
         document.getElementById("subadmin_recharge_btn").style.display = "inline-block";
+        renderSubadminRechargeList();
       }
 
       initDefaultDags();
@@ -1273,6 +1383,65 @@
     });
   }
 
+  /* SUB-ADMIN RECHARGE HISTORY & FILTERING */
+  function filterSubadminRecharges(status, btn) {
+    currentFilterStatus = status;
+    var btns = document.querySelectorAll(".filter-btn");
+    btns.forEach(b => b.classList.remove("active"));
+    if(btn) btn.classList.add("active");
+    renderSubadminRechargeList();
+  }
+
+  function renderSubadminRechargeList() {
+    var tbody = document.getElementById("subadmin_recharge_list");
+    var user = sessionStorage.getItem("loggedInUser");
+    if (!tbody || !user) return;
+
+    db.ref("recharges").on("value", snapshot => {
+      var requests = snapshot.val() || {};
+      tbody.innerHTML = "";
+
+      var myRequests = [];
+      for (var k in requests) {
+        if (requests[k].username === user) {
+          if (currentFilterStatus === 'all' || requests[k].status === currentFilterStatus) {
+            myRequests.push(requests[k]);
+          }
+        }
+      }
+
+      if (myRequests.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6">কোনো অনুরোধের রেকর্ড নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      myRequests.forEach(req => {
+        var tr = document.createElement("tr");
+
+        var screenshotBtn = req.screenshot 
+          ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` 
+          : `<span style="color:#aaa;">নাই</span>`;
+
+        var statusBadge = req.status === "pending" 
+          ? "<span style='color:orange; font-weight:bold;'>অপেক্ষমাণ</span>" 
+          : req.status === "approved" 
+          ? "<span style='color:green; font-weight:bold;'>সফল</span>" 
+          : "<span style='color:red; font-weight:bold;'>বাতিল</span>";
+
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>৳ ${req.amount}</td>
+          <td>${escapeHtml(req.trxnId)}</td>
+          <td>${screenshotBtn}</td>
+          <td>${statusBadge}</td>
+          <td>${req.date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
   function approveRecharge(reqId, user, amount) {
     db.ref("users/" + user + "/balance").once("value").then(snapshot => {
       var currentBal = snapshot.val() || 0;
@@ -1303,13 +1472,13 @@
     db.ref("users/" + user + "/balance").once("value").then(snapshot => {
       var bal = snapshot.val() || 0;
 
-      if (bal < 10) {
-        alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳১০)। অনুগ্রহ করে রিচার্জ করুন।");
+      if (bal < printFee) {
+        alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳" + printFee + ")। অনুগ্রহ করে রিচার্জ করুন।");
         return;
       }
 
-      if (confirm("প্রিন্ট বা ডাউনলোড করার জন্য আপনার অ্যাকাউন্ট থেকে ৳১০ কাটা হবে। নিশ্চিত?")) {
-        var newBal = bal - 10;
+      if (confirm("প্রিন্ট বা ডাউনলোড করার জন্য আপনার অ্যাকাউন্ট থেকে ৳" + printFee + " কাটা হবে। নিশ্চিত?")) {
+        var newBal = bal - printFee;
         db.ref("users/" + user + "/balance").set(newBal).then(() => {
           loadWallet();
           window.print();
