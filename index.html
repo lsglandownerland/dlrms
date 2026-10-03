@@ -41,7 +41,7 @@
     }
 
     .slide-item {
-      width: 16.666%; /* ১০০ / ৬ = ১৬.৬৬৬% */
+      width: 16.666%;
       height: 100%;
       position: relative;
     }
@@ -458,6 +458,7 @@
       margin-bottom: 20px;
       border-bottom: 2px solid #ddd;
       padding-bottom: 10px;
+      flex-wrap: wrap;
     }
     .nav-tab-btn {
       padding: 8px 16px;
@@ -471,6 +472,38 @@
       background: #007bff;
       color: white;
       border-color: #007bff;
+    }
+
+    /* Free Links Section Style */
+    .free-links-container {
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 20px;
+    }
+    .free-links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .free-link-card {
+      background: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #a5d6a7;
+      text-decoration: none;
+      color: #2e7d32;
+      font-weight: bold;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .free-link-card:hover {
+      background: #c8e6c9;
     }
 
     /* Modal Popup Styles */
@@ -712,12 +745,34 @@
         <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
       </div>
 
+      <!-- FREE QUICK SERVICES LINK SECTION -->
+      <div class="free-links-container">
+        <h4 style="margin-bottom: 5px; color: #1b5e20; border: none;"><i class="fas fa-gift"></i> সম্পূর্ণ ফ্রী সেবা পোর্টালসমূহ:</h4>
+        <div class="free-links-grid">
+          <a href="https://mswservices.gov.bd/auth/login" target="_blank" class="free-link-card">
+            <i class="fas fa-hands-helping"></i> সমাজ সেবা পোর্টাল
+          </a>
+          <a href="https://services.nidw.gov.bd/nid-pub/" target="_blank" class="free-link-card">
+            <i class="fas fa-id-card"></i> জাতীয় পরিচয়পত্র পোর্টাল
+          </a>
+          <a href="https://www.epassport.gov.bd/landing" target="_blank" class="free-link-card">
+            <i class="fas fa-passport"></i> ই-পাসপোর্ট আবেদন
+          </a>
+          <a href="https://everify.bdris.gov.bd/" target="_blank" class="free-link-card">
+            <i class="fas fa-certificate"></i> জন্ম/মৃত্যু নিবন্ধন ভেরিফাই
+          </a>
+        </div>
+      </div>
+
       <div class="app-nav">
         <button type="button" class="nav-tab-btn active" id="tab_khatian_btn" onclick="switchTab('khatian_section')">
           <i class="fas fa-file-alt"></i> খতিয়ান ব্যবস্থাপনা
         </button>
         <button type="button" class="nav-tab-btn" id="tab_bhumisheba_btn" onclick="switchTab('bhumisheba_section')">
           <i class="fas fa-globe"></i> ভূমি সেবা পোর্টাল
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_sebabox_btn" onclick="switchTab('sebabox_section')">
+          <i class="fas fa-box-open"></i> সেবা বক্স পোর্টাল (Sebabox)
         </button>
       </div>
 
@@ -777,6 +832,10 @@
               <div class="form-group">
                 <label>ভূমি সেবা অনলাইন পোর্টাল চার্জ (৳):</label>
                 <input type="number" id="setting_bhumisheba_fee" required placeholder="যেমন: ৫০">
+              </div>
+              <div class="form-group">
+                <label>সেবা বক্স (Sebabox) পোর্টাল চার্জ (৳):</label>
+                <input type="number" id="setting_sebabox_fee" required placeholder="যেমন: ৩০">
               </div>
             </div>
             <button type="submit" class="btn btn-save"><i class="fas fa-check"></i> মূল্য সেভ করুন</button>
@@ -961,12 +1020,44 @@
                 <input type="number" id="bs_service_amount" placeholder="যেমন: ৫০">
               </div>
             </div>
-            <button type="button" class="btn btn-save" onclick="submitPendingOrder()">
+            <button type="button" class="btn btn-save" onclick="submitPendingOrder('ভূমি সেবা')">
               <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন (পেন্ডিং থাকবে)
             </button>
           </div>
 
           <div id="bhumisheba_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- SEBABOX TAB SECTION -->
+      <div id="sebabox_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-box-open"></i> সেবা বক্স পোর্টাল (Sebabox)</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">সেবা বক্স পোর্টাল হতে যেকোনো সেবা নিতে অর্ডার করুন। এডমিন অনুমোদন করলে পোর্টাল সচল হবে।</p>
+          </div>
+          
+          <!-- SEBABOX ORDER FORM -->
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>সেবা বক্স অর্ডার ফরম</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের নাম/বিবরণ:</label>
+                <input type="text" id="sb_service_name" placeholder="যেমন: সেবা বক্স পোর্টালে কাজের আবেদন">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="sb_service_amount" placeholder="যেমন: ৩০">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitSebaboxOrder()">
+              <i class="fas fa-paper-plane"></i> সেবা বক্স অর্ডার করুন (পেন্ডিং থাকবে)
+            </button>
+          </div>
+
+          <div id="sebabox_iframe_container" style="display: none; margin-top: 15px;"></div>
         </div>
       </div>
 
@@ -1064,7 +1155,7 @@
             </div>
 
             <div style="width: 30%; text-align: center;">
-              <img src="logo.png" alt="অফিসিয়াল সীল" class="official-logo-img">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="অফিসিয়াল সীল" class="official-logo-img">
             </div>
 
             <div style="width: 35%; text-align: right;">
@@ -1086,7 +1177,7 @@
 <script>
   // ==================== COVER SLIDER SCRIPT ====================
   var currentSlide = 0;
-  var totalSlides = 6; // মোট ৬টি স্লাইড সেট করা হলো
+  var totalSlides = 6;
 
   function updateSlider() {
     var slider = document.getElementById("coverSlider");
@@ -1111,7 +1202,7 @@
   setInterval(function() {
     currentSlide = (currentSlide + 1) % totalSlides;
     updateSlider();
-  }, 4000); // ৪ সেকেন্ড পর পর অটো স্লাইড পরিবর্তন হবে
+  }, 4000);
 
   // ==================== FIREBASE CONFIGURATION ====================
   var firebaseConfig = {
@@ -1125,7 +1216,6 @@
     measurementId: "G-R8VQGCPYM"
   };
 
-  // Initialize Firebase
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
@@ -1135,6 +1225,7 @@
   
   // Dynamic Service Prices
   var bhumishebaFee = 50;
+  var sebaboxFee = 30;
   var printFee = 10;
   var currentFilterStatus = 'all';
 
@@ -1159,21 +1250,26 @@
       var prices = snapshot.val();
       if (prices) {
         if (prices.bhumishebaFee !== undefined) bhumishebaFee = parseFloat(prices.bhumishebaFee);
+        if (prices.sebaboxFee !== undefined) sebaboxFee = parseFloat(prices.sebaboxFee);
         if (prices.printFee !== undefined) printFee = parseFloat(prices.printFee);
       }
       
-      // Update UI texts
       var printBtn = document.getElementById("btn_print_action");
       if(printBtn) printBtn.innerText = "ডাউনলোড / প্রিন্ট করুন (৳" + printFee + ")";
 
-      // Update input fields for Admin
       var setPrint = document.getElementById("setting_print_fee");
       var setBhumisheba = document.getElementById("setting_bhumisheba_fee");
+      var setSebabox = document.getElementById("setting_sebabox_fee");
+
       if(setPrint && !setPrint.value) setPrint.value = printFee;
       if(setBhumisheba && !setBhumisheba.value) setBhumisheba.value = bhumishebaFee;
+      if(setSebabox && !setSebabox.value) setSebabox.value = sebaboxFee;
       
       var bsAmount = document.getElementById("bs_service_amount");
       if(bsAmount && !bsAmount.value) bsAmount.value = bhumishebaFee;
+
+      var sbAmount = document.getElementById("sb_service_amount");
+      if(sbAmount && !sbAmount.value) sbAmount.value = sebaboxFee;
     });
   }
 
@@ -1181,15 +1277,17 @@
     e.preventDefault();
     var newPrintFee = parseFloat(document.getElementById("setting_print_fee").value);
     var newBhumishebaFee = parseFloat(document.getElementById("setting_bhumisheba_fee").value);
+    var newSebaboxFee = parseFloat(document.getElementById("setting_sebabox_fee").value);
 
-    if (isNaN(newPrintFee) || isNaN(newBhumishebaFee)) {
+    if (isNaN(newPrintFee) || isNaN(newBhumishebaFee) || isNaN(newSebaboxFee)) {
       alert("সঠিক টাকার পরিমাণ টাইপ করুন!");
       return;
     }
 
     db.ref("settings/prices").set({
       printFee: newPrintFee,
-      bhumishebaFee: newBhumishebaFee
+      bhumishebaFee: newBhumishebaFee,
+      sebaboxFee: newSebaboxFee
     }).then(() => {
       alert("সেবা মূল্য সফলভাবে আপডেট করা হয়েছে!");
     });
@@ -1216,9 +1314,11 @@
   function switchTab(sectionId) {
     document.getElementById("khatian_section").style.display = "none";
     document.getElementById("bhumisheba_section").style.display = "none";
+    document.getElementById("sebabox_section").style.display = "none";
     
     document.getElementById("tab_khatian_btn").classList.remove("active");
     document.getElementById("tab_bhumisheba_btn").classList.remove("active");
+    document.getElementById("tab_sebabox_btn").classList.remove("active");
 
     document.getElementById(sectionId).style.display = "block";
     
@@ -1226,11 +1326,13 @@
       document.getElementById("tab_khatian_btn").classList.add("active");
     } else if (sectionId === 'bhumisheba_section') {
       document.getElementById("tab_bhumisheba_btn").classList.add("active");
+    } else if (sectionId === 'sebabox_section') {
+      document.getElementById("tab_sebabox_btn").classList.add("active");
     }
   }
 
   /* ==================== PENDING ORDER SYSTEM ==================== */
-  function submitPendingOrder() {
+  function submitPendingOrder(category) {
     var user = sessionStorage.getItem("loggedInUser");
     var serviceDetails = document.getElementById("bs_service_name").value.trim();
     var amount = parseFloat(document.getElementById("bs_service_amount").value);
@@ -1242,6 +1344,7 @@
 
     var orderData = {
       requestedBy: user,
+      serviceCategory: category || 'ভূমি সেবা',
       serviceDetails: serviceDetails,
       amount: amount,
       status: "pending",
@@ -1250,8 +1353,36 @@
     };
 
     db.ref("bhumisheba_orders").push(orderData).then(function() {
-      alert("আপনার অর্ডারটি জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
+      alert("আপনার " + category + " অর্ডারটি জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
       document.getElementById("bs_service_name").value = "";
+    }).catch(function(error) {
+      alert("অর্ডার জমা দিতে ত্রুটি: " + error.message);
+    });
+  }
+
+  function submitSebaboxOrder() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var serviceDetails = document.getElementById("sb_service_name").value.trim();
+    var amount = parseFloat(document.getElementById("sb_service_amount").value);
+
+    if (!serviceDetails || isNaN(amount) || amount <= 0) {
+      alert("সঠিক সার্ভিসের নাম এবং ফি প্রদান করুন!");
+      return;
+    }
+
+    var orderData = {
+      requestedBy: user,
+      serviceCategory: 'Sebabox',
+      serviceDetails: serviceDetails,
+      amount: amount,
+      status: "pending",
+      date: new Date().toLocaleString("bn-BD"),
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    db.ref("bhumisheba_orders").push(orderData).then(function() {
+      alert("আপনার সেবা বক্স অর্ডারটি জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
+      document.getElementById("sb_service_name").value = "";
     }).catch(function(error) {
       alert("অর্ডার জমা দিতে ত্রুটি: " + error.message);
     });
@@ -1276,12 +1407,12 @@
           var tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${escapeHtml(order.requestedBy)}</td>
-            <td>${escapeHtml(order.serviceDetails)}</td>
+            <td>[${escapeHtml(order.serviceCategory || 'সেবা')}] ${escapeHtml(order.serviceDetails)}</td>
             <td>৳${order.amount}</td>
             <td><span style="color:orange; font-weight:bold;">Pending</span></td>
             <td>${order.date || '-'}</td>
             <td>
-              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', ${order.amount})">অনুমোদন ও ফি কর্তন</button>
+              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', ${order.amount}, '${order.serviceCategory}')">অনুমোদন ও ফি কর্তন</button>
               <button class="btn-sm btn-del" onclick="rejectOrder('${orderId}')">বাতিল</button>
             </td>
           `;
@@ -1290,7 +1421,7 @@
       });
   }
 
-  function approveOrder(orderId, fee) {
+  function approveOrder(orderId, fee, category) {
     var adminUser = sessionStorage.getItem("loggedInUser");
 
     db.ref("users/" + adminUser + "/balance").once("value").then(function(snapshot) {
@@ -1312,7 +1443,11 @@
           }).then(function() {
             alert("অর্ডারটি অনুমোদিত হয়েছে এবং ওয়ালেট থেকে ৳" + fee + " কাটা হয়েছে।");
             loadWallet();
-            loadBhumishebaFrame();
+            if(category === 'Sebabox') {
+              loadSebaboxFrame();
+            } else {
+              loadBhumishebaFrame();
+            }
           });
         });
       }
@@ -1335,10 +1470,25 @@
     
     container.innerHTML = `
       <div style="text-align:center; padding: 40px; background: #f8f9fa; border: 2px dashed #28a745; border-radius: 8px;">
-        <h3 style="color: #28a745; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
+        <h3 style="color: #28a745; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> ভূমি সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
         <p style="margin-bottom: 20px;">নিচের বাটনে ক্লিক করে ভূমি সেবা পোর্টালে সরাসরি প্রবেশ করুন:</p>
         <a href="https://app.bhumisheba.com/pages/home.php" target="_blank" class="btn btn-save" style="text-decoration:none; font-size:16px; padding: 10px 20px;">
           <i class="fas fa-external-link-alt"></i> ভূমি সেবা পোর্টালে যান
+        </a>
+      </div>
+    `;
+  }
+
+  function loadSebaboxFrame() {
+    var container = document.getElementById('sebabox_iframe_container');
+    container.style.display = "block";
+    
+    container.innerHTML = `
+      <div style="text-align:center; padding: 40px; background: #f8f9fa; border: 2px dashed #007bff; border-radius: 8px;">
+        <h3 style="color: #007bff; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> সেবা বক্স সফলভাবে সক্রিয় করা হয়েছে</h3>
+        <p style="margin-bottom: 20px;">নিচের বাটনে ক্লিক করে সেবা বক্স পোর্টালে সরাসরি প্রবেশ করুন:</p>
+        <a href="https://sebabox.info/index.php" target="_blank" class="btn btn-print" style="text-decoration:none; font-size:16px; padding: 10px 20px;">
+          <i class="fas fa-external-link-alt"></i> Sebabox পোর্টালে যান
         </a>
       </div>
     `;
