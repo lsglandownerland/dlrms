@@ -786,9 +786,7 @@
             </button>
           </div>
 
-          <div id="bhumisheba_iframe_container" style="display: none; margin-top: 15px;">
-            <iframe id="bhumisheba_frame" src="" style="width: 100%; height: 750px; border: 1px solid #ccc; border-radius: 8px;"></iframe>
-          </div>
+          <div id="bhumisheba_iframe_container" style="display: none; margin-top: 15px;"></div>
         </div>
       </div>
 
@@ -1020,6 +1018,7 @@
     }
   }
 
+  /* FIXED BHUMISHEBA SERVICE REDIRECT */
   function accessBhumishebaService() {
     var role = sessionStorage.getItem("userRole");
     var user = sessionStorage.getItem("loggedInUser");
@@ -1049,10 +1048,21 @@
   }
 
   function loadBhumishebaFrame() {
-    var iframe = document.getElementById('bhumisheba_frame');
-    iframe.src = "https://app.bhumisheba.com/pages/home.php";
-    document.getElementById('bhumisheba_iframe_container').style.display = "block";
-    document.getElementById('bhumisheba_action_area').style.display = "none";
+    var container = document.getElementById('bhumisheba_iframe_container');
+    var actionArea = document.getElementById('bhumisheba_action_area');
+    
+    actionArea.style.display = "none";
+    container.style.display = "block";
+    
+    container.innerHTML = `
+      <div style="text-align:center; padding: 40px; background: #f8f9fa; border: 2px dashed #28a745; border-radius: 8px;">
+        <h3 style="color: #28a745; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
+        <p style="margin-bottom: 20px;">নিচের বাটনে ক্লিক করে ভূমি সেবা পোর্টালে সরাসরি প্রবেশ করুন:</p>
+        <a href="https://app.bhumisheba.com/pages/home.php" target="_blank" class="btn btn-save" style="text-decoration:none; font-size:16px; padding: 10px 20px;">
+          <i class="fas fa-external-link-alt"></i> ভূমি সেবা পোর্টালে যান
+        </a>
+      </div>
+    `;
   }
 
   function loadPublicViewData(params) {
@@ -1152,7 +1162,7 @@
       if (userData && userData.password === pass) {
         sessionStorage.setItem("isLoggedIn", "true");
         sessionStorage.setItem("loggedInUser", user);
-        sessionStorage.setItem("userRole", "subadmin");
+        sessionStorage.setItem("userRole", userData.role || "subadmin");
         checkAuth();
       } else {
         alert("ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!");
@@ -1222,11 +1232,16 @@
     document.getElementById("prev_total_land_sum").innerText = banglaTotal;
   }
 
-  /* SUB-ADMIN FIREBASE ACTIONS */
+  /* FIXED SUB-ADMIN CREATION */
   function addSubAdmin(e) {
     e.preventDefault();
     var user = document.getElementById("sub_username").value.trim();
     var pass = document.getElementById("sub_password").value;
+
+    if (!user || !pass) {
+      alert("ইউজারনেম এবং পাসওয়ার্ড দিন!");
+      return;
+    }
 
     if (user === "admin") {
       alert("এই ব্যবহারকারীর নাম রিজার্ভ করা আছে!");
@@ -1236,11 +1251,13 @@
     db.ref("users/" + user).set({
       username: user,
       password: pass,
+      role: "subadmin",
       balance: 0
     }).then(() => {
       alert("সাব-এডমিন সফলভাবে ডাটাবেসে তৈরি হয়েছে!");
       document.getElementById("subAdminForm").reset();
-      renderSubAdmins();
+    }).catch(error => {
+      alert("ত্রুটি: " + error.message);
     });
   }
 
@@ -1251,15 +1268,16 @@
     db.ref("users").on("value", snapshot => {
       var users = snapshot.val() || {};
       tbody.innerHTML = "";
-      var keys = Object.keys(users);
 
-      if (keys.length === 0) {
+      var subadminKeys = Object.keys(users).filter(u => users[u].role === "subadmin");
+
+      if (subadminKeys.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4">কোনো সাব-এডমিন নেই</td></tr>`;
         return;
       }
 
       var idx = 1;
-      for (var u in users) {
+      subadminKeys.forEach(u => {
         var tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${idx++}</td>
@@ -1268,14 +1286,14 @@
           <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${users[u].username}')">মুছুন</button></td>
         `;
         tbody.appendChild(tr);
-      }
+      });
     });
   }
 
   function deleteSubAdmin(user) {
     if (!confirm("আপনি কি নিশ্চিত এই সাব-এডমিন মুছে ফেলতে চান?")) return;
     db.ref("users/" + user).remove().then(() => {
-      renderSubAdmins();
+      alert("সাব-এডমিন মুছে ফেলা হয়েছে।");
     });
   }
 
