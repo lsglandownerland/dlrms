@@ -555,7 +555,7 @@
     <!-- MAIN APP PANEL -->
     <div id="admin_panel" style="display:none;">
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
+      <div style="display:flex; justify-style:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
         <div>
           <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
           <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
@@ -683,6 +683,26 @@
             <tbody id="recharge_list"></tbody>
           </table>
         </div>
+
+        <!-- ADMIN PENDING ORDERS APPROVAL PANEL -->
+        <div class="admin-section-box">
+          <h4>পেন্ডিং অর্ডারসমূহ (এডমিন অনুমোদন প্যানেল)</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>আবেদনকারী</th>
+                <th>সার্ভিসের বিবরণ</th>
+                <th>ফি (৳)</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="admin_pending_orders_list">
+              <tr><td colspan="6">পেন্ডিং অর্ডার লোড হচ্ছে...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- SUBADMIN RECHARGE HISTORY SECTION -->
@@ -777,12 +797,24 @@
           <hr style="margin: 15px 0;">
           
           <div id="bhumisheba_notice" style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
-            <p style="margin: 0;">এই সেবাটি সাব-এডমিনদের ব্যবহার করতে প্রতিবার ওয়ালেট থেকে <strong id="bhumisheba_fee_text">৫০</strong> টাকা চার্জ হিসেবে কাটা হবে।</p>
+            <p style="margin: 0;">এই সেবাটির নতুন অর্ডার সাবমিট করলে তা পেন্ডিং হিসেবে জমা থাকবে। এডমিন অনুমোদন দিলে পোর্টাল এক্সেস সচল হবে।</p>
           </div>
           
-          <div id="bhumisheba_action_area" style="margin-bottom: 15px;">
-            <button type="button" onclick="accessBhumishebaService()" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold;">
-              <i class="fas fa-check-circle"></i> চার্জ প্রদান করে সেবা চালু করুন
+          <!-- ORDER SUBMISSION FORM -->
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>নতুন ভূমি সেবা অর্ডার করুন</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের নাম/বিবরণ:</label>
+                <input type="text" id="bs_service_name" placeholder="যেমন: খতিয়ান বা নামজারি আবেদন">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="bs_service_amount" placeholder="যেমন: ৫০">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitPendingOrder()">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন (পেন্ডিং থাকবে)
             </button>
           </div>
 
@@ -954,7 +986,6 @@
       }
       
       // Update UI texts
-      document.getElementById("bhumisheba_fee_text").innerText = bhumishebaFee;
       var printBtn = document.getElementById("btn_print_action");
       if(printBtn) printBtn.innerText = "ডাউনলোড / প্রিন্ট করুন (৳" + printFee + ")";
 
@@ -963,6 +994,9 @@
       var setBhumisheba = document.getElementById("setting_bhumisheba_fee");
       if(setPrint && !setPrint.value) setPrint.value = printFee;
       if(setBhumisheba && !setBhumisheba.value) setBhumisheba.value = bhumishebaFee;
+      
+      var bsAmount = document.getElementById("bs_service_amount");
+      if(bsAmount && !bsAmount.value) bsAmount.value = bhumishebaFee;
     });
   }
 
@@ -1018,40 +1052,114 @@
     }
   }
 
-  /* FIXED BHUMISHEBA SERVICE REDIRECT */
-  function accessBhumishebaService() {
-    var role = sessionStorage.getItem("userRole");
+  /* ==================== PENDING ORDER SYSTEM ==================== */
+  // ১. পেন্ডিং অর্ডার সাবমিট করার ফাংশন
+  function submitPendingOrder() {
     var user = sessionStorage.getItem("loggedInUser");
+    var serviceDetails = document.getElementById("bs_service_name").value.trim();
+    var amount = parseFloat(document.getElementById("bs_service_amount").value);
 
-    if (role === "subadmin") {
-      db.ref("users/" + user).once("value").then(snapshot => {
-        var userData = snapshot.val() || {};
-        var bal = userData.balance || 0;
+    if (!serviceDetails || isNaN(amount) || amount <= 0) {
+      alert("সঠিক সার্ভিসের নাম এবং ফি প্রদান করুন!");
+      return;
+    }
 
-        if (bal < bhumishebaFee) {
-          alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজনীয় চার্জ: ৳" + bhumishebaFee);
+    var orderData = {
+      requestedBy: user,
+      serviceDetails: serviceDetails,
+      amount: amount,
+      status: "pending",
+      date: new Date().toLocaleString("bn-BD"),
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    db.ref("bhumisheba_orders").push(orderData).then(function() {
+      alert("আপনার অর্ডারটি জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
+      document.getElementById("bs_service_name").value = "";
+    }).catch(function(error) {
+      alert("অর্ডার জমা দিতে ত্রুটি: " + error.message);
+    });
+  }
+
+  // ২. পেন্ডিং অর্ডার এডমিন প্যানেলে প্রদর্শন
+  function loadPendingOrdersForAdmin() {
+    var tbody = document.getElementById("admin_pending_orders_list");
+    if (!tbody) return;
+
+    db.ref("bhumisheba_orders").orderByChild("status").equalTo("pending")
+      .on("value", function(snapshot) {
+        tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+          tbody.innerHTML = "<tr><td colspan='6'>কোনো পেন্ডিং অর্ডার নেই।</td></tr>";
           return;
         }
 
-        if (confirm("ভূমি সেবা পোর্টাল ব্যবহার করতে আপনার ওয়ালেট থেকে ৳" + bhumishebaFee + " কাটা হবে। আপনি কি নিশ্চিত?")) {
-          var newBal = bal - bhumishebaFee;
-          db.ref("users/" + user + "/balance").set(newBal).then(() => {
+        snapshot.forEach(function(child) {
+          var orderId = child.key;
+          var order = child.val();
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(order.requestedBy)}</td>
+            <td>${escapeHtml(order.serviceDetails)}</td>
+            <td>৳${order.amount}</td>
+            <td><span style="color:orange; font-weight:bold;">Pending</span></td>
+            <td>${order.date || '-'}</td>
+            <td>
+              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', ${order.amount})">অনুমোদন ও ফি কর্তন</button>
+              <button class="btn-sm btn-del" onclick="rejectOrder('${orderId}')">বাতিল</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  // ৩. এডমিন কর্তৃক অর্ডার অনুমোদন এবং ওয়ালেট থেকে ব্যালেন্স কর্তন
+  function approveOrder(orderId, fee) {
+    var adminUser = sessionStorage.getItem("loggedInUser");
+
+    db.ref("users/" + adminUser + "/balance").once("value").then(function(snapshot) {
+      var currentBalance = snapshot.val() || 0;
+
+      if (currentBalance < fee) {
+        alert("এডমিন ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + fee + ", বর্তমান ব্যালেন্স: ৳" + currentBalance);
+        return;
+      }
+
+      if (confirm("আপনি কি নিশ্চিত যে ৳" + fee + " কেটে এই অর্ডারটি অনুমোদন করবেন?")) {
+        var newBalance = currentBalance - fee;
+
+        // এডমিন ওয়ালেট থেকে টাকা কাটা
+        db.ref("users/" + adminUser + "/balance").set(newBalance).then(function() {
+          // অর্ডারের স্ট্যাটাস approved করা
+          db.ref("bhumisheba_orders/" + orderId).update({
+            status: "approved",
+            approvedBy: adminUser,
+            approvedAt: firebase.database.ServerValue.TIMESTAMP
+          }).then(function() {
+            alert("অর্ডারটি অনুমোদিত হয়েছে এবং ওয়ালেট থেকে ৳" + fee + " কাটা হয়েছে।");
             loadWallet();
-            alert("আপনার ওয়ালেট থেকে ৳" + bhumishebaFee + " সফলভাবে কাটা হয়েছে।");
             loadBhumishebaFrame();
           });
-        }
+        });
+      }
+    });
+  }
+
+  // ৪. অর্ডার বাতিল করার ফাংশন
+  function rejectOrder(orderId) {
+    if (confirm("আপনি কি নিশ্চিত এই অর্ডারটি বাতিল করতে চান?")) {
+      db.ref("bhumisheba_orders/" + orderId).update({
+        status: "rejected"
+      }).then(function() {
+        alert("অর্ডারটি বাতিল করা হয়েছে।");
       });
-    } else {
-      loadBhumishebaFrame();
     }
   }
 
   function loadBhumishebaFrame() {
     var container = document.getElementById('bhumisheba_iframe_container');
-    var actionArea = document.getElementById('bhumisheba_action_area');
-    
-    actionArea.style.display = "none";
     container.style.display = "block";
     
     container.innerHTML = `
@@ -1193,6 +1301,7 @@
         document.getElementById("subadmin_recharge_btn").style.display = "none";
         renderSubAdmins();
         renderRechargeRequests();
+        loadPendingOrdersForAdmin(); // অ্যাডমিনের জন্য পেন্ডিং অর্ডার প্রদর্শন কল
       } else {
         document.getElementById("master_admin_controls").style.display = "none";
         document.getElementById("subadmin_recharge_history").style.display = "block";
@@ -1232,7 +1341,7 @@
     document.getElementById("prev_total_land_sum").innerText = banglaTotal;
   }
 
-  /* FIXED SUB-ADMIN CREATION */
+  /* SUB-ADMIN CREATION */
   function addSubAdmin(e) {
     e.preventDefault();
     var user = document.getElementById("sub_username").value.trim();
@@ -1301,14 +1410,10 @@
     var role = sessionStorage.getItem("userRole");
     var user = sessionStorage.getItem("loggedInUser");
 
-    if (role === "admin") {
-      document.getElementById("wallet_balance").innerText = "অসীমিত (Admin)";
-    } else {
-      db.ref("users/" + user).on("value", snapshot => {
-        var userData = snapshot.val() || {};
-        document.getElementById("wallet_balance").innerText = "৳ " + (userData.balance || 0);
-      });
-    }
+    db.ref("users/" + user).on("value", snapshot => {
+      var userData = snapshot.val() || {};
+      document.getElementById("wallet_balance").innerText = "৳ " + (userData.balance || 0);
+    });
   }
 
   function requestRecharge(e) {
