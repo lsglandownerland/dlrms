@@ -1,4 +1,547 @@
-<!-- ==================== COVER PAGE SLIDER ==================== -->
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    /* Cover Page Carousel Style */
+    .cover-container {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      background-color: #000;
+    }
+
+    .cover-slider {
+      display: flex;
+      width: 400%;
+      height: 100%;
+      transition: transform 0.8s ease-in-out;
+    }
+
+    .slide-item {
+      width: 25%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+
+    .slide-caption {
+      position: absolute;
+      bottom: 20px;
+      left: 30px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 12px 20px;
+      border-radius: 6px;
+      border-left: 4px solid #28a745;
+      max-width: 80%;
+    }
+
+    .slide-caption h3 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .slide-caption p {
+      font-size: 13px;
+      color: #ddd;
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 12px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .dot.active {
+      background: #28a745;
+      transform: scale(1.2);
+    }
+
+    .app-container {
+      max-width: 1100px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h4 {
+      margin-bottom: 15px;
+      color: #0c5460;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 5px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="password"],
+    input[type="number"],
+    input[type="file"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #007bff;
+    }
+
+    .dag-section {
+      background: #f9f9f9;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .dag-row {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr) 30px;
+      gap: 5px;
+      margin-top: 8px;
+      align-items: center;
+    }
+
+    .dag-row input {
+      font-size: 11px;
+      padding: 4px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn-preview { background-color: #17a2b8; }
+    .btn-save { background-color: #28a745; }
+    .btn-reset { background-color: #6c757d; }
+    .btn-print { background-color: #007bff; }
+    .btn-recharge { background-color: #e2136e; color: #fff; padding: 5px 12px; font-size: 13px; border-radius: 20px; border: none; cursor: pointer; margin-left: 10px; }
+    .btn-add-dag { background-color: #28a745; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-edit { background-color: #ffc107; color: #212529; }
+    .btn-prt { background-color: #17a2b8; }
+    .btn-del { background-color: #dc3545; }
+
+    .record-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .record-table th, .record-table td {
+      border: 1px solid #333;
+      padding: 6px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .record-table th { background-color: #e9ecef; }
+
+    .bkash-box {
+      background-color: #e2136e;
+      color: white;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .admin-section-box {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 25px;
+    }
+
+    .khatian-box {
+      border: none;
+      padding: 10px;
+      margin: 0 auto;
+      background: #fff;
+      font-size: 14px;
+      color: #000;
+      width: 100%;
+      max-width: 950px;
+      box-sizing: border-box;
+    }
+
+    .khatian-top-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .page-number-top {
+      float: right;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .meta-line {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .khatian-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 2px solid #000;
+      table-layout: fixed;
+    }
+
+    .khatian-table th, .khatian-table td {
+      border: 1px solid #000;
+      padding: 6px 3px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 13px;
+      word-wrap: break-word;
+    }
+
+    .khatian-table th {
+      font-weight: bold;
+      background-color: #fff;
+    }
+
+    .th-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 80px;
+      box-sizing: border-box;
+    }
+
+    .th-label {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .th-num {
+      font-weight: bold;
+      margin-top: 5px;
+      display: block;
+      width: 100%;
+    }
+
+    .owner-td {
+      text-align: left !important;
+      white-space: pre-line;
+      line-height: 1.4;
+      padding-left: 8px !important;
+    }
+
+    .footer-note-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .official-logo-img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .qr-code { width: 90px; height: 90px; }
+
+    .top-bar {
+      background-color: #4a7c59;
+      color: #fff;
+      text-align: center;
+      padding: 8px 15px;
+      font-size: 13px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .nav-bar {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .logo-img { height: 45px; }
+
+    .khatian-card {
+      background: #fff;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 8px;
+    }
+    .khatian-title {
+      color: #0d5c3a;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: bold;
+    }
+    .info-row {
+      display: flex;
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: #333;
+    }
+    .info-label { width: 110px; font-weight: bold; }
+    .info-colon { margin-right: 10px; font-weight: bold; }
+    .info-value { flex: 1; }
+
+    .footer-section {
+      background-color: #e8f5e9;
+      padding: 25px 20px;
+      margin-top: 40px;
+      border-top: 3px solid #81c784;
+    }
+    .section-title {
+      color: #1b5e20;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .link-item {
+      color: #2e7d32;
+      text-decoration: none;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-logos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .partner-logos { display: flex; gap: 10px; align-items: center; }
+    .partner-logos img { height: 40px; }
+    .social-icons { display: flex; gap: 10px; }
+    .social-icon {
+      width: 35px; height: 35px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px; text-decoration: none;
+    }
+    .bg-fb { background: #1877f2; }
+    .bg-x { background: #000; }
+    .bg-insta { background: #e4405f; }
+    .bg-yt { background: #ff0000; }
+    .playstore-btn { margin-top: 20px; height: 45px; }
+
+    .app-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .nav-tab-btn {
+      padding: 8px 16px;
+      background: #e9ecef;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .nav-tab-btn.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    /* Modal Popup Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-card {
+      background: #fff;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .modal-close:hover { color: #000; }
+
+    .filter-btn-group {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .filter-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid #007bff;
+      background: #fff;
+      color: #007bff;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .filter-btn.active {
+      background: #007bff;
+      color: #fff;
+    }
+
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 5mm;
+      }
+      body { background: none; padding: 0; }
+      body * { visibility: hidden; }
+      #preview_area, #preview_area * { visibility: visible; }
+      #preview_area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+      }
+      .khatian-box {
+        border: none !important;
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+      }
+      .button-group { display: none !important; }
+      .cover-container { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== COVER PAGE SLIDER ==================== -->
   <div class="cover-container">
     <div class="cover-slider" id="coverSlider">
       <div class="slide-item">
@@ -37,3 +580,1427 @@
       <span class="dot" onclick="goToSlide(3)"></span>
     </div>
   </div>
+
+  <!-- ==================== PUBLIC VIEW PAGE ==================== -->
+  <div id="public_view_page" style="display:none;">
+    <div class="top-bar">
+      <span id="top_eng_date">ইংরেজি: লোড হচ্ছে...</span>
+      <span>|</span>
+      <span id="top_bangla_date">বাংলা: লোড হচ্ছে...</span>
+    </div>
+
+    <div class="nav-bar">
+      <img src="https://land.gov.bd/sites/default/files/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div style="font-size: 20px; color: #1b5e20;">
+        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-ellipsis-v" style="margin-left: 15px;"></i>
+      </div>
+    </div>
+
+    <div class="khatian-card">
+      <div class="khatian-title">খতিয়ান নং - <span id="view_khatian">-</span></div>
+
+      <div class="info-row"><div class="info-label">মালিক</div><div class="info-colon">:</div><div class="info-value" id="view_owner">-</div></div>
+      <div class="info-row"><div class="info-label">দাগ নং</div><div class="info-colon">:</div><div class="info-value" id="view_dag">-</div></div>
+      <div class="info-row"><div class="info-label">সার্ভে</div><div class="info-colon">:</div><div class="info-value" id="view_survey">বি আর এস</div></div>
+      <div class="info-row"><div class="info-label">মৌজা</div><div class="info-colon">:</div><div class="info-value" id="view_mouza">-</div></div>
+      <div class="info-row"><div class="info-label">উপজেলা</div><div class="info-colon">:</div><div class="info-value" id="view_upazila">-</div></div>
+      <div class="info-row"><div class="info-label">জেলা</div><div class="info-colon">:</div><div class="info-value" id="view_district">-</div></div>
+      <div class="info-row"><div class="info-label">বিভাগ</div><div class="info-colon">:</div><div class="info-value" id="view_division">-</div></div>
+      <div class="info-row"><div class="info-label">তারিখ</div><div class="info-colon">:</div><div class="info-value" id="view_date">-</div></div>
+    </div>
+
+    <div class="footer-section">
+      <div class="section-title">গুরুত্বপূর্ণ লিংক</div>
+      <div class="links-grid">
+        <a href="#" class="link-item">► বাংলাদেশ জাতীয় তথ্য বাতায়ন</a>
+        <a href="#" class="link-item">► সাপোর্ট টিকেট</a>
+        <a href="#" class="link-item">► ভূমি মন্ত্রণালয়</a>
+        <a href="#" class="link-item">► গোপনীয়তা নীতি</a>
+        <a href="#" class="link-item">► তথ্য অধিদপ্তর (পিআইডি)</a>
+        <a href="#" class="link-item">► সাধারণ জিজ্ঞাসা</a>
+        <a href="#" class="link-item">► অভিযোগ প্রতিকার ব্যবস্থা</a>
+        <a href="#" class="link-item">► যোগাযোগ</a>
+      </div>
+
+      <div class="footer-logos">
+        <div>
+          <div style="font-weight: bold; color: #1b5e20; margin-bottom: 8px;">পরিকল্পনা ও বাস্তবায়নে</div>
+          <div class="partner-logos">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="Gov">
+            <span style="font-size: 11px; font-weight: bold; color: #2e7d32;">জনবান্ধব ভূমি সেবা অটোমেশন</span>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight: bold; color: #1b5e20; margin-bottom: 8px;">সামাজিক যোগাযোগ</div>
+          <div class="social-icons">
+            <a href="#" class="social-icon bg-fb"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon bg-x"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" class="social-icon bg-insta"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon bg-yt"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="playstore-btn">
+    </div>
+  </div>
+
+
+  <!-- ==================== ADMIN / SYSTEM MANAGEMENT PAGE ==================== -->
+  <div id="main_app_page" class="app-container" style="display:none;">
+
+    <!-- LOGIN PANEL -->
+    <div id="login_panel" style="max-width:400px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius:6px; background:#fafafa;">
+      <h4 style="text-align:center;">সিস্টেম লগইন</h4>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>ব্যবহারকারীর নাম:</label>
+          <input type="text" id="username" required placeholder="admin বা সাব-এডমিন ইউজারনেম">
+        </div>
+        <div class="form-group" style="margin-bottom:15px;">
+          <label>পাসওয়ার্ড:</label>
+          <input type="password" id="password" required placeholder="পাসওয়ার্ড দিন">
+        </div>
+        <button type="submit" class="btn btn-print" style="width:100%;">লগইন করুন</button>
+      </form>
+    </div>
+
+    <!-- MAIN APP PANEL -->
+    <div id="admin_panel" style="display:none;">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
+        <div>
+          <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
+          <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
+          <button type="button" class="btn-recharge" id="subadmin_recharge_btn" onclick="openRechargeModal()"><i class="fas fa-wallet"></i> রিচার্জ করুন</button>
+        </div>
+        <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
+      </div>
+
+      <div class="app-nav">
+        <button type="button" class="nav-tab-btn active" id="tab_khatian_btn" onclick="switchTab('khatian_section')">
+          <i class="fas fa-file-alt"></i> খতিয়ান ব্যবস্থাপনা
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_bhumisheba_btn" onclick="switchTab('bhumisheba_section')">
+          <i class="fas fa-globe"></i> ভূমি সেবা পোর্টাল
+        </button>
+      </div>
+
+      <!-- RECHARGE MODAL POPUP -->
+      <div id="recharge_modal" class="modal-overlay">
+        <div class="modal-card">
+          <span class="modal-close" onclick="closeRechargeModal()">&times;</span>
+          <div class="bkash-box" style="text-align: center;">
+            <i class="fas fa-mobile-alt" style="font-size: 24px; margin-bottom: 5px;"></i><br>
+            <strong>বিকাশ রিচার্জ নির্দেশিকা:</strong><br>
+            বিকাশ পারসোনাল নম্বর: <strong style="font-size:18px; text-decoration: underline;">01833013604</strong> (Send Money)<br>
+            <small>টাকা পাঠানোর পর নিচের ফর্মে টাকার পরিমাণ, Transaction ID এবং সেন্ডমানির স্ক্রিনশট আপলোড করে সাবমিট করুন।</small>
+          </div>
+          <h4 style="margin-top: 10px;">ওয়ালেট রিচার্জের অনুরোধ পাঠান</h4>
+          <form onsubmit="requestRecharge(event)">
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+              <div class="form-group">
+                <label>টাকার পরিমাণ (৳):</label>
+                <input type="number" id="recharge_amount" required placeholder="যেমন: ১০০">
+              </div>
+              <div class="form-group">
+                <label>Transaction ID (TrxID):</label>
+                <input type="text" id="recharge_trxn" required placeholder="যেমন: B8A9XX123">
+              </div>
+              <div class="form-group">
+                <label>সেন্ডমানির স্ক্রিনশট আপলোড করুন:</label>
+                <input type="file" id="recharge_screenshot" accept="image/*" required>
+                <small style="color:#666; font-size:11px; margin-top:2px;">সর্বোচ্চ সাইজ: 2MB (JPG, PNG)</small>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-save" style="width:100%; margin-top:10px;">অনুরোধ পাঠান</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- SCREENSHOT VIEW MODAL FOR ADMIN -->
+      <div id="screenshot_modal" class="modal-overlay">
+        <div class="modal-card" style="text-align:center;">
+          <span class="modal-close" onclick="closeScreenshotModal()">&times;</span>
+          <h4>সেন্ডমানি স্ক্রিনশট</h4>
+          <img id="screenshot_img_view" src="" alt="Screenshot" style="max-width:100%; max-height:70vh; border:1px solid #ccc; border-radius:5px; margin-top:10px;">
+        </div>
+      </div>
+
+      <!-- MASTER ADMIN CONTROLS -->
+      <div id="master_admin_controls" style="display:none;">
+        
+        <!-- ADMIN PRICE/FEE CONTROL SECTION -->
+        <div class="admin-section-box">
+          <h4><i class="fas fa-cog"></i> সেবা মূল্য ও ফি সেটিং (Admin Only)</h4>
+          <form onsubmit="saveServicePrices(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>খতিয়ান প্রিন্ট/ডাউনলোড ফি (৳):</label>
+                <input type="number" id="setting_print_fee" required placeholder="যেমন: ১০">
+              </div>
+              <div class="form-group">
+                <label>ভূমি সেবা অনলাইন পোর্টাল চার্জ (৳):</label>
+                <input type="number" id="setting_bhumisheba_fee" required placeholder="যেমন: ৫০">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-save"><i class="fas fa-check"></i> মূল্য সেভ করুন</button>
+          </form>
+        </div>
+
+        <div class="admin-section-box">
+          <h4>নতুন সাব-এডমিন যোগ করুন</h4>
+          <form id="subAdminForm" onsubmit="addSubAdmin(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>ইউজারনেম:</label>
+                <input type="text" id="sub_username" required placeholder="যেমন: user1">
+              </div>
+              <div class="form-group">
+                <label>পাসওয়ার্ড:</label>
+                <input type="password" id="sub_password" required placeholder="পাসওয়ার্ড">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-print">সাব-এডমিন তৈরি করুন</button>
+          </form>
+
+          <h4 style="margin-top:15px;">সাব-এডমিনদের তালিকা</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ইউজারনেম</th>
+                <th>বর্তমান ব্যালেন্স</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="subadmin_list"></tbody>
+          </table>
+        </div>
+
+        <div class="admin-section-box">
+          <h4>রিচার্জ অনুরোধসমূহ (বিকাশ) - এডমিন ভিউ</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ইউজারনেম</th>
+                <th>পরিমাণ</th>
+                <th>TrxID</th>
+                <th>স্ক্রিনশট</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="recharge_list"></tbody>
+          </table>
+        </div>
+
+        <!-- ADMIN PENDING ORDERS APPROVAL PANEL -->
+        <div class="admin-section-box">
+          <h4>পেন্ডিং অর্ডারসমূহ (এডমিন অনুমোদন প্যানেল)</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>আবেদনকারী</th>
+                <th>সার্ভিসের বিবরণ</th>
+                <th>ফি (৳)</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="admin_pending_orders_list">
+              <tr><td colspan="6">পেন্ডিং অর্ডার লোড হচ্ছে...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUBADMIN RECHARGE HISTORY SECTION -->
+      <div id="subadmin_recharge_history" class="admin-section-box" style="display:none;">
+        <h4>আমার রিচার্জের অনুরোধসমূহ</h4>
+        <div class="filter-btn-group">
+          <button class="filter-btn active" onclick="filterSubadminRecharges('all', this)">সবগুলো</button>
+          <button class="filter-btn" onclick="filterSubadminRecharges('pending', this)">অপেক্ষমাণ (Pending)</button>
+          <button class="filter-btn" onclick="filterSubadminRecharges('approved', this)">সফল (Approved)</button>
+          <button class="filter-btn" onclick="filterSubadminRecharges('rejected', this)">বাতিল (Rejected)</button>
+        </div>
+        <table class="record-table">
+          <thead>
+            <tr>
+              <th>ক্রমিক</th>
+              <th>পরিমাণ</th>
+              <th>TrxID</th>
+              <th>স্ক্রিনশট</th>
+              <th>স্ট্যাটাস</th>
+              <th>তারিখ</th>
+            </tr>
+          </thead>
+          <tbody id="subadmin_recharge_list"></tbody>
+        </table>
+      </div>
+
+      <!-- KHATIAN TAB SECTION -->
+      <div id="khatian_section">
+        <form id="khatianForm" style="margin-top:20px;">
+          <h4>খতিয়ান তথ্য ফর্ম</h4>
+
+          <div class="form-grid">
+            <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৪৮৫" oninput="renderPreview()"></div>
+            <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
+            <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
+            <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
+            <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
+            <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর" oninput="renderPreview()"></div>
+            <div class="form-group"><label>সার্ভে / জে এল নং:</label><input type="text" id="in_jl" value="বি আর এস" oninput="renderPreview()"></div>
+            <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
+
+            <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="4" placeholder="যেমন: দং নজির আহম্মদ..." oninput="renderPreview()"></textarea></div>
+
+            <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
+
+            <div class="form-group full-width">
+              <div class="dag-section">
+                <h4>দাগ ও জমির বিবরণ</h4>
+                <button type="button" class="btn-add-dag" onclick="addDagRow()">+ নতুন দাগ যোগ করুন</button>
+                <div id="dag_container"></div>
+              </div>
+            </div>
+
+            <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
+            <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
+            <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
+            <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="১৮ সেপ্টেম্বর, ২০২৬" oninput="renderPreview()"></div>
+            <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
+          </div>
+
+          <div class="button-group">
+            <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
+            <button type="button" class="btn btn-save" onclick="saveKhatian()">খতিয়ান সংরক্ষণ করুন</button>
+            <button type="button" class="btn btn-reset" onclick="resetKhatianForm()">ফরম রিসেট</button>
+          </div>
+        </form>
+
+        <div class="list-section" style="margin-top:30px;">
+          <h4>সংরক্ষিত খতিয়ানের তালিকা</h4>
+          <div style="overflow-x:auto;">
+            <table class="record-table">
+              <thead>
+                <tr>
+                  <th>ক্রমিক</th>
+                  <th>খতিয়ান নং</th>
+                  <th>মৌজা</th>
+                  <th>মোট জমি</th>
+                  <th>তারিখ</th>
+                  <th>অ্যাকশন</th>
+                </tr>
+              </thead>
+              <tbody id="khatian_list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BHUMISHEBA TAB SECTION -->
+      <div id="bhumisheba_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-globe"></i> ভূমি সেবা অনলাইন পোর্টাল</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div id="bhumisheba_notice" style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">এই সেবাটির নতুন অর্ডার সাবমিট করলে তা পেন্ডিং হিসেবে জমা থাকবে। এডমিন অনুমোদন দিলে পোর্টাল এক্সেস সচল হবে।</p>
+          </div>
+          
+          <!-- ORDER SUBMISSION FORM -->
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>নতুন ভূমি সেবা অর্ডার করুন</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের নাম/বিবরণ:</label>
+                <input type="text" id="bs_service_name" placeholder="যেমন: খতিয়ান বা নামজারি আবেদন">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="bs_service_amount" placeholder="যেমন: ৫০">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitPendingOrder()">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন (পেন্ডিং থাকবে)
+            </button>
+          </div>
+
+          <div id="bhumisheba_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- PREVIEW AREA -->
+      <div id="preview_area" style="display:none; margin-top:30px;">
+        <div class="khatian-box">
+          <div class="page-number-top">পৃষ্ঠা নং: <span id="prev_page">১ এর ১</span></div>
+          <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৪৮৫</span></div>
+
+          <div class="meta-line">
+            <div>বিভাগ: <span id="prev_division">চট্টগ্রাম</span></div>
+            <div>জেলা: <span id="prev_district">নোয়াখালী</span></div>
+            <div>উপজেলা/থানা: <span id="prev_upazila">বেগমগঞ্জ</span></div>
+            <div>মৌজা: <span id="prev_mouza">আলাদিনগর</span></div>
+            <div>জে, এল, নং: <span id="prev_jl">বি আর এস</span></div>
+            <div>রে: সা: নং: <span id="prev_resa">-</span></div>
+          </div>
+
+          <table class="khatian-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width: 25%;">
+                  <div class="th-container">
+                    <div class="th-label">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</div>
+                    <div class="th-num">(১)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 6%;">
+                  <div class="th-container">
+                    <div class="th-label">অংশ</div>
+                    <div class="th-num">(২)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 6%;">
+                  <div class="th-container">
+                    <div class="th-label">রাজস্ব</div>
+                    <div class="th-num">(৩)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 7%;">
+                  <div class="th-container">
+                    <div class="th-label">দাগ</div>
+                    <div class="th-num">(৪)</div>
+                  </div>
+                </th>
+                <th colspan="2" style="width: 14%;">জমির শ্রেণী</th>
+                <th colspan="2" style="width: 14%;">দাগের মোট পরিমাণ</th>
+                <th rowspan="2" style="width: 10%;">
+                  <div class="th-container">
+                    <div class="th-label">দাগের মধ্যে অত্র খতিয়ানের অংশ</div>
+                    <div class="th-num">(৭)</div>
+                  </div>
+                </th>
+                <th colspan="2" style="width: 10%;">অংশ অনুযায়ী জমির পরিমাণ</th>
+                <th rowspan="2" style="width: 8%;">
+                  <div class="th-container">
+                    <div class="th-label">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</div>
+                    <div class="th-num">(৯)</div>
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th>কৃষি<br>৫(ক)</th>
+                <th>অকৃষি<br>৫(খ)</th>
+                <th>একর<br>৬(ক)</th>
+                <th>শতাংশ<br>৬(খ)</th>
+                <th>একর<br>৮(ক)</th>
+                <th>শতাংশ<br>৮(খ)</th>
+              </tr>
+            </thead>
+            <tbody id="prev_table_body"></tbody>
+            <tfoot>
+              <tr>
+                <td class="owner-td" style="font-size: 11px;">
+                  <span id="prev_note">............ ধারামতে নোট বা পরিবর্তন মায়</span><br>
+                  <span id="prev_case_note">মোকদ্দমা নং ............ এবং সন .............</span>
+                </td>
+                <td><b id="prev_owner_share">১.০০০</b></td>
+                <td></td>
+                <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
+                <td><b>মোট জমি:</b></td>
+                <td><b id="prev_total_land_sum">০</b></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top: 10px; font-size: 12px;">
+            মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="prev_print_date">১৮ সেপ্টেম্বর, ২০২৬</span>
+          </div>
+
+          <div class="footer-note-section">
+            <div style="font-size: 13px; font-weight: bold; width: 35%;">
+              বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
+            </div>
+
+            <div style="width: 30%; text-align: center;">
+              <img src="logo.png" alt="অফিসিয়াল সীল" class="official-logo-img">
+            </div>
+
+            <div style="width: 35%; text-align: right;">
+              <img id="preview_qr" class="qr-code" src="" alt="QR Code">
+            </div>
+          </div>
+
+          <div class="button-group" style="margin-top:20px;">
+            <button type="button" class="btn btn-print" id="btn_print_action" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
+            <button type="button" class="btn btn-reset" onclick="closePreview()">প্রিভিউ বন্ধ করুন</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  // ==================== COVER SLIDER SCRIPT ====================
+  var currentSlide = 0;
+  var totalSlides = 4;
+
+  function updateSlider() {
+    var slider = document.getElementById("coverSlider");
+    var dots = document.querySelectorAll(".slider-dots .dot");
+    if(slider) {
+      slider.style.transform = "translateX(-" + (currentSlide * 25) + "%)";
+      dots.forEach((dot, idx) => {
+        if(idx === currentSlide) {
+          dot.classList.add("active");
+        } else {
+          dot.classList.remove("active");
+        }
+      });
+    }
+  }
+
+  function goToSlide(index) {
+    currentSlide = index;
+    updateSlider();
+  }
+
+  setInterval(function() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+  }, 4000); // ৪ সেকেন্ড পর পর অটো স্লাইড পরিবর্তন হবে
+
+  // ==================== FIREBASE CONFIGURATION ====================
+  var firebaseConfig = {
+    apiKey: "AIzaSyDBPuA4web1HgfPCAvfcyUq7w1IWXl1S6I",
+    authDomain: "land-management-21042.firebaseapp.com",
+    databaseURL: "https://land-management-21042-default-rtdb.firebaseio.com",
+    projectId: "land-management-21042",
+    storageBucket: "land-management-21042.firebasestorage.app",
+    messagingSenderId: "64550140691",
+    appId: "1:64550140691:web:76fc8ed3fbdd68736f38e6",
+    measurementId: "G-R8VQGCPYM"
+  };
+
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  var db = firebase.database();
+
+  var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
+  
+  // Dynamic Service Prices
+  var bhumishebaFee = 50;
+  var printFee = 10;
+  var currentFilterStatus = 'all';
+
+  window.addEventListener("DOMContentLoaded", function() {
+    var params = new URLSearchParams(window.location.search);
+    
+    if (params.has("k") || params.has("m")) {
+      document.getElementById("public_view_page").style.display = "block";
+      document.getElementById("main_app_page").style.display = "none";
+      loadPublicViewData(params);
+    } else {
+      document.getElementById("public_view_page").style.display = "none";
+      document.getElementById("main_app_page").style.display = "block";
+      listenToServiceSettings();
+      checkAuth();
+    }
+  });
+
+  /* DYNAMIC SERVICE PRICES LISTENERS */
+  function listenToServiceSettings() {
+    db.ref("settings/prices").on("value", snapshot => {
+      var prices = snapshot.val();
+      if (prices) {
+        if (prices.bhumishebaFee !== undefined) bhumishebaFee = parseFloat(prices.bhumishebaFee);
+        if (prices.printFee !== undefined) printFee = parseFloat(prices.printFee);
+      }
+      
+      // Update UI texts
+      var printBtn = document.getElementById("btn_print_action");
+      if(printBtn) printBtn.innerText = "ডাউনলোড / প্রিন্ট করুন (৳" + printFee + ")";
+
+      // Update input fields for Admin
+      var setPrint = document.getElementById("setting_print_fee");
+      var setBhumisheba = document.getElementById("setting_bhumisheba_fee");
+      if(setPrint && !setPrint.value) setPrint.value = printFee;
+      if(setBhumisheba && !setBhumisheba.value) setBhumisheba.value = bhumishebaFee;
+      
+      var bsAmount = document.getElementById("bs_service_amount");
+      if(bsAmount && !bsAmount.value) bsAmount.value = bhumishebaFee;
+    });
+  }
+
+  function saveServicePrices(e) {
+    e.preventDefault();
+    var newPrintFee = parseFloat(document.getElementById("setting_print_fee").value);
+    var newBhumishebaFee = parseFloat(document.getElementById("setting_bhumisheba_fee").value);
+
+    if (isNaN(newPrintFee) || isNaN(newBhumishebaFee)) {
+      alert("সঠিক টাকার পরিমাণ টাইপ করুন!");
+      return;
+    }
+
+    db.ref("settings/prices").set({
+      printFee: newPrintFee,
+      bhumishebaFee: newBhumishebaFee
+    }).then(() => {
+      alert("সেবা মূল্য সফলভাবে আপডেট করা হয়েছে!");
+    });
+  }
+
+  function openRechargeModal() {
+    document.getElementById("recharge_modal").style.display = "flex";
+  }
+
+  function closeRechargeModal() {
+    document.getElementById("recharge_modal").style.display = "none";
+  }
+
+  function openScreenshotModal(imgSrc) {
+    document.getElementById("screenshot_img_view").src = imgSrc;
+    document.getElementById("screenshot_modal").style.display = "flex";
+  }
+
+  function closeScreenshotModal() {
+    document.getElementById("screenshot_modal").style.display = "none";
+    document.getElementById("screenshot_img_view").src = "";
+  }
+
+  function switchTab(sectionId) {
+    document.getElementById("khatian_section").style.display = "none";
+    document.getElementById("bhumisheba_section").style.display = "none";
+    
+    document.getElementById("tab_khatian_btn").classList.remove("active");
+    document.getElementById("tab_bhumisheba_btn").classList.remove("active");
+
+    document.getElementById(sectionId).style.display = "block";
+    
+    if (sectionId === 'khatian_section') {
+      document.getElementById("tab_khatian_btn").classList.add("active");
+    } else if (sectionId === 'bhumisheba_section') {
+      document.getElementById("tab_bhumisheba_btn").classList.add("active");
+    }
+  }
+
+  /* ==================== PENDING ORDER SYSTEM ==================== */
+  function submitPendingOrder() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var serviceDetails = document.getElementById("bs_service_name").value.trim();
+    var amount = parseFloat(document.getElementById("bs_service_amount").value);
+
+    if (!serviceDetails || isNaN(amount) || amount <= 0) {
+      alert("সঠিক সার্ভিসের নাম এবং ফি প্রদান করুন!");
+      return;
+    }
+
+    var orderData = {
+      requestedBy: user,
+      serviceDetails: serviceDetails,
+      amount: amount,
+      status: "pending",
+      date: new Date().toLocaleString("bn-BD"),
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    db.ref("bhumisheba_orders").push(orderData).then(function() {
+      alert("আপনার অর্ডারটি জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
+      document.getElementById("bs_service_name").value = "";
+    }).catch(function(error) {
+      alert("অর্ডার জমা দিতে ত্রুটি: " + error.message);
+    });
+  }
+
+  function loadPendingOrdersForAdmin() {
+    var tbody = document.getElementById("admin_pending_orders_list");
+    if (!tbody) return;
+
+    db.ref("bhumisheba_orders").orderByChild("status").equalTo("pending")
+      .on("value", function(snapshot) {
+        tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+          tbody.innerHTML = "<tr><td colspan='6'>কোনো পেন্ডিং অর্ডার নেই।</td></tr>";
+          return;
+        }
+
+        snapshot.forEach(function(child) {
+          var orderId = child.key;
+          var order = child.val();
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(order.requestedBy)}</td>
+            <td>${escapeHtml(order.serviceDetails)}</td>
+            <td>৳${order.amount}</td>
+            <td><span style="color:orange; font-weight:bold;">Pending</span></td>
+            <td>${order.date || '-'}</td>
+            <td>
+              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', ${order.amount})">অনুমোদন ও ফি কর্তন</button>
+              <button class="btn-sm btn-del" onclick="rejectOrder('${orderId}')">বাতিল</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  function approveOrder(orderId, fee) {
+    var adminUser = sessionStorage.getItem("loggedInUser");
+
+    db.ref("users/" + adminUser + "/balance").once("value").then(function(snapshot) {
+      var currentBalance = snapshot.val() || 0;
+
+      if (currentBalance < fee) {
+        alert("এডমিন ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + fee + ", বর্তমান ব্যালেন্স: ৳" + currentBalance);
+        return;
+      }
+
+      if (confirm("আপনি কি নিশ্চিত যে ৳" + fee + " কেটে এই অর্ডারটি অনুমোদন করবেন?")) {
+        var newBalance = currentBalance - fee;
+
+        db.ref("users/" + adminUser + "/balance").set(newBalance).then(function() {
+          db.ref("bhumisheba_orders/" + orderId).update({
+            status: "approved",
+            approvedBy: adminUser,
+            approvedAt: firebase.database.ServerValue.TIMESTAMP
+          }).then(function() {
+            alert("অর্ডারটি অনুমোদিত হয়েছে এবং ওয়ালেট থেকে ৳" + fee + " কাটা হয়েছে।");
+            loadWallet();
+            loadBhumishebaFrame();
+          });
+        });
+      }
+    });
+  }
+
+  function rejectOrder(orderId) {
+    if (confirm("আপনি কি নিশ্চিত এই অর্ডারটি বাতিল করতে চান?")) {
+      db.ref("bhumisheba_orders/" + orderId).update({
+        status: "rejected"
+      }).then(function() {
+        alert("অর্ডারটি বাতিল করা হয়েছে।");
+      });
+    }
+  }
+
+  function loadBhumishebaFrame() {
+    var container = document.getElementById('bhumisheba_iframe_container');
+    container.style.display = "block";
+    
+    container.innerHTML = `
+      <div style="text-align:center; padding: 40px; background: #f8f9fa; border: 2px dashed #28a745; border-radius: 8px;">
+        <h3 style="color: #28a745; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
+        <p style="margin-bottom: 20px;">নিচের বাটনে ক্লিক করে ভূমি সেবা পোর্টালে সরাসরি প্রবেশ করুন:</p>
+        <a href="https://app.bhumisheba.com/pages/home.php" target="_blank" class="btn btn-save" style="text-decoration:none; font-size:16px; padding: 10px 20px;">
+          <i class="fas fa-external-link-alt"></i> ভূমি সেবা পোর্টালে যান
+        </a>
+      </div>
+    `;
+  }
+
+  function loadPublicViewData(params) {
+    document.getElementById("view_khatian").innerText = params.get("k") || "-";
+    document.getElementById("view_owner").innerText = params.get("m") || "-";
+    document.getElementById("view_dag").innerText = params.get("d") || "-";
+    document.getElementById("view_survey").innerText = params.get("s") || "বি আর এস";
+    document.getElementById("view_mouza").innerText = params.get("mz") || "-";
+    document.getElementById("view_upazila").innerText = params.get("u") || "-";
+    document.getElementById("view_district").innerText = params.get("dt") || "-";
+    document.getElementById("view_division").innerText = params.get("dv") || "-";
+
+    var dateObj = getBanglaAndEnglishDate();
+    document.getElementById("view_date").innerText = dateObj.engFullDate;
+    document.getElementById("top_eng_date").innerText = "ইংরেজি: " + dateObj.topEngBar;
+    document.getElementById("top_bangla_date").innerText = "বাংলা: " + dateObj.topBanglaBar;
+  }
+
+  function getBanglaAndEnglishDate() {
+    var engMonths = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+    var engDays = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
+    var banMonths = ["বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ", "ভাদ্র", "আশ্বিন", "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"];
+
+    var now = new Date();
+    var dayName = engDays[now.getDay()];
+    var engDayNum = now.getDate();
+    var monthIdx = now.getMonth();
+    var engYear = now.getFullYear();
+
+    var engDayBn = toBanglaDigits(engDayNum);
+    var engYearBn = toBanglaDigits(engYear);
+
+    var bDay, bMonthIdx, bYear;
+    bYear = (monthIdx < 3 || (monthIdx === 3 && engDayNum < 14)) ? engYear - 594 : engYear - 593;
+
+    var dayOfYear = Math.floor((now - new Date(engYear, 0, 0)) / (1000 * 60 * 60 * 24));
+    var isLeap = (engYear % 4 === 0 && engYear % 100 !== 0) || (engYear % 400 === 0);
+    var boishakhStart = isLeap ? 105 : 104;
+
+    if (dayOfYear >= boishakhStart) {
+      var diff = dayOfYear - boishakhStart;
+      if (diff < 31) { bMonthIdx = 0; bDay = diff + 1; }
+      else if (diff < 62) { bMonthIdx = 1; bDay = diff - 31 + 1; }
+      else if (diff < 93) { bMonthIdx = 2; bDay = diff - 62 + 1; }
+      else if (diff < 124) { bMonthIdx = 3; bDay = diff - 93 + 1; }
+      else if (diff < 155) { bMonthIdx = 4; bDay = diff - 124 + 1; }
+      else if (diff < 186) { bMonthIdx = 5; bDay = diff - 155 + 1; }
+      else if (diff < 216) { bMonthIdx = 6; bDay = diff - 186 + 1; }
+      else if (diff < 246) { bMonthIdx = 7; bDay = diff - 216 + 1; }
+      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 246 + 1; }
+      else if (diff < 306) { bMonthIdx = 9; bDay = diff - 276 + 1; }
+      else {
+        var falgunDays = isLeap ? 30 : 29;
+        if (diff < 306 + falgunDays) { bMonthIdx = 10; bDay = diff - 306 + 1; }
+        else { bMonthIdx = 11; bDay = diff - (306 + falgunDays) + 1; }
+      }
+    } else {
+      var prevYearLeap = ((engYear - 1) % 4 === 0 && (engYear - 1) % 100 !== 0) || ((engYear - 1) % 400 === 0);
+      var prevBoishakhStart = prevYearLeap ? 105 : 104;
+      var totalPrevYearDays = prevYearLeap ? 366 : 365;
+      var diff = (totalPrevYearDays - prevBoishakhStart) + dayOfYear;
+
+      if (diff < 216) { bMonthIdx = 6; bDay = diff - 186 + 1; }
+      else if (diff < 246) { bMonthIdx = 7; bDay = diff - 216 + 1; }
+      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 276 + 1; }
+      else if (diff < 306) { bMonthIdx = 9; bDay = diff - 276 + 1; }
+      else {
+        var falgunDays = prevYearLeap ? 30 : 29;
+        if (diff < 306 + falgunDays) { bMonthIdx = 10; bDay = diff - 306 + 1; }
+        else { bMonthIdx = 11; bDay = diff - (306 + falgunDays) + 1; }
+      }
+    }
+
+    return {
+      engFullDate: engDayBn + " " + engMonths[monthIdx] + ", " + engYearBn,
+      topEngBar: dayName + ", " + engDayBn + " " + engMonths[monthIdx] + " " + engYearBn,
+      topBanglaBar: toBanglaDigits(bDay) + " " + banMonths[bMonthIdx] + " " + toBanglaDigits(bYear) + " বঙ্গাব্দ"
+    };
+  }
+
+  /* FIREBASE LOGIN SYSTEM */
+  function handleLogin(e) {
+    e.preventDefault();
+    var user = document.getElementById("username").value.trim();
+    var pass = document.getElementById("password").value;
+
+    if (user === "admin" && pass === "12345") {
+      sessionStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem("loggedInUser", "admin");
+      sessionStorage.setItem("userRole", "admin");
+      checkAuth();
+      return;
+    }
+
+    db.ref("users/" + user).once("value").then(snapshot => {
+      var userData = snapshot.val();
+      if (userData && userData.password === pass) {
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("loggedInUser", user);
+        sessionStorage.setItem("userRole", userData.role || "subadmin");
+        checkAuth();
+      } else {
+        alert("ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!");
+      }
+    });
+  }
+
+  function handleLogout() {
+    sessionStorage.clear();
+    location.href = window.location.pathname;
+  }
+
+  function checkAuth() {
+    var logged = sessionStorage.getItem("isLoggedIn") === "true";
+    var role = sessionStorage.getItem("userRole");
+    var username = sessionStorage.getItem("loggedInUser");
+
+    document.getElementById("login_panel").style.display = logged ? "none" : "block";
+    document.getElementById("admin_panel").style.display = logged ? "block" : "none";
+
+    if (logged) {
+      document.getElementById("display_username").innerText = username;
+      document.getElementById("display_role").innerText = role === "admin" ? "অ্যাডমিন" : "সাব-অ্যাডমিন";
+
+      if (role === "admin") {
+        document.getElementById("master_admin_controls").style.display = "block";
+        document.getElementById("subadmin_recharge_history").style.display = "none";
+        document.getElementById("subadmin_recharge_btn").style.display = "none";
+        renderSubAdmins();
+        renderRechargeRequests();
+        loadPendingOrdersForAdmin();
+      } else {
+        document.getElementById("master_admin_controls").style.display = "none";
+        document.getElementById("subadmin_recharge_history").style.display = "block";
+        document.getElementById("subadmin_recharge_btn").style.display = "inline-block";
+        renderSubadminRechargeList();
+      }
+
+      initDefaultDags();
+      loadWallet();
+      renderList();
+    }
+  }
+
+  function toEnglishDigits(str) {
+    var bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return String(str || '').replace(/[০-৯]/g, function(w) { return bn.indexOf(w); });
+  }
+
+  function toBanglaDigits(num) {
+    var bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return String(num).replace(/[0-9]/g, function(w) { return bn[parseInt(w)]; });
+  }
+
+  function calculateTotalLand() {
+    var rows = document.querySelectorAll("#dag_container .dag-row");
+    var total = 0;
+    rows.forEach(function(row) {
+      var val = row.querySelector(".d_sh_per")?.value || "";
+      var engVal = parseFloat(toEnglishDigits(val));
+      if (!isNaN(engVal)) {
+        total += engVal;
+      }
+    });
+
+    var banglaTotal = toBanglaDigits(total);
+    document.getElementById("in_total_land_sum").value = banglaTotal;
+    document.getElementById("prev_total_land_sum").innerText = banglaTotal;
+  }
+
+  function addSubAdmin(e) {
+    e.preventDefault();
+    var user = document.getElementById("sub_username").value.trim();
+    var pass = document.getElementById("sub_password").value;
+
+    if (!user || !pass) {
+      alert("ইউজারনেম এবং পাসওয়ার্ড দিন!");
+      return;
+    }
+
+    if (user === "admin") {
+      alert("এই ব্যবহারকারীর নাম রিজার্ভ করা আছে!");
+      return;
+    }
+
+    db.ref("users/" + user).set({
+      username: user,
+      password: pass,
+      role: "subadmin",
+      balance: 0
+    }).then(() => {
+      alert("সাব-এডমিন সফলভাবে ডাটাবেসে তৈরি হয়েছে!");
+      document.getElementById("subAdminForm").reset();
+    }).catch(error => {
+      alert("ত্রুটি: " + error.message);
+    });
+  }
+
+  function renderSubAdmins() {
+    var tbody = document.getElementById("subadmin_list");
+    if (!tbody) return;
+
+    db.ref("users").on("value", snapshot => {
+      var users = snapshot.val() || {};
+      tbody.innerHTML = "";
+
+      var subadminKeys = Object.keys(users).filter(u => users[u].role === "subadmin");
+
+      if (subadminKeys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4">কোনো সাব-এডমিন নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      subadminKeys.forEach(u => {
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>${escapeHtml(users[u].username)}</td>
+          <td>৳ ${users[u].balance || 0}</td>
+          <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${users[u].username}')">মুছুন</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  function deleteSubAdmin(user) {
+    if (!confirm("আপনি কি নিশ্চিত এই সাব-এডমিন মুছে ফেলতে চান?")) return;
+    db.ref("users/" + user).remove().then(() => {
+      alert("সাব-এডমিন মুছে ফেলা হয়েছে।");
+    });
+  }
+
+  function loadWallet() {
+    var role = sessionStorage.getItem("userRole");
+    var user = sessionStorage.getItem("loggedInUser");
+
+    db.ref("users/" + user).on("value", snapshot => {
+      var userData = snapshot.val() || {};
+      document.getElementById("wallet_balance").innerText = "৳ " + (userData.balance || 0);
+    });
+  }
+
+  function requestRecharge(e) {
+    e.preventDefault();
+    var amount = parseFloat(document.getElementById("recharge_amount").value);
+    var trxnId = document.getElementById("recharge_trxn").value.trim();
+    var fileInput = document.getElementById("recharge_screenshot");
+    var file = fileInput.files[0];
+    var user = sessionStorage.getItem("loggedInUser");
+
+    if (!amount || amount <= 0 || !trxnId) {
+      alert("সঠিক পরিমাণ এবং ট্রানজেকশন আইডি দিন।");
+      return;
+    }
+
+    if (!file) {
+      alert("অনুগ্রহ করে সেন্ডমানির একটি স্ক্রিনশট সিলেক্ট করুন।");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("স্ক্রিনশটের সাইজ সর্বোচ্চ 2MB হতে পারবে!");
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var screenshotBase64 = event.target.result;
+      var reqId = "REQ-" + Date.now();
+
+      db.ref("recharges/" + reqId).set({
+        id: reqId,
+        username: user,
+        amount: amount,
+        trxnId: trxnId,
+        screenshot: screenshotBase64,
+        status: "pending",
+        date: new Date().toLocaleString("bn-BD")
+      }).then(() => {
+        alert("আপনার রিচার্জের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে ব্যালেন্স যুক্ত হবে।");
+        document.getElementById("recharge_amount").value = "";
+        document.getElementById("recharge_trxn").value = "";
+        fileInput.value = "";
+        closeRechargeModal();
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderRechargeRequests() {
+    var tbody = document.getElementById("recharge_list");
+    if (!tbody) return;
+
+    db.ref("recharges").on("value", snapshot => {
+      var requests = snapshot.val() || {};
+      tbody.innerHTML = "";
+      var keys = Object.keys(requests);
+
+      if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8">কোনো অনুরোধ নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      for (var k in requests) {
+        var req = requests[k];
+        var tr = document.createElement("tr");
+
+        var screenshotBtn = req.screenshot 
+          ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` 
+          : `<span style="color:#aaa;">নাই</span>`;
+
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>${escapeHtml(req.username)}</td>
+          <td>৳ ${req.amount}</td>
+          <td>${escapeHtml(req.trxnId)}</td>
+          <td>${screenshotBtn}</td>
+          <td>${req.status === "pending" ? "<span style='color:orange;'>অপেক্ষমাণ</span>" : req.status === "approved" ? "<span style='color:green;'>অনুমোদিত</span>" : "<span style='color:red;'>বাতিল</span>"}</td>
+          <td>${req.date}</td>
+          <td>
+            ${req.status === "pending" ? `
+              <button class="btn-sm btn-save" onclick="approveRecharge('${req.id}', '${req.username}',${req.amount})">অনুমোদন</button>
+              <button class="btn-sm btn-del" onclick="rejectRecharge('${req.id}')">বাতিল</button>
+            ` : "-"}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+  }
+
+  function filterSubadminRecharges(status, btn) {
+    currentFilterStatus = status;
+    var btns = document.querySelectorAll(".filter-btn");
+    btns.forEach(b => b.classList.remove("active"));
+    if(btn) btn.classList.add("active");
+    renderSubadminRechargeList();
+  }
+
+  function renderSubadminRechargeList() {
+    var tbody = document.getElementById("subadmin_recharge_list");
+    var user = sessionStorage.getItem("loggedInUser");
+    if (!tbody || !user) return;
+
+    db.ref("recharges").on("value", snapshot => {
+      var requests = snapshot.val() || {};
+      tbody.innerHTML = "";
+
+      var myRequests = [];
+      for (var k in requests) {
+        if (requests[k].username === user) {
+          if (currentFilterStatus === 'all' || requests[k].status === currentFilterStatus) {
+            myRequests.push(requests[k]);
+          }
+        }
+      }
+
+      if (myRequests.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6">কোনো অনুরোধের রেকর্ড নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      myRequests.forEach(req => {
+        var tr = document.createElement("tr");
+
+        var screenshotBtn = req.screenshot 
+          ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` 
+          : `<span style="color:#aaa;">নাই</span>`;
+
+        var statusBadge = req.status === "pending" 
+          ? "<span style='color:orange; font-weight:bold;'>অপেক্ষমাণ</span>" 
+          : req.status === "approved" 
+          ? "<span style='color:green; font-weight:bold;'>সফল</span>" 
+          : "<span style='color:red; font-weight:bold;'>বাতিল</span>";
+
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>৳ ${req.amount}</td>
+          <td>${escapeHtml(req.trxnId)}</td>
+          <td>${screenshotBtn}</td>
+          <td>${statusBadge}</td>
+          <td>${req.date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  function approveRecharge(reqId, user, amount) {
+    db.ref("users/" + user + "/balance").once("value").then(snapshot => {
+      var currentBal = snapshot.val() || 0;
+      var newBal = currentBal + amount;
+
+      db.ref("users/" + user + "/balance").set(newBal);
+      db.ref("recharges/" + reqId + "/status").set("approved").then(() => {
+        alert("অনুরোধ অনুমোদন করা হয়েছে এবং টাকা যোগ করা হয়েছে!");
+      });
+    });
+  }
+
+  function rejectRecharge(reqId) {
+    db.ref("recharges/" + reqId + "/status").set("rejected").then(() => {
+      alert("অনুরোধ বাতিল করা হয়েছে।");
+    });
+  }
+
+  function payAndPrint() {
+    var role = sessionStorage.getItem("userRole");
+    var user = sessionStorage.getItem("loggedInUser");
+
+    if (role === "admin") {
+      window.print();
+      return;
+    }
+
+    db.ref("users/" + user + "/balance").once("value").then(snapshot => {
+      var bal = snapshot.val() || 0;
+
+      if (bal < printFee) {
+        alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳" + printFee + ")। অনুগ্রহ করে রিচার্জ করুন।");
+        return;
+      }
+
+      if (confirm("প্রিন্ট বা ডাউনলোড করার জন্য আপনার অ্যাকাউন্ট থেকে ৳" + printFee + " কাটা হবে। নিশ্চিত?")) {
+        var newBal = bal - printFee;
+        db.ref("users/" + user + "/balance").set(newBal).then(() => {
+          loadWallet();
+          window.print();
+        });
+      }
+    });
+  }
+
+  function initDefaultDags() {
+    var container = document.getElementById("dag_container");
+    if (container && container.children.length === 0) {
+      addDagRow({ share: "", dagNo: "৪১৫০", landClassAgri: "", landClassNonAgri: "", totalAcre: "", totalPercent: "", dagShare: "", shareAcre: "", sharePercent: "", comment: "" });
+    }
+  }
+
+  function addDagRow(data) {
+    data = data || {};
+    var container = document.getElementById("dag_container");
+    var row = document.createElement("div");
+    row.className = "dag-row";
+    row.innerHTML = `
+      <input type="text" class="d_share" placeholder="অংশ" value="${escapeHtml(data.share || '')}">
+      <input type="text" class="d_no" placeholder="দাগ" value="${escapeHtml(data.dagNo || '')}" oninput="renderPreview()">
+      <input type="text" class="d_agri" placeholder="কৃষি" value="${escapeHtml(data.landClassAgri || '')}">
+      <input type="text" class="d_nonagri" placeholder="অকৃষি" value="${escapeHtml(data.landClassNonAgri || '')}">
+      <input type="text" class="d_tot_acre" placeholder="মোট একর" value="${escapeHtml(data.totalAcre || '')}">
+      <input type="text" class="d_tot_per" placeholder="মোট শতাংশ" value="${escapeHtml(data.totalPercent || '')}">
+      <input type="text" class="d_dag_share" placeholder="অত্র অংশ" value="${escapeHtml(data.dagShare || '')}">
+      <input type="text" class="d_sh_acre" placeholder="অংশ একর" value="${escapeHtml(data.shareAcre || '')}">
+      <input type="text" class="d_sh_per" placeholder="অংশ শতাংশ" value="${escapeHtml(data.sharePercent || '')}" oninput="calculateTotalLand(); renderPreview();">
+      <input type="text" class="d_comment" placeholder="মন্তব্য" value="${escapeHtml(data.comment || '')}">
+      <button type="button" class="btn-sm btn-del" onclick="removeDagRow(this)">×</button>
+    `;
+    container.appendChild(row);
+    calculateTotalLand();
+  }
+
+  function removeDagRow(btn) {
+    var row = btn.closest(".dag-row");
+    if (row) row.remove();
+    calculateTotalLand();
+    renderPreview();
+  }
+
+  function getDagData() {
+    var rows = document.querySelectorAll("#dag_container .dag-row");
+    var list = [];
+    rows.forEach(function(row) {
+      list.push({
+        share: row.querySelector(".d_share")?.value.trim() || "",
+        dagNo: row.querySelector(".d_no")?.value.trim() || "",
+        landClassAgri: row.querySelector(".d_agri")?.value.trim() || "",
+        landClassNonAgri: row.querySelector(".d_nonagri")?.value.trim() || "",
+        totalAcre: row.querySelector(".d_tot_acre")?.value.trim() || "",
+        totalPercent: row.querySelector(".d_tot_per")?.value.trim() || "",
+        dagShare: row.querySelector(".d_dag_share")?.value.trim() || "",
+        shareAcre: row.querySelector(".d_sh_acre")?.value.trim() || "",
+        sharePercent: row.querySelector(".d_sh_per")?.value.trim() || "",
+        comment: row.querySelector(".d_comment")?.value.trim() || ""
+      });
+    });
+    return list;
+  }
+
+  function escapeHtml(val) {
+    return String(val || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function getFormData() {
+    return {
+      id: document.getElementById("in_record_id")?.value.trim() || "",
+      khatian: document.getElementById("in_khatian")?.value.trim() || "",
+      page: document.getElementById("in_page")?.value.trim() || "",
+      division: document.getElementById("in_division")?.value.trim() || "",
+      district: document.getElementById("in_district")?.value.trim() || "",
+      upazila: document.getElementById("in_upazila")?.value.trim() || "",
+      mouza: document.getElementById("in_mouza")?.value.trim() || "",
+      jl: document.getElementById("in_jl")?.value.trim() || "",
+      resa: document.getElementById("in_resa")?.value.trim() || "-",
+      owner: document.getElementById("in_owner")?.value || "",
+      ownerShare: document.getElementById("in_owner_share")?.value.trim() || "",
+      totalLandSum: document.getElementById("in_total_land_sum")?.value.trim() || "০",
+      note: document.getElementById("in_note")?.value.trim() || "",
+      caseNote: document.getElementById("in_case_note")?.value.trim() || "",
+      printDate: document.getElementById("in_print_date")?.value.trim() || "",
+      dags: getDagData()
+    };
+  }
+
+  function generateQRUrl(data) {
+    var baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    var params = new URLSearchParams({
+      k: data.khatian || "",
+      m: data.owner || "",
+      d: (data.dags && data.dags[0] && data.dags[0].dagNo) ? data.dags[0].dagNo : "",
+      s: data.jl || "",
+      mz: data.mouza || "",
+      u: (data.upazila || "") + " রাজস্ব সার্কেল",
+      dt: data.district || "",
+      dv: data.division || ""
+    });
+
+    return baseUrl + "?" + params.toString();
+  }
+
+  function saveKhatian() {
+    var data = getFormData();
+    if (!data.khatian || !data.owner) {
+      alert("খতিয়ান নম্বর এবং মালিকের নাম আবশ্যক!");
+      return;
+    }
+
+    if (!data.id) {
+      data.id = "KHT-" + Date.now().toString(36).toUpperCase();
+      document.getElementById("in_record_id").value = data.id;
+    }
+
+    db.ref("khatians/" + data.id).set(data).then(() => {
+      alert("খতিয়ান সফলভাবে অনলাইনে সংরক্ষিত হয়েছে!");
+      renderList();
+    });
+  }
+
+  function renderList() {
+    var tbody = document.getElementById("khatian_list");
+    if (!tbody) return;
+
+    db.ref("khatians").on("value", snapshot => {
+      var records = snapshot.val() || {};
+      tbody.innerHTML = "";
+      var keys = Object.keys(records);
+
+      if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6">কোনো রেকর্ড নেই</td></tr>`;
+        return;
+      }
+
+      var idx = 1;
+      for (var k in records) {
+        var rec = records[k];
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx++}</td>
+          <td>${escapeHtml(rec.khatian)}</td>
+          <td>${escapeHtml(rec.mouza)}</td>
+          <td>${escapeHtml(rec.totalLandSum)}</td>
+          <td>${escapeHtml(rec.printDate)}</td>
+          <td>
+            <button class="btn-sm btn-edit" onclick="loadKhatian('${rec.id}')">এডিট</button>
+            <button class="btn-sm btn-prt" onclick="loadKhatian('${rec.id}'); payAndPrint();">প্রিন্ট</button>
+            <button class="btn-sm btn-del" onclick="deleteKhatian('${rec.id}')">মুছুন</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+  }
+
+  function loadKhatian(id) {
+    db.ref("khatians/" + id).once("value").then(snapshot => {
+      var rec = snapshot.val();
+      if (!rec) return;
+
+      document.getElementById("in_record_id").value = rec.id || "";
+      document.getElementById("in_khatian").value = rec.khatian || "";
+      document.getElementById("in_page").value = rec.page || "";
+      document.getElementById("in_division").value = rec.division || "";
+      document.getElementById("in_district").value = rec.district || "";
+      document.getElementById("in_upazila").value = rec.upazila || "";
+      document.getElementById("in_mouza").value = rec.mouza || "";
+      document.getElementById("in_jl").value = rec.jl || "";
+      document.getElementById("in_resa").value = rec.resa || "-";
+      document.getElementById("in_owner").value = rec.owner || "";
+      document.getElementById("in_owner_share").value = rec.ownerShare || "";
+      document.getElementById("in_total_land_sum").value = rec.totalLandSum || "০";
+      document.getElementById("in_note").value = rec.note || "";
+      document.getElementById("in_case_note").value = rec.caseNote || "";
+      document.getElementById("in_print_date").value = rec.printDate || "";
+
+      var container = document.getElementById("dag_container");
+      container.innerHTML = "";
+      if (rec.dags && rec.dags.length) {
+        rec.dags.forEach(d => addDagRow(d));
+      } else {
+        addDagRow();
+      }
+      renderPreview();
+    });
+  }
+
+  function deleteKhatian(id) {
+    if (!confirm("মুছে ফেলতে চান?")) return;
+    db.ref("khatians/" + id).remove().then(() => {
+      renderList();
+    });
+  }
+
+  function renderPreview() {
+    calculateTotalLand();
+    var data = getFormData();
+    var setTxt = (id, val, def) => { var el = document.getElementById(id); if (el) el.innerText = val || def || ""; };
+
+    setTxt("prev_page", data.page, "১ এর ১");
+    setTxt("prev_khatian", data.khatian, "-");
+    setTxt("prev_division", data.division, "-");
+    setTxt("prev_district", data.district, "-");
+    setTxt("prev_upazila", data.upazila, "-");
+    setTxt("prev_mouza", data.mouza, "-");
+    setTxt("prev_jl", data.jl, "-");
+    setTxt("prev_resa", data.resa, "-");
+
+    setTxt("prev_note", data.note);
+    setTxt("prev_case_note", data.caseNote);
+    setTxt("prev_owner_share", data.ownerShare, "১.০০০");
+    setTxt("prev_total_land_sum", data.totalLandSum, "০");
+    setTxt("prev_print_date", data.printDate, "১৮ সেপ্টেম্বর, ২০২৬");
+
+    var dynamicQrLink = generateQRUrl(data);
+    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(dynamicQrLink);
+
+    var tbody = document.getElementById("prev_table_body");
+    tbody.innerHTML = "";
+
+    var dags = data.dags.length ? data.dags : [{}];
+
+    dags.forEach((dag, idx) => {
+      var tr = document.createElement("tr");
+
+      var ownerCell = idx === 0 
+        ? `<td rowspan="${dags.length}" class="owner-td">${escapeHtml(data.owner)}</td>` 
+        : '';
+
+      tr.innerHTML = `
+        ${ownerCell}
+        <td>${escapeHtml(dag.share)}</td>
+        <td></td>
+        <td>${escapeHtml(dag.dagNo)}</td>
+        <td>${escapeHtml(dag.landClassAgri)}</td>
+        <td>${escapeHtml(dag.landClassNonAgri)}</td>
+        <td>${escapeHtml(dag.totalAcre)}</td>
+        <td>${escapeHtml(dag.totalPercent)}</td>
+        <td>${escapeHtml(dag.dagShare)}</td>
+        <td>${escapeHtml(dag.shareAcre)}</td>
+        <td>${escapeHtml(dag.sharePercent)}</td>
+        <td>${escapeHtml(dag.comment)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("preview_area").style.display = "block";
+  }
+
+  function closePreview() {
+    document.getElementById("preview_area").style.display = "none";
+  }
+
+  function resetKhatianForm() {
+    document.getElementById("khatianForm").reset();
+    document.getElementById("dag_container").innerHTML = "";
+    initDefaultDags();
+    closePreview();
+  }
+</script>
+
+</body>
+</html>
