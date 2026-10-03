@@ -35,7 +35,7 @@
 
     .cover-slider {
       display: flex;
-      width: 600%; /* ৬টি স্লাইডের জন্য ৬০০% */
+      width: 600%;
       height: 100%;
       transition: transform 0.8s ease-in-out;
     }
@@ -761,6 +761,9 @@
           <a href="https://everify.bdris.gov.bd/" target="_blank" class="free-link-card">
             <i class="fas fa-certificate"></i> জন্ম/মৃত্যু নিবন্ধন ভেরিফাই
           </a>
+          <a href="https://sebabari.shop/free.php" target="_blank" class="free-link-card">
+            <i class="fas fa-globe"></i> সেবা বাড়ি ফ্রি পেজ
+          </a>
         </div>
       </div>
 
@@ -772,7 +775,13 @@
           <i class="fas fa-globe"></i> ভূমি সেবা পোর্টাল
         </button>
         <button type="button" class="nav-tab-btn" id="tab_sebabox_btn" onclick="switchTab('sebabox_section')">
-          <i class="fas fa-box-open"></i> সেবা বক্স পোর্টাল (Sebabox)
+          <i class="fas fa-box-open"></i> সেবা বক্স (Sebabox)
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_bestbuy_btn" onclick="switchTab('bestbuy_section')">
+          <i class="fas fa-shopping-bag"></i> Best Buy পোর্টাল
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_bdfast_btn" onclick="switchTab('bdfast_section')">
+          <i class="fas fa-shipping-fast"></i> BD Fast Service
         </button>
       </div>
 
@@ -834,8 +843,16 @@
                 <input type="number" id="setting_bhumisheba_fee" required placeholder="যেমন: ৫০">
               </div>
               <div class="form-group">
-                <label>সেবা বক্স (Sebabox) পোর্টাল চার্জ (৳):</label>
+                <label>সেবা বক্স (Sebabox) চার্জ (৳):</label>
                 <input type="number" id="setting_sebabox_fee" required placeholder="যেমন: ৩০">
+              </div>
+              <div class="form-group">
+                <label>Best Buy পোর্টাল চার্জ (৳):</label>
+                <input type="number" id="setting_bestbuy_fee" required placeholder="যেমন: ৪০">
+              </div>
+              <div class="form-group">
+                <label>BD Fast Service চার্জ (৳):</label>
+                <input type="number" id="setting_bdfast_fee" required placeholder="যেমন: ২৫">
               </div>
             </div>
             <button type="submit" class="btn btn-save"><i class="fas fa-check"></i> মূল্য সেভ করুন</button>
@@ -1003,16 +1020,15 @@
           <h3><i class="fas fa-globe"></i> ভূমি সেবা অনলাইন পোর্টাল</h3>
           <hr style="margin: 15px 0;">
           
-          <div id="bhumisheba_notice" style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
-            <p style="margin: 0;">এই সেবাটির নতুন অর্ডার সাবমিট করলে তা পেন্ডিং হিসেবে জমা থাকবে। এডমিন অনুমোদন দিলে পোর্টাল এক্সেস সচল হবে।</p>
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">এই সেবার জন্য অর্ডার সাবমিট করলে ফি কেটে নেওয়া হবে এবং এডমিন অনুমোদন সাপেক্ষে লিংক চালু হবে।</p>
           </div>
           
-          <!-- ORDER SUBMISSION FORM -->
           <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
             <h4>নতুন ভূমি সেবা অর্ডার করুন</h4>
             <div class="form-grid" style="margin-top:10px;">
               <div class="form-group">
-                <label>সার্ভিসের নাম/বিবরণ:</label>
+                <label>সার্ভিসের বিবরণ:</label>
                 <input type="text" id="bs_service_name" placeholder="যেমন: খতিয়ান বা নামজারি আবেদন">
               </div>
               <div class="form-group">
@@ -1020,8 +1036,8 @@
                 <input type="number" id="bs_service_amount" placeholder="যেমন: ৫০">
               </div>
             </div>
-            <button type="button" class="btn btn-save" onclick="submitPendingOrder('ভূমি সেবা')">
-              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন (পেন্ডিং থাকবে)
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('ভূমি সেবা', 'bs_service_name', 'bs_service_amount', 'bhumisheba_iframe_container', 'https://app.bhumisheba.com/pages/home.php')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
             </button>
           </div>
 
@@ -1036,15 +1052,14 @@
           <hr style="margin: 15px 0;">
           
           <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
-            <p style="margin: 0;">সেবা বক্স পোর্টাল হতে যেকোনো সেবা নিতে অর্ডার করুন। এডমিন অনুমোদন করলে পোর্টাল সচল হবে।</p>
+            <p style="margin: 0;">সেবা বক্স পোর্টালে কাজের জন্য অর্ডার করুন।</p>
           </div>
           
-          <!-- SEBABOX ORDER FORM -->
           <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
             <h4>সেবা বক্স অর্ডার ফরম</h4>
             <div class="form-grid" style="margin-top:10px;">
               <div class="form-group">
-                <label>সার্ভিসের নাম/বিবরণ:</label>
+                <label>সার্ভিসের বিবরণ:</label>
                 <input type="text" id="sb_service_name" placeholder="যেমন: সেবা বক্স পোর্টালে কাজের আবেদন">
               </div>
               <div class="form-group">
@@ -1052,12 +1067,74 @@
                 <input type="number" id="sb_service_amount" placeholder="যেমন: ৩০">
               </div>
             </div>
-            <button type="button" class="btn btn-save" onclick="submitSebaboxOrder()">
-              <i class="fas fa-paper-plane"></i> সেবা বক্স অর্ডার করুন (পেন্ডিং থাকবে)
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('Sebabox', 'sb_service_name', 'sb_service_amount', 'sebabox_iframe_container', 'https://sebabox.info/index.php')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
             </button>
           </div>
 
           <div id="sebabox_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- BESTBUY TAB SECTION -->
+      <div id="bestbuy_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-shopping-bag"></i> Best Buy পোর্টাল</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">Best Buy পোর্টালে এক্সেস পেতে অর্ডার করুন।</p>
+          </div>
+          
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>Best Buy অর্ডার ফরম</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের বিবরণ:</label>
+                <input type="text" id="bb_service_name" placeholder="যেমন: Best Buy ইউজার লগইন সেবা">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="bb_service_amount" placeholder="যেমন: ৪০">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BestBuy', 'bb_service_name', 'bb_service_amount', 'bestbuy_iframe_container', 'https://user.bestbuy-public.top/user-login?')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
+            </button>
+          </div>
+
+          <div id="bestbuy_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- BDFAST TAB SECTION -->
+      <div id="bdfast_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-shipping-fast"></i> BD Fast Service</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">BD Fast Service পোর্টালে কাজের জন্য অর্ডার করুন।</p>
+          </div>
+          
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>BD Fast Service অর্ডার ফরম</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের বিবরণ:</label>
+                <input type="text" id="bf_service_name" placeholder="যেমন: BD Fast Service পোর্টালে সেবা">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="bf_service_amount" placeholder="যেমন: ২৫">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BDFast', 'bf_service_name', 'bf_service_amount', 'bdfast_iframe_container', 'https://www.bdfastservice.xyz/login.php')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
+            </button>
+          </div>
+
+          <div id="bdfast_iframe_container" style="display: none; margin-top: 15px;"></div>
         </div>
       </div>
 
@@ -1226,6 +1303,8 @@
   // Dynamic Service Prices
   var bhumishebaFee = 50;
   var sebaboxFee = 30;
+  var bestbuyFee = 40;
+  var bdfastFee = 25;
   var printFee = 10;
   var currentFilterStatus = 'all';
 
@@ -1251,6 +1330,8 @@
       if (prices) {
         if (prices.bhumishebaFee !== undefined) bhumishebaFee = parseFloat(prices.bhumishebaFee);
         if (prices.sebaboxFee !== undefined) sebaboxFee = parseFloat(prices.sebaboxFee);
+        if (prices.bestbuyFee !== undefined) bestbuyFee = parseFloat(prices.bestbuyFee);
+        if (prices.bdfastFee !== undefined) bdfastFee = parseFloat(prices.bdfastFee);
         if (prices.printFee !== undefined) printFee = parseFloat(prices.printFee);
       }
       
@@ -1260,16 +1341,19 @@
       var setPrint = document.getElementById("setting_print_fee");
       var setBhumisheba = document.getElementById("setting_bhumisheba_fee");
       var setSebabox = document.getElementById("setting_sebabox_fee");
+      var setBestbuy = document.getElementById("setting_bestbuy_fee");
+      var setBdfast = document.getElementById("setting_bdfast_fee");
 
       if(setPrint && !setPrint.value) setPrint.value = printFee;
       if(setBhumisheba && !setBhumisheba.value) setBhumisheba.value = bhumishebaFee;
       if(setSebabox && !setSebabox.value) setSebabox.value = sebaboxFee;
+      if(setBestbuy && !setBestbuy.value) setBestbuy.value = bestbuyFee;
+      if(setBdfast && !setBdfast.value) setBdfast.value = bdfastFee;
       
-      var bsAmount = document.getElementById("bs_service_amount");
-      if(bsAmount && !bsAmount.value) bsAmount.value = bhumishebaFee;
-
-      var sbAmount = document.getElementById("sb_service_amount");
-      if(sbAmount && !sbAmount.value) sbAmount.value = sebaboxFee;
+      if(document.getElementById("bs_service_amount") && !document.getElementById("bs_service_amount").value) document.getElementById("bs_service_amount").value = bhumishebaFee;
+      if(document.getElementById("sb_service_amount") && !document.getElementById("sb_service_amount").value) document.getElementById("sb_service_amount").value = sebaboxFee;
+      if(document.getElementById("bb_service_amount") && !document.getElementById("bb_service_amount").value) document.getElementById("bb_service_amount").value = bestbuyFee;
+      if(document.getElementById("bf_service_amount") && !document.getElementById("bf_service_amount").value) document.getElementById("bf_service_amount").value = bdfastFee;
     });
   }
 
@@ -1278,16 +1362,15 @@
     var newPrintFee = parseFloat(document.getElementById("setting_print_fee").value);
     var newBhumishebaFee = parseFloat(document.getElementById("setting_bhumisheba_fee").value);
     var newSebaboxFee = parseFloat(document.getElementById("setting_sebabox_fee").value);
-
-    if (isNaN(newPrintFee) || isNaN(newBhumishebaFee) || isNaN(newSebaboxFee)) {
-      alert("সঠিক টাকার পরিমাণ টাইপ করুন!");
-      return;
-    }
+    var newBestbuyFee = parseFloat(document.getElementById("setting_bestbuy_fee").value);
+    var newBdfastFee = parseFloat(document.getElementById("setting_bdfast_fee").value);
 
     db.ref("settings/prices").set({
       printFee: newPrintFee,
       bhumishebaFee: newBhumishebaFee,
-      sebaboxFee: newSebaboxFee
+      sebaboxFee: newSebaboxFee,
+      bestbuyFee: newBestbuyFee,
+      bdfastFee: newBdfastFee
     }).then(() => {
       alert("সেবা মূল্য সফলভাবে আপডেট করা হয়েছে!");
     });
@@ -1312,79 +1395,49 @@
   }
 
   function switchTab(sectionId) {
-    document.getElementById("khatian_section").style.display = "none";
-    document.getElementById("bhumisheba_section").style.display = "none";
-    document.getElementById("sebabox_section").style.display = "none";
-    
-    document.getElementById("tab_khatian_btn").classList.remove("active");
-    document.getElementById("tab_bhumisheba_btn").classList.remove("active");
-    document.getElementById("tab_sebabox_btn").classList.remove("active");
+    var sections = ['khatian_section', 'bhumisheba_section', 'sebabox_section', 'bestbuy_section', 'bdfast_section'];
+    var buttons = ['tab_khatian_btn', 'tab_bhumisheba_btn', 'tab_sebabox_btn', 'tab_bestbuy_btn', 'tab_bdfast_btn'];
+
+    sections.forEach(s => document.getElementById(s).style.display = "none");
+    buttons.forEach(b => document.getElementById(b).classList.remove("active"));
 
     document.getElementById(sectionId).style.display = "block";
     
-    if (sectionId === 'khatian_section') {
-      document.getElementById("tab_khatian_btn").classList.add("active");
-    } else if (sectionId === 'bhumisheba_section') {
-      document.getElementById("tab_bhumisheba_btn").classList.add("active");
-    } else if (sectionId === 'sebabox_section') {
-      document.getElementById("tab_sebabox_btn").classList.add("active");
-    }
+    if (sectionId === 'khatian_section') document.getElementById('tab_khatian_btn').classList.add("active");
+    if (sectionId === 'bhumisheba_section') document.getElementById('tab_bhumisheba_btn').classList.add("active");
+    if (sectionId === 'sebabox_section') document.getElementById('tab_sebabox_btn').classList.add("active");
+    if (sectionId === 'bestbuy_section') document.getElementById('tab_bestbuy_btn').classList.add("active");
+    if (sectionId === 'bdfast_section') document.getElementById('tab_bdfast_btn').classList.add("active");
   }
 
   /* ==================== PENDING ORDER SYSTEM ==================== */
-  function submitPendingOrder(category) {
+  function submitCustomOrder(category, nameInputId, amountInputId, containerId, targetUrl) {
     var user = sessionStorage.getItem("loggedInUser");
-    var serviceDetails = document.getElementById("bs_service_name").value.trim();
-    var amount = parseFloat(document.getElementById("bs_service_amount").value);
+    var serviceDetails = document.getElementById(nameInputId).value.trim();
+    var amount = parseFloat(document.getElementById(amountInputId).value);
 
     if (!serviceDetails || isNaN(amount) || amount <= 0) {
-      alert("সঠিক সার্ভিসের নাম এবং ফি প্রদান করুন!");
+      alert("সঠিক সার্ভিসের বিবরণ এবং ফি প্রদান করুন!");
       return;
     }
 
     var orderData = {
       requestedBy: user,
-      serviceCategory: category || 'ভূমি সেবা',
+      serviceCategory: category,
       serviceDetails: serviceDetails,
       amount: amount,
+      targetUrl: targetUrl,
+      containerId: containerId,
       status: "pending",
       date: new Date().toLocaleString("bn-BD"),
       timestamp: firebase.database.ServerValue.TIMESTAMP
     };
 
     db.ref("bhumisheba_orders").push(orderData).then(function() {
-      alert("আপনার " + category + " অর্ডারটি জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
-      document.getElementById("bs_service_name").value = "";
+      alert("আপনার অর্ডারটি সফলভাবে জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
+      document.getElementById(nameInputId).value = "";
     }).catch(function(error) {
-      alert("অর্ডার জমা দিতে ত্রুটি: " + error.message);
-    });
-  }
-
-  function submitSebaboxOrder() {
-    var user = sessionStorage.getItem("loggedInUser");
-    var serviceDetails = document.getElementById("sb_service_name").value.trim();
-    var amount = parseFloat(document.getElementById("sb_service_amount").value);
-
-    if (!serviceDetails || isNaN(amount) || amount <= 0) {
-      alert("সঠিক সার্ভিসের নাম এবং ফি প্রদান করুন!");
-      return;
-    }
-
-    var orderData = {
-      requestedBy: user,
-      serviceCategory: 'Sebabox',
-      serviceDetails: serviceDetails,
-      amount: amount,
-      status: "pending",
-      date: new Date().toLocaleString("bn-BD"),
-      timestamp: firebase.database.ServerValue.TIMESTAMP
-    };
-
-    db.ref("bhumisheba_orders").push(orderData).then(function() {
-      alert("আপনার সেবা বক্স অর্ডারটি জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
-      document.getElementById("sb_service_name").value = "";
-    }).catch(function(error) {
-      alert("অর্ডার জমা দিতে ত্রুটি: " + error.message);
+      alert("অর্ডার দিতে ত্রুটি: " + error.message);
     });
   }
 
@@ -1407,12 +1460,12 @@
           var tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${escapeHtml(order.requestedBy)}</td>
-            <td>[${escapeHtml(order.serviceCategory || 'সেবা')}] ${escapeHtml(order.serviceDetails)}</td>
+            <td>[${escapeHtml(order.serviceCategory)}] ${escapeHtml(order.serviceDetails)}</td>
             <td>৳${order.amount}</td>
             <td><span style="color:orange; font-weight:bold;">Pending</span></td>
             <td>${order.date || '-'}</td>
             <td>
-              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', ${order.amount}, '${order.serviceCategory}')">অনুমোদন ও ফি কর্তন</button>
+              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', ${order.amount}, '${order.containerId}', '${order.targetUrl}')">অনুমোদন ও ফি কর্তন</button>
               <button class="btn-sm btn-del" onclick="rejectOrder('${orderId}')">বাতিল</button>
             </td>
           `;
@@ -1421,18 +1474,18 @@
       });
   }
 
-  function approveOrder(orderId, fee, category) {
+  function approveOrder(orderId, fee, containerId, targetUrl) {
     var adminUser = sessionStorage.getItem("loggedInUser");
 
     db.ref("users/" + adminUser + "/balance").once("value").then(function(snapshot) {
       var currentBalance = snapshot.val() || 0;
 
       if (currentBalance < fee) {
-        alert("এডমিন ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + fee + ", বর্তমান ব্যালেন্স: ৳" + currentBalance);
+        alert("এডমিন ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + fee);
         return;
       }
 
-      if (confirm("আপনি কি নিশ্চিত যে ৳" + fee + " কেটে এই অর্ডারটি অনুমোদন করবেন?")) {
+      if (confirm("আপনি কি নিশ্চিত যে ৳" + fee + " কেটে অর্ডারটি অনুমোদন করবেন?")) {
         var newBalance = currentBalance - fee;
 
         db.ref("users/" + adminUser + "/balance").set(newBalance).then(function() {
@@ -1441,12 +1494,10 @@
             approvedBy: adminUser,
             approvedAt: firebase.database.ServerValue.TIMESTAMP
           }).then(function() {
-            alert("অর্ডারটি অনুমোদিত হয়েছে এবং ওয়ালেট থেকে ৳" + fee + " কাটা হয়েছে।");
+            alert("অর্ডার অনুমোদিত হয়েছে এবং ওয়ালেট থেকে ফি কাটা হয়েছে।");
             loadWallet();
-            if(category === 'Sebabox') {
-              loadSebaboxFrame();
-            } else {
-              loadBhumishebaFrame();
+            if(containerId && targetUrl) {
+              activatePortalFrame(containerId, targetUrl);
             }
           });
         });
@@ -1455,40 +1506,23 @@
   }
 
   function rejectOrder(orderId) {
-    if (confirm("আপনি কি নিশ্চিত এই অর্ডারটি বাতিল করতে চান?")) {
-      db.ref("bhumisheba_orders/" + orderId).update({
-        status: "rejected"
-      }).then(function() {
-        alert("অর্ডারটি বাতিল করা হয়েছে।");
+    if (confirm("অর্ডারটি বাতিল করতে চান?")) {
+      db.ref("bhumisheba_orders/" + orderId).update({ status: "rejected" }).then(() => {
+        alert("অর্ডার বাতিল করা হয়েছে।");
       });
     }
   }
 
-  function loadBhumishebaFrame() {
-    var container = document.getElementById('bhumisheba_iframe_container');
+  function activatePortalFrame(containerId, targetUrl) {
+    var container = document.getElementById(containerId);
+    if(!container) return;
     container.style.display = "block";
-    
     container.innerHTML = `
-      <div style="text-align:center; padding: 40px; background: #f8f9fa; border: 2px dashed #28a745; border-radius: 8px;">
-        <h3 style="color: #28a745; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> ভূমি সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
-        <p style="margin-bottom: 20px;">নিচের বাটনে ক্লিক করে ভূমি সেবা পোর্টালে সরাসরি প্রবেশ করুন:</p>
-        <a href="https://app.bhumisheba.com/pages/home.php" target="_blank" class="btn btn-save" style="text-decoration:none; font-size:16px; padding: 10px 20px;">
-          <i class="fas fa-external-link-alt"></i> ভূমি সেবা পোর্টালে যান
-        </a>
-      </div>
-    `;
-  }
-
-  function loadSebaboxFrame() {
-    var container = document.getElementById('sebabox_iframe_container');
-    container.style.display = "block";
-    
-    container.innerHTML = `
-      <div style="text-align:center; padding: 40px; background: #f8f9fa; border: 2px dashed #007bff; border-radius: 8px;">
-        <h3 style="color: #007bff; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> সেবা বক্স সফলভাবে সক্রিয় করা হয়েছে</h3>
-        <p style="margin-bottom: 20px;">নিচের বাটনে ক্লিক করে সেবা বক্স পোর্টালে সরাসরি প্রবেশ করুন:</p>
-        <a href="https://sebabox.info/index.php" target="_blank" class="btn btn-print" style="text-decoration:none; font-size:16px; padding: 10px 20px;">
-          <i class="fas fa-external-link-alt"></i> Sebabox পোর্টালে যান
+      <div style="text-align:center; padding: 30px; background: #f8f9fa; border: 2px dashed #28a745; border-radius: 8px;">
+        <h3 style="color: #28a745; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
+        <p style="margin-bottom: 15px;">নিচের বাটনে ক্লিক করে পোর্টালে প্রবেশ করুন:</p>
+        <a href="${targetUrl}" target="_blank" class="btn btn-save" style="text-decoration:none; font-size:15px; padding: 10px 20px;">
+          <i class="fas fa-external-link-alt"></i> সরাসরি পোর্টালে যান
         </a>
       </div>
     `;
@@ -1727,9 +1761,7 @@
   }
 
   function loadWallet() {
-    var role = sessionStorage.getItem("userRole");
     var user = sessionStorage.getItem("loggedInUser");
-
     db.ref("users/" + user).on("value", snapshot => {
       var userData = snapshot.val() || {};
       document.getElementById("wallet_balance").innerText = "৳ " + (userData.balance || 0);
@@ -1744,36 +1776,24 @@
     var file = fileInput.files[0];
     var user = sessionStorage.getItem("loggedInUser");
 
-    if (!amount || amount <= 0 || !trxnId) {
-      alert("সঠিক পরিমাণ এবং ট্রানজেকশন আইডি দিন।");
-      return;
-    }
-
-    if (!file) {
-      alert("অনুগ্রহ করে সেন্ডমানির একটি স্ক্রিনশট সিলেক্ট করুন।");
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      alert("স্ক্রিনশটের সাইজ সর্বোচ্চ 2MB হতে পারবে!");
+    if (!amount || amount <= 0 || !trxnId || !file) {
+      alert("সকল তথ্য ও স্ক্রিনশট সঠিকভাবে দিন।");
       return;
     }
 
     var reader = new FileReader();
     reader.onload = function(event) {
-      var screenshotBase64 = event.target.result;
       var reqId = "REQ-" + Date.now();
-
       db.ref("recharges/" + reqId).set({
         id: reqId,
         username: user,
         amount: amount,
         trxnId: trxnId,
-        screenshot: screenshotBase64,
+        screenshot: event.target.result,
         status: "pending",
         date: new Date().toLocaleString("bn-BD")
       }).then(() => {
-        alert("আপনার রিচার্জের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে ব্যালেন্স যুক্ত হবে।");
+        alert("রিচার্জ অনুরোধ পাঠানো হয়েছে।");
         document.getElementById("recharge_amount").value = "";
         document.getElementById("recharge_trxn").value = "";
         fileInput.value = "";
@@ -1801,10 +1821,7 @@
       for (var k in requests) {
         var req = requests[k];
         var tr = document.createElement("tr");
-
-        var screenshotBtn = req.screenshot 
-          ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` 
-          : `<span style="color:#aaa;">নাই</span>`;
+        var screenshotBtn = req.screenshot ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` : "নাই";
 
         tr.innerHTML = `
           <td>${idx++}</td>
@@ -1828,8 +1845,7 @@
 
   function filterSubadminRecharges(status, btn) {
     currentFilterStatus = status;
-    var btns = document.querySelectorAll(".filter-btn");
-    btns.forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
     if(btn) btn.classList.add("active");
     renderSubadminRechargeList();
   }
@@ -1842,7 +1858,6 @@
     db.ref("recharges").on("value", snapshot => {
       var requests = snapshot.val() || {};
       tbody.innerHTML = "";
-
       var myRequests = [];
       for (var k in requests) {
         if (requests[k].username === user) {
@@ -1853,32 +1868,15 @@
       }
 
       if (myRequests.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6">কোনো অনুরোধের রেকর্ড নেই</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6">কোনো রেকর্ড নেই</td></tr>`;
         return;
       }
 
       var idx = 1;
       myRequests.forEach(req => {
         var tr = document.createElement("tr");
-
-        var screenshotBtn = req.screenshot 
-          ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` 
-          : `<span style="color:#aaa;">নাই</span>`;
-
-        var statusBadge = req.status === "pending" 
-          ? "<span style='color:orange; font-weight:bold;'>অপেক্ষমাণ</span>" 
-          : req.status === "approved" 
-          ? "<span style='color:green; font-weight:bold;'>সফল</span>" 
-          : "<span style='color:red; font-weight:bold;'>বাতিল</span>";
-
-        tr.innerHTML = `
-          <td>${idx++}</td>
-          <td>৳ ${req.amount}</td>
-          <td>${escapeHtml(req.trxnId)}</td>
-          <td>${screenshotBtn}</td>
-          <td>${statusBadge}</td>
-          <td>${req.date}</td>
-        `;
+        var screenshotBtn = req.screenshot ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` : "নাই";
+        tr.innerHTML = `<td>${idx++}</td><td>৳ ${req.amount}</td><td>${escapeHtml(req.trxnId)}</td><td>${screenshotBtn}</td><td>${req.status}</td><td>${req.date}</td>`;
         tbody.appendChild(tr);
       });
     });
@@ -1887,18 +1885,16 @@
   function approveRecharge(reqId, user, amount) {
     db.ref("users/" + user + "/balance").once("value").then(snapshot => {
       var currentBal = snapshot.val() || 0;
-      var newBal = currentBal + amount;
-
-      db.ref("users/" + user + "/balance").set(newBal);
+      db.ref("users/" + user + "/balance").set(currentBal + amount);
       db.ref("recharges/" + reqId + "/status").set("approved").then(() => {
-        alert("অনুরোধ অনুমোদন করা হয়েছে এবং টাকা যোগ করা হয়েছে!");
+        alert("অনুমোদন সফল হয়েছে!");
       });
     });
   }
 
   function rejectRecharge(reqId) {
     db.ref("recharges/" + reqId + "/status").set("rejected").then(() => {
-      alert("অনুরোধ বাতিল করা হয়েছে।");
+      alert("বাতিল করা হয়েছে।");
     });
   }
 
@@ -1913,15 +1909,12 @@
 
     db.ref("users/" + user + "/balance").once("value").then(snapshot => {
       var bal = snapshot.val() || 0;
-
       if (bal < printFee) {
-        alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই (প্রয়োজন ৳" + printFee + ")। অনুগ্রহ করে রিচার্জ করুন।");
+        alert("অপর্যাপ্ত ব্যালেন্স! প্রয়োজন: ৳" + printFee);
         return;
       }
-
-      if (confirm("প্রিন্ট বা ডাউনলোড করার জন্য আপনার অ্যাকাউন্ট থেকে ৳" + printFee + " কাটা হবে। নিশ্চিত?")) {
-        var newBal = bal - printFee;
-        db.ref("users/" + user + "/balance").set(newBal).then(() => {
+      if (confirm("প্রিন্ট করার জন্য ৳" + printFee + " কাটা হবে। নিশ্চিত?")) {
+        db.ref("users/" + user + "/balance").set(bal - printFee).then(() => {
           loadWallet();
           window.print();
         });
@@ -1932,7 +1925,7 @@
   function initDefaultDags() {
     var container = document.getElementById("dag_container");
     if (container && container.children.length === 0) {
-      addDagRow({ share: "", dagNo: "৪১৫০", landClassAgri: "", landClassNonAgri: "", totalAcre: "", totalPercent: "", dagShare: "", shareAcre: "", sharePercent: "", comment: "" });
+      addDagRow({ dagNo: "৪১৫০" });
     }
   }
 
@@ -1959,8 +1952,7 @@
   }
 
   function removeDagRow(btn) {
-    var row = btn.closest(".dag-row");
-    if (row) row.remove();
+    btn.closest(".dag-row").remove();
     calculateTotalLand();
     renderPreview();
   }
@@ -2015,14 +2007,13 @@
     var params = new URLSearchParams({
       k: data.khatian || "",
       m: data.owner || "",
-      d: (data.dags && data.dags[0] && data.dags[0].dagNo) ? data.dags[0].dagNo : "",
+      d: (data.dags && data.dags[0]) ? data.dags[0].dagNo : "",
       s: data.jl || "",
       mz: data.mouza || "",
       u: (data.upazila || "") + " রাজস্ব সার্কেল",
       dt: data.district || "",
       dv: data.division || ""
     });
-
     return baseUrl + "?" + params.toString();
   }
 
@@ -2032,14 +2023,12 @@
       alert("খতিয়ান নম্বর এবং মালিকের নাম আবশ্যক!");
       return;
     }
-
     if (!data.id) {
       data.id = "KHT-" + Date.now().toString(36).toUpperCase();
       document.getElementById("in_record_id").value = data.id;
     }
-
     db.ref("khatians/" + data.id).set(data).then(() => {
-      alert("খতিয়ান সফলভাবে অনলাইনে সংরক্ষিত হয়েছে!");
+      alert("খতিয়ান সফলভাবে সংরক্ষিত হয়েছে!");
       renderList();
     });
   }
@@ -2113,9 +2102,7 @@
 
   function deleteKhatian(id) {
     if (!confirm("মুছে ফেলতে চান?")) return;
-    db.ref("khatians/" + id).remove().then(() => {
-      renderList();
-    });
+    db.ref("khatians/" + id).remove().then(() => renderList());
   }
 
   function renderPreview() {
@@ -2131,32 +2118,24 @@
     setTxt("prev_mouza", data.mouza, "-");
     setTxt("prev_jl", data.jl, "-");
     setTxt("prev_resa", data.resa, "-");
-
     setTxt("prev_note", data.note);
     setTxt("prev_case_note", data.caseNote);
     setTxt("prev_owner_share", data.ownerShare, "১.০০০");
     setTxt("prev_total_land_sum", data.totalLandSum, "০");
     setTxt("prev_print_date", data.printDate, "১৮ সেপ্টেম্বর, ২০২৬");
 
-    var dynamicQrLink = generateQRUrl(data);
-    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(dynamicQrLink);
+    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(generateQRUrl(data));
 
     var tbody = document.getElementById("prev_table_body");
     tbody.innerHTML = "";
-
     var dags = data.dags.length ? data.dags : [{}];
 
     dags.forEach((dag, idx) => {
       var tr = document.createElement("tr");
-
-      var ownerCell = idx === 0 
-        ? `<td rowspan="${dags.length}" class="owner-td">${escapeHtml(data.owner)}</td>` 
-        : '';
-
+      var ownerCell = idx === 0 ? `<td rowspan="${dags.length}" class="owner-td">${escapeHtml(data.owner)}</td>` : '';
       tr.innerHTML = `
         ${ownerCell}
-        <td>${escapeHtml(dag.share)}</td>
-        <td></td>
+        <td>${escapeHtml(dag.share)}</td><td></td>
         <td>${escapeHtml(dag.dagNo)}</td>
         <td>${escapeHtml(dag.landClassAgri)}</td>
         <td>${escapeHtml(dag.landClassNonAgri)}</td>
