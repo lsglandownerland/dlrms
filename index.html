@@ -552,16 +552,15 @@
 
 <script>
   // ==================== FIREBASE CONFIGURATION ====================
-  var db = firebase.database();
-  var auth = firebase.auth();
-
-  var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
-  var bhumishebaFee = 50;
-  var printFee = 10;
-  var currentFilterStatus = 'all';
-  var currentUserData = null;
-
-  window.addEventListener("DOMContentLoaded", function() {
+ var firebaseConfig = {
+  apiKey: "AIzaSyDBPuA4web1HgfPCAvfcyUq7w1IWX11S6I",
+  authDomain: "land-management-21042.firebaseapp.com",
+  databaseURL: "https://land-management-21042-default-rtdb.firebaseio.com",
+  projectId: "land-management-21042",
+  storageBucket: "land-management-21042.firebasestorage.app",
+  messagingSenderId: "64550140691",
+  appId: "1:64550140691:web:d609e86eb982e9346f38e6"
+};
     var params = new URLSearchParams(window.location.search);
     
     if (params.has("k") || params.has("m")) {
