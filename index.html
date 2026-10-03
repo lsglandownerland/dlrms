@@ -35,13 +35,13 @@
 
     .cover-slider {
       display: flex;
-      width: 400%;
+      width: 600%; /* ৬টি স্লাইডের জন্য ৬০০% */
       height: 100%;
       transition: transform 0.8s ease-in-out;
     }
 
     .slide-item {
-      width: 25%;
+      width: 16.666%; /* ১০০ / ৬ = ১৬.৬৬৬% */
       height: 100%;
       position: relative;
     }
@@ -95,6 +95,16 @@
     .dot.active {
       background: #28a745;
       transform: scale(1.2);
+    }
+
+    /* Scrolling Ticker Text Style */
+    .marquee-container {
+      background: #1b5e20;
+      color: #ffffff;
+      padding: 10px 0;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     .app-container {
@@ -535,7 +545,7 @@
         padding: 0;
       }
       .button-group { display: none !important; }
-      .cover-container { display: none !important; }
+      .cover-container, .marquee-container { display: none !important; }
     }
   </style>
 </head>
@@ -545,31 +555,45 @@
   <div class="cover-container">
     <div class="cover-slider" id="coverSlider">
       <div class="slide-item">
-        <img src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1200&q=80" alt="বজরা শাহী মসজিদ">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="নিঝুম দ্বীপ">
         <div class="slide-caption">
-          <h3>বজরা শাহী মসজিদ, সোনাইমুড়ী, নোয়াখালী</h3>
-          <p>মোঘল স্থাপত্য শৈলীতে নির্মিত নোয়াখালীর ঐতিহাসিক ও দর্শনীয় মসজিদ।</p>
+          <h3>নিঝুম দ্বীপ, নোয়াখালী</h3>
+          <p>ঐতিহাসিক ও মনোরম প্রাকৃতিক সৌন্দর্যে ঘেরা নোয়াখালীর অন্যতম পর্যটনকেন্দ্র।</p>
         </div>
       </div>
       <div class="slide-item">
-        <img src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=80" alt="বায়তুল মোকাররম মসজিদ">
+        <img src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=1200&q=80" alt="জাতীয় শহীদ মিনার">
         <div class="slide-caption">
-          <h3>বায়তুল মোকাররম জাতীয় মসজিদ, ঢাকা</h3>
-          <p>বাংলাদেশের জাতীয় মসজিদ ও ইসলামিক ঐতিহ্যের অন্যতম নিদর্শন।</p>
+          <h3>জাতীয় শহীদ মিনার</h3>
+          <p>ভাষা শহীদদের আত্মত্যাগের স্মরণে নির্মিত মহান স্তম্ভ।</p>
         </div>
       </div>
       <div class="slide-item">
-        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80" alt="জাতীয় সংসদ ভবন">
+        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80" alt="নোয়াখালী পৌর পার্ক">
         <div class="slide-caption">
-          <h3>জাতীয় সংসদ ভবন, ঢাকা</h3>
-          <p>লুই কানের চমৎকার স্থাপত্যশৈলীতে নির্মিত বাংলাদেশের অনন্য নিদর্শন।</p>
+          <h3>নোয়াখালী পৌর পার্ক</h3>
+          <p>নোয়াখালী শহরবাসীর মনোরম ও মনোরম প্রাকৃতির বিনোদন কেন্দ্র।</p>
         </div>
       </div>
       <div class="slide-item">
-        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80" alt="নোয়াখালী জেলা জামে মসজিদ">
+        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80" alt="গান্ধী আশ্রম">
         <div class="slide-caption">
-          <h3>নোয়াখালী জেলা জামে মসজিদ</h3>
-          <p>নোয়াখালী শহরের মাইজদীতে অবস্থিত সুপ্রাচীন ও ঐতিহ্যবাহী জামে মসজিদ।</p>
+          <h3>সোনাইমুড়ী গান্ধী আশ্রম, নোয়াখালী</h3>
+          <p>ঐতিহাসিক শান্তি ও মানবসেবার প্রতীকী নিদর্শন।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=80" alt="জাতীয় স্মৃতিসৌধ">
+        <div class="slide-caption">
+          <h3>জাতীয় স্মৃতিসৌধ, সাভার</h3>
+          <p>বাংলাদেশের মুক্তিযুদ্ধের বীর শহীদদের স্মরণে নির্মিত জাতীয় স্মারক।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80" alt="সুবর্ণচর">
+        <div class="slide-caption">
+          <h3>সুবর্ণচর, নোয়াখালী</h3>
+          <p>প্রকৃতির অপরূপ রূপ ও দিগন্তজোড়া সবুজ শ্যামল সৌন্দর্যের প্রাণকেন্দ্র।</p>
         </div>
       </div>
     </div>
@@ -578,7 +602,16 @@
       <span class="dot" onclick="goToSlide(1)"></span>
       <span class="dot" onclick="goToSlide(2)"></span>
       <span class="dot" onclick="goToSlide(3)"></span>
+      <span class="dot" onclick="goToSlide(4)"></span>
+      <span class="dot" onclick="goToSlide(5)"></span>
     </div>
+  </div>
+
+  <!-- ==================== SCROLLING TEXT MARQUEE ==================== -->
+  <div class="marquee-container">
+    <marquee behavior="scroll" direction="left" scrollamount="6">
+      *** নিজে নামাজ পড়ুন অন্যকে নামাজ পড়ার সুযোগ দিন। *** মা-বাবার সেবা করুন। *** বাল্য বিবাহ কে না বলুন। *** প্রতিদিন একটি ভালো কাজ করুন। ***
+    </marquee>
   </div>
 
   <!-- ==================== PUBLIC VIEW PAGE ==================== -->
@@ -1053,13 +1086,13 @@
 <script>
   // ==================== COVER SLIDER SCRIPT ====================
   var currentSlide = 0;
-  var totalSlides = 4;
+  var totalSlides = 6; // মোট ৬টি স্লাইড সেট করা হলো
 
   function updateSlider() {
     var slider = document.getElementById("coverSlider");
     var dots = document.querySelectorAll(".slider-dots .dot");
     if(slider) {
-      slider.style.transform = "translateX(-" + (currentSlide * 25) + "%)";
+      slider.style.transform = "translateX(-" + (currentSlide * 16.666) + "%)";
       dots.forEach((dot, idx) => {
         if(idx === currentSlide) {
           dot.classList.add("active");
