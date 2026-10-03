@@ -23,6 +23,80 @@
       color: #333;
     }
 
+    /* Cover Page Carousel Style */
+    .cover-container {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      background-color: #000;
+    }
+
+    .cover-slider {
+      display: flex;
+      width: 400%;
+      height: 100%;
+      transition: transform 0.8s ease-in-out;
+    }
+
+    .slide-item {
+      width: 25%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+
+    .slide-caption {
+      position: absolute;
+      bottom: 20px;
+      left: 30px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 12px 20px;
+      border-radius: 6px;
+      border-left: 4px solid #28a745;
+      max-width: 80%;
+    }
+
+    .slide-caption h3 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .slide-caption p {
+      font-size: 13px;
+      color: #ddd;
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 12px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .dot.active {
+      background: #28a745;
+      transform: scale(1.2);
+    }
+
     .app-container {
       max-width: 1100px;
       margin: 20px auto;
@@ -461,10 +535,51 @@
         padding: 0;
       }
       .button-group { display: none !important; }
+      .cover-container { display: none !important; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ==================== COVER PAGE SLIDER ==================== -->
+  <div class="cover-container">
+    <div class="cover-slider" id="coverSlider">
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="নিঝুম দ্বীপ">
+        <div class="slide-caption">
+          <h3>নিঝুম দ্বীপ, নোয়াখালী</h3>
+          <p>ঐতিহাসিক ও মনোরম প্রাকৃতিক সৌন্দর্যে ঘেরা নোয়াখালীর অন্যতম পর্যটনকেন্দ্র।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=1200&q=80" alt="নোয়াখালী শহীদ মিনার">
+        <div class="slide-caption">
+          <h3>নোয়াখালী কেন্দ্রীয় শহীদ মিনার</h3>
+          <p>ভাষা শহীদদের স্মরণে নির্মিত নোয়াখালী জেলার মূল স্তম্ভ।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80" alt="নোয়াখালী ম্যাজিস্ট্রেট কোর্ট">
+        <div class="slide-caption">
+          <h3>নোয়াখালী জেলা ও ম্যাজিস্ট্রেট কোর্ট</h3>
+          <p>নোয়াখালী জেলার ঐতিহ্যবাহী বিচারিক প্রশাসন ভবন।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80" alt="গান্ধী আশ্রম">
+        <div class="slide-caption">
+          <h3>গান্ধী আশ্রম, জয়গ, নোয়াখালী</h3>
+          <p>ঐতিহাসিক শান্তি ও মানবসেবার প্রতীকী নিদর্শন।</p>
+        </div>
+      </div>
+    </div>
+    <div class="slider-dots">
+      <span class="dot active" onclick="goToSlide(0)"></span>
+      <span class="dot" onclick="goToSlide(1)"></span>
+      <span class="dot" onclick="goToSlide(2)"></span>
+      <span class="dot" onclick="goToSlide(3)"></span>
+    </div>
+  </div>
 
   <!-- ==================== PUBLIC VIEW PAGE ==================== -->
   <div id="public_view_page" style="display:none;">
@@ -555,7 +670,7 @@
     <!-- MAIN APP PANEL -->
     <div id="admin_panel" style="display:none;">
 
-      <div style="display:flex; justify-style:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
         <div>
           <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
           <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
@@ -936,6 +1051,35 @@
   </div>
 
 <script>
+  // ==================== COVER SLIDER SCRIPT ====================
+  var currentSlide = 0;
+  var totalSlides = 4;
+
+  function updateSlider() {
+    var slider = document.getElementById("coverSlider");
+    var dots = document.querySelectorAll(".slider-dots .dot");
+    if(slider) {
+      slider.style.transform = "translateX(-" + (currentSlide * 25) + "%)";
+      dots.forEach((dot, idx) => {
+        if(idx === currentSlide) {
+          dot.classList.add("active");
+        } else {
+          dot.classList.remove("active");
+        }
+      });
+    }
+  }
+
+  function goToSlide(index) {
+    currentSlide = index;
+    updateSlider();
+  }
+
+  setInterval(function() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+  }, 4000); // ৪ সেকেন্ড পর পর অটো স্লাইড পরিবর্তন হবে
+
   // ==================== FIREBASE CONFIGURATION ====================
   var firebaseConfig = {
     apiKey: "AIzaSyDBPuA4web1HgfPCAvfcyUq7w1IWXl1S6I",
@@ -1053,7 +1197,6 @@
   }
 
   /* ==================== PENDING ORDER SYSTEM ==================== */
-  // ১. পেন্ডিং অর্ডার সাবমিট করার ফাংশন
   function submitPendingOrder() {
     var user = sessionStorage.getItem("loggedInUser");
     var serviceDetails = document.getElementById("bs_service_name").value.trim();
@@ -1081,7 +1224,6 @@
     });
   }
 
-  // ২. পেন্ডিং অর্ডার এডমিন প্যানেলে প্রদর্শন
   function loadPendingOrdersForAdmin() {
     var tbody = document.getElementById("admin_pending_orders_list");
     if (!tbody) return;
@@ -1115,7 +1257,6 @@
       });
   }
 
-  // ৩. এডমিন কর্তৃক অর্ডার অনুমোদন এবং ওয়ালেট থেকে ব্যালেন্স কর্তন
   function approveOrder(orderId, fee) {
     var adminUser = sessionStorage.getItem("loggedInUser");
 
@@ -1130,9 +1271,7 @@
       if (confirm("আপনি কি নিশ্চিত যে ৳" + fee + " কেটে এই অর্ডারটি অনুমোদন করবেন?")) {
         var newBalance = currentBalance - fee;
 
-        // এডমিন ওয়ালেট থেকে টাকা কাটা
         db.ref("users/" + adminUser + "/balance").set(newBalance).then(function() {
-          // অর্ডারের স্ট্যাটাস approved করা
           db.ref("bhumisheba_orders/" + orderId).update({
             status: "approved",
             approvedBy: adminUser,
@@ -1147,7 +1286,6 @@
     });
   }
 
-  // ৪. অর্ডার বাতিল করার ফাংশন
   function rejectOrder(orderId) {
     if (confirm("আপনি কি নিশ্চিত এই অর্ডারটি বাতিল করতে চান?")) {
       db.ref("bhumisheba_orders/" + orderId).update({
@@ -1301,7 +1439,7 @@
         document.getElementById("subadmin_recharge_btn").style.display = "none";
         renderSubAdmins();
         renderRechargeRequests();
-        loadPendingOrdersForAdmin(); // অ্যাডমিনের জন্য পেন্ডিং অর্ডার প্রদর্শন কল
+        loadPendingOrdersForAdmin();
       } else {
         document.getElementById("master_admin_controls").style.display = "none";
         document.getElementById("subadmin_recharge_history").style.display = "block";
@@ -1341,7 +1479,6 @@
     document.getElementById("prev_total_land_sum").innerText = banglaTotal;
   }
 
-  /* SUB-ADMIN CREATION */
   function addSubAdmin(e) {
     e.preventDefault();
     var user = document.getElementById("sub_username").value.trim();
@@ -1434,7 +1571,7 @@
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) { // 2MB Limit
+    if (file.size > 2 * 1024 * 1024) {
       alert("স্ক্রিনশটের সাইজ সর্বোচ্চ 2MB হতে পারবে!");
       return;
     }
@@ -1506,7 +1643,6 @@
     });
   }
 
-  /* SUB-ADMIN RECHARGE HISTORY & FILTERING */
   function filterSubadminRecharges(status, btn) {
     currentFilterStatus = status;
     var btns = document.querySelectorAll(".filter-btn");
