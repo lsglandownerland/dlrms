@@ -66,6 +66,7 @@
     input[type="url"],
     input[type="password"],
     input[type="number"],
+    input[type="file"],
     textarea,
     select {
       width: 100%;
@@ -122,6 +123,7 @@
     .btn-save { background-color: #28a745; }
     .btn-reset { background-color: #6c757d; }
     .btn-print { background-color: #007bff; }
+    .btn-recharge { background-color: #e2136e; color: #fff; padding: 5px 12px; font-size: 13px; border-radius: 20px; border: none; cursor: pointer; margin-left: 10px; }
     .btn-add-dag { background-color: #28a745; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
 
     .btn-sm {
@@ -387,6 +389,37 @@
       border-color: #007bff;
     }
 
+    /* Modal Popup Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-card {
+      background: #fff;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .modal-close:hover { color: #000; }
+
     @media print {
       @page {
         size: A4 landscape;
@@ -507,6 +540,7 @@
         <div>
           <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
           <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
+          <button type="button" class="btn-recharge" id="subadmin_recharge_btn" onclick="openRechargeModal()"><i class="fas fa-wallet"></i> রিচার্জ করুন</button>
         </div>
         <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
       </div>
@@ -520,27 +554,45 @@
         </button>
       </div>
 
-      <!-- SUB-ADMIN RECHARGE SECTION -->
-      <div id="subadmin_recharge_area" class="admin-section-box" style="display:none; margin-bottom:20px;">
-        <div class="bkash-box">
-          <strong>বিকাশ রিচার্জ নির্দেশিকা:</strong><br>
-          বিকাশ পারসোনাল নম্বর: <strong>01833013604</strong> (Send Money)<br>
-          টাকা পাঠানোর পর নিচের ফর্মে টাকার পরিমাণ এবং Transaction ID লিখে সাবমিট করুন।
-        </div>
-        <h4>ওয়ালেট রিচার্জের অনুরোধ পাঠান</h4>
-        <form onsubmit="requestRecharge(event)">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>টাকার পরিমাণ (৳):</label>
-              <input type="number" id="recharge_amount" required placeholder="যেমন: ১০০">
-            </div>
-            <div class="form-group">
-              <label>Transaction ID (TrxID):</label>
-              <input type="text" id="recharge_trxn" required placeholder="যেমন: B8A9XX123">
-            </div>
+      <!-- RECHARGE MODAL POPUP -->
+      <div id="recharge_modal" class="modal-overlay">
+        <div class="modal-card">
+          <span class="modal-close" onclick="closeRechargeModal()">&times;</span>
+          <div class="bkash-box" style="text-align: center;">
+            <i class="fas fa-mobile-alt" style="font-size: 24px; margin-bottom: 5px;"></i><br>
+            <strong>বিকাশ রিচার্জ নির্দেশিকা:</strong><br>
+            বিকাশ পারসোনাল নম্বর: <strong style="font-size:18px; text-decoration: underline;">01833013604</strong> (Send Money)<br>
+            <small>টাকা পাঠানোর পর নিচের ফর্মে টাকার পরিমাণ, Transaction ID এবং সেন্ডমানির স্ক্রিনশট আপলোড করে সাবমিট করুন।</small>
           </div>
-          <button type="submit" class="btn btn-save">অনুরোধ পাঠান</button>
-        </form>
+          <h4 style="margin-top: 10px;">ওয়ালেট রিচার্জের অনুরোধ পাঠান</h4>
+          <form onsubmit="requestRecharge(event)">
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+              <div class="form-group">
+                <label>টাকার পরিমাণ (৳):</label>
+                <input type="number" id="recharge_amount" required placeholder="যেমন: ১০০">
+              </div>
+              <div class="form-group">
+                <label>Transaction ID (TrxID):</label>
+                <input type="text" id="recharge_trxn" required placeholder="যেমন: B8A9XX123">
+              </div>
+              <div class="form-group">
+                <label>সেন্ডমানির স্ক্রিনশট আপলোড করুন:</label>
+                <input type="file" id="recharge_screenshot" accept="image/*" required>
+                <small style="color:#666; font-size:11px; margin-top:2px;">সর্বোচ্চ সাইজ: 2MB (JPG, PNG)</small>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-save" style="width:100%; margin-top:10px;">অনুরোধ পাঠান</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- SCREENSHOT VIEW MODAL FOR ADMIN -->
+      <div id="screenshot_modal" class="modal-overlay">
+        <div class="modal-card" style="text-align:center;">
+          <span class="modal-close" onclick="closeScreenshotModal()">&times;</span>
+          <h4>সেন্ডমানি স্ক্রিনশট</h4>
+          <img id="screenshot_img_view" src="" alt="Screenshot" style="max-width:100%; max-height:70vh; border:1px solid #ccc; border-radius:5px; margin-top:10px;">
+        </div>
       </div>
 
       <!-- MASTER ADMIN ONLY -->
@@ -584,6 +636,7 @@
                 <th>ইউজারনেম</th>
                 <th>পরিমাণ</th>
                 <th>TrxID</th>
+                <th>স্ক্রিনশট</th>
                 <th>স্ট্যাটাস</th>
                 <th>তারিখ</th>
                 <th>অ্যাকশন</th>
@@ -792,8 +845,7 @@
 
 <script>
   // ==================== FIREBASE CONFIGURATION ====================
-  // আপনার ফায়ারবেস কনফিগারেশন আপডেট করুন (Firebase Console থেকে প্রাপ্ত)
-var firebaseConfig = {
+  var firebaseConfig = {
     apiKey: "AIzaSyDBPuA4web1HgfPCAvfcyUq7w1IWXl1S6I",
     authDomain: "land-management-21042.firebaseapp.com",
     databaseURL: "https://land-management-21042-default-rtdb.firebaseio.com",
@@ -826,6 +878,24 @@ var firebaseConfig = {
       checkAuth();
     }
   });
+
+  function openRechargeModal() {
+    document.getElementById("recharge_modal").style.display = "flex";
+  }
+
+  function closeRechargeModal() {
+    document.getElementById("recharge_modal").style.display = "none";
+  }
+
+  function openScreenshotModal(imgSrc) {
+    document.getElementById("screenshot_img_view").src = imgSrc;
+    document.getElementById("screenshot_modal").style.display = "flex";
+  }
+
+  function closeScreenshotModal() {
+    document.getElementById("screenshot_modal").style.display = "none";
+    document.getElementById("screenshot_img_view").src = "";
+  }
 
   function switchTab(sectionId) {
     document.getElementById("khatian_section").style.display = "none";
@@ -940,7 +1010,7 @@ var firebaseConfig = {
 
       if (diff < 216) { bMonthIdx = 6; bDay = diff - 186 + 1; }
       else if (diff < 246) { bMonthIdx = 7; bDay = diff - 216 + 1; }
-      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 246 + 1; }
+      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 276 + 1; }
       else if (diff < 306) { bMonthIdx = 9; bDay = diff - 276 + 1; }
       else {
         var falgunDays = prevYearLeap ? 30 : 29;
@@ -1002,12 +1072,12 @@ var firebaseConfig = {
 
       if (role === "admin") {
         document.getElementById("master_admin_controls").style.display = "block";
-        document.getElementById("subadmin_recharge_area").style.display = "none";
+        document.getElementById("subadmin_recharge_btn").style.display = "none";
         renderSubAdmins();
         renderRechargeRequests();
       } else {
         document.getElementById("master_admin_controls").style.display = "none";
-        document.getElementById("subadmin_recharge_area").style.display = "block";
+        document.getElementById("subadmin_recharge_btn").style.display = "inline-block";
       }
 
       initDefaultDags();
@@ -1117,6 +1187,8 @@ var firebaseConfig = {
     e.preventDefault();
     var amount = parseFloat(document.getElementById("recharge_amount").value);
     var trxnId = document.getElementById("recharge_trxn").value.trim();
+    var fileInput = document.getElementById("recharge_screenshot");
+    var file = fileInput.files[0];
     var user = sessionStorage.getItem("loggedInUser");
 
     if (!amount || amount <= 0 || !trxnId) {
@@ -1124,19 +1196,38 @@ var firebaseConfig = {
       return;
     }
 
-    var reqId = "REQ-" + Date.now();
-    db.ref("recharges/" + reqId).set({
-      id: reqId,
-      username: user,
-      amount: amount,
-      trxnId: trxnId,
-      status: "pending",
-      date: new Date().toLocaleString("bn-BD")
-    }).then(() => {
-      alert("আপনার রিচার্জের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে ব্যালেন্স যুক্ত হবে।");
-      document.getElementById("recharge_amount").value = "";
-      document.getElementById("recharge_trxn").value = "";
-    });
+    if (!file) {
+      alert("অনুগ্রহ করে সেন্ডমানির একটি স্ক্রিনশট সিলেক্ট করুন।");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB Limit
+      alert("স্ক্রিনশটের সাইজ সর্বোচ্চ 2MB হতে পারবে!");
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var screenshotBase64 = event.target.result;
+      var reqId = "REQ-" + Date.now();
+
+      db.ref("recharges/" + reqId).set({
+        id: reqId,
+        username: user,
+        amount: amount,
+        trxnId: trxnId,
+        screenshot: screenshotBase64,
+        status: "pending",
+        date: new Date().toLocaleString("bn-BD")
+      }).then(() => {
+        alert("আপনার রিচার্জের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে ব্যালেন্স যুক্ত হবে।");
+        document.getElementById("recharge_amount").value = "";
+        document.getElementById("recharge_trxn").value = "";
+        fileInput.value = "";
+        closeRechargeModal();
+      });
+    };
+    reader.readAsDataURL(file);
   }
 
   function renderRechargeRequests() {
@@ -1149,7 +1240,7 @@ var firebaseConfig = {
       var keys = Object.keys(requests);
 
       if (keys.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7">কোনো অনুরোধ নেই</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8">কোনো অনুরোধ নেই</td></tr>`;
         return;
       }
 
@@ -1157,11 +1248,17 @@ var firebaseConfig = {
       for (var k in requests) {
         var req = requests[k];
         var tr = document.createElement("tr");
+
+        var screenshotBtn = req.screenshot 
+          ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` 
+          : `<span style="color:#aaa;">নাই</span>`;
+
         tr.innerHTML = `
           <td>${idx++}</td>
           <td>${escapeHtml(req.username)}</td>
           <td>৳ ${req.amount}</td>
           <td>${escapeHtml(req.trxnId)}</td>
+          <td>${screenshotBtn}</td>
           <td>${req.status === "pending" ? "<span style='color:orange;'>অপেক্ষমাণ</span>" : req.status === "approved" ? "<span style='color:green;'>অনুমোদিত</span>" : "<span style='color:red;'>বাতিল</span>"}</td>
           <td>${req.date}</td>
           <td>
