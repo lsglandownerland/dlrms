@@ -1246,8 +1246,9 @@
                 <td><b id="prev_owner_share">১.০০০</b></td>
                 <td></td>
                 <td colspan="5" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
-                <td style="font-weight: bold; white-space: nowrap;">মোট জমি:</td>
-                <td colspan="2" style="white-space: nowrap;"><b id="prev_total_land_sum">০</b> শতাংশ</td>
+                <td style="font-weight: bold; font-size: 12px; white-space: nowrap;">মোট জমি:</td>
+                <td><b id="prev_total_acre_sum">০</b></td>
+                <td><b id="prev_total_land_sum">০</b></td>
                 <td></td>
               </tr>
             </tfoot>
@@ -1471,7 +1472,6 @@
       return;
     }
 
-    // যদি সাব-এডমিন হয়, তবে তার ব্যালেন্স থেকে টাকা কাটা হবে
     if (role !== "admin") {
       db.ref("users/" + user + "/balance").once("value").then(function(snapshot) {
         var currentBalance = snapshot.val() || 0;
@@ -1488,7 +1488,6 @@
         }
       });
     } else {
-      // এডমিন ইউজার হলে ব্যালেন্স কাটার প্রয়োজন নেই (অসীম ব্যালেন্স)
       saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
     }
   }
@@ -1567,7 +1566,6 @@
       db.ref("bhumisheba_orders/" + orderId).once("value").then(function(snapshot) {
         var orderData = snapshot.val();
         if(orderData && orderData.status === "pending") {
-          // ইউজারের ওয়ালেটে টাকা রিফান্ড করা
           db.ref("users/" + requestedBy + "/balance").once("value").then(function(balSnap) {
             var currentBal = balSnap.val() || 0;
             db.ref("users/" + requestedBy + "/balance").set(currentBal + amount).then(function() {
@@ -2036,6 +2034,7 @@
     var tbody = document.getElementById("prev_table_body");
     tbody.innerHTML = "";
 
+    var totalAcre = 0;
     var totalShataṁśa = 0;
 
     dagRowsData.forEach((row, i) => {
@@ -2070,11 +2069,14 @@
       }
       tbody.appendChild(tr);
 
+      var ac = parseFloat(row.d_ekr) || 0;
       var sh = parseFloat(row.d_shataṁśa) || 0;
+      totalAcre += ac;
       totalShataṁśa += sh;
     });
 
     document.getElementById("in_total_land_sum").value = totalShataṁśa;
+    document.getElementById("prev_total_acre_sum").innerText = totalAcre;
     document.getElementById("prev_total_land_sum").innerText = totalShataṁśa;
 
     var qrData = window.location.origin + window.location.pathname + "?k=" + encodeURIComponent(khatian) + "&m=" + encodeURIComponent(owner) + "&d=" + encodeURIComponent(dagRowsData.map(r=>r.dag).join(',')) + "&mz=" + encodeURIComponent(mouza) + "&u=" + encodeURIComponent(upazila) + "&dt=" + encodeURIComponent(district) + "&dv=" + encodeURIComponent(division);
