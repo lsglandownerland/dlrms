@@ -1,104 +1,2267 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'SolaimanLipi', Arial, sans-serif;
-        }
-        body {
-            background-color: #f4f6f9;
-            color: #333;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .logo-section {
-            margin-bottom: 20px;
-        }
-        .logo-section img {
-            width: 100px;
-            height: auto;
-        }
-        .header-title {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .content-box {
-            margin-top: 30px;
-            text-align: left;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .footer-logo {
-            margin-top: 40px;
-            text-align: center;
-        }
-    </style>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Cover Page Carousel Style */
+    .cover-container {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      background-color: #000;
+    }
+
+    .cover-slider {
+      display: flex;
+      width: 600%;
+      height: 100%;
+      transition: transform 0.8s ease-in-out;
+    }
+
+    .slide-item {
+      width: 16.666%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+
+    .slide-caption {
+      position: absolute;
+      bottom: 20px;
+      left: 30px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 12px 20px;
+      border-radius: 6px;
+      border-left: 4px solid #28a745;
+      max-width: 80%;
+    }
+
+    .slide-caption h3 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .slide-caption p {
+      font-size: 13px;
+      color: #ddd;
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 12px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .dot.active {
+      background: #28a745;
+      transform: scale(1.2);
+    }
+
+    /* Scrolling Text Marquee Style */
+    .marquee-container {
+      background: #1b5e20;
+      color: #ffffff;
+      padding: 10px 0;
+      font-size: 15px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .app-container {
+      max-width: 1100px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      flex: 1;
+    }
+
+    h4 {
+      margin-bottom: 15px;
+      color: #0c5460;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 5px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="password"],
+    input[type="number"],
+    input[type="file"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #007bff;
+    }
+
+    .dag-section {
+      background: #f9f9f9;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .dag-row {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr) 30px;
+      gap: 5px;
+      margin-top: 8px;
+      align-items: center;
+    }
+
+    .dag-row input {
+      font-size: 11px;
+      padding: 4px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn-preview { background-color: #17a2b8; }
+    .btn-save { background-color: #28a745; }
+    .btn-reset { background-color: #6c757d; }
+    .btn-print { background-color: #007bff; }
+    .btn-recharge { background-color: #e2136e; color: #fff; padding: 5px 12px; font-size: 13px; border-radius: 20px; border: none; cursor: pointer; margin-left: 5px; }
+    .btn-history { background-color: #17a2b8; color: #fff; padding: 5px 12px; font-size: 13px; border-radius: 20px; border: none; cursor: pointer; margin-left: 5px; }
+    .btn-add-dag { background-color: #28a745; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-edit { background-color: #ffc107; color: #212529; }
+    .btn-prt { background-color: #17a2b8; }
+    .btn-del { background-color: #dc3545; }
+
+    .record-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .record-table th, .record-table td {
+      border: 1px solid #333;
+      padding: 6px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .record-table th { background-color: #e9ecef; }
+
+    .bkash-box {
+      background-color: #e2136e;
+      color: white;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .admin-section-box {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 25px;
+    }
+
+    .khatian-box {
+      border: none;
+      padding: 10px;
+      margin: 0 auto;
+      background: #fff;
+      font-size: 14px;
+      color: #000;
+      width: 100%;
+      max-width: 950px;
+      box-sizing: border-box;
+    }
+
+    .khatian-top-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .page-number-top {
+      float: right;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .meta-line {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .khatian-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 2px solid #000;
+      table-layout: fixed;
+    }
+
+    .khatian-table th, .khatian-table td {
+      border: 1px solid #000;
+      padding: 6px 3px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 13px;
+      word-wrap: break-word;
+    }
+
+    .khatian-table th {
+      font-weight: bold;
+      background-color: #fff;
+    }
+
+    .th-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 80px;
+      box-sizing: border-box;
+    }
+
+    .th-label {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .th-num {
+      font-weight: bold;
+      margin-top: 5px;
+      display: block;
+      width: 100%;
+    }
+
+    .owner-td {
+      text-align: left !important;
+      white-space: pre-line;
+      line-height: 1.4;
+      padding-left: 8px !important;
+    }
+
+    .footer-note-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .official-logo-img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .qr-code { width: 90px; height: 90px; }
+
+    .top-bar {
+      background-color: #4a7c59;
+      color: #fff;
+      text-align: center;
+      padding: 8px 15px;
+      font-size: 13px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .nav-bar {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .logo-img { height: 45px; }
+
+    .khatian-card {
+      background: #fff;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 8px;
+    }
+    .khatian-title {
+      color: #0d5c3a;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: bold;
+    }
+    .info-row {
+      display: flex;
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: #333;
+    }
+    .info-label { width: 110px; font-weight: bold; }
+    .info-colon { margin-right: 10px; font-weight: bold; }
+    .info-value { flex: 1; }
+
+    .footer-section {
+      background-color: #e8f5e9;
+      padding: 25px 20px;
+      margin-top: 40px;
+      border-top: 3px solid #81c784;
+    }
+    .section-title {
+      color: #1b5e20;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .link-item {
+      color: #2e7d32;
+      text-decoration: none;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-logos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .partner-logos { display: flex; gap: 10px; align-items: center; }
+    .partner-logos img { height: 40px; }
+    .social-icons { display: flex; gap: 10px; }
+    .social-icon {
+      width: 35px; height: 35px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px; text-decoration: none;
+    }
+    .bg-fb { background: #1877f2; }
+    .bg-x { background: #000; }
+    .bg-insta { background: #e4405f; }
+    .bg-yt { background: #ff0000; }
+    .playstore-btn { margin-top: 20px; height: 45px; }
+
+    .app-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .nav-tab-btn {
+      padding: 8px 16px;
+      background: #e9ecef;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .nav-tab-btn.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    /* Free Links Section Style */
+    .free-links-container {
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 20px;
+    }
+    .free-links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .free-link-card {
+      background: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #a5d6a7;
+      text-decoration: none;
+      color: #2e7d32;
+      font-weight: bold;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .free-link-card:hover {
+      background: #c8e6c9;
+    }
+
+    /* Modal Popup Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-card {
+      background: #fff;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .modal-close:hover { color: #000; }
+
+    .filter-btn-group {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .filter-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid #007bff;
+      background: #fff;
+      color: #007bff;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .filter-btn.active {
+      background: #007bff;
+      color: #fff;
+    }
+
+    /* GitHub Logo Watermark Container Style (Updated to center at bottom automatically) */
+    .github-logo-container {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .github-logo-img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      opacity: 0.15;
+    }
+
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 5mm;
+      }
+      body { background: none; padding: 0; }
+      body * { visibility: hidden; }
+      #preview_area, #preview_area * { visibility: visible; }
+      #preview_area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+      }
+      .khatian-box {
+        border: none !important;
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+      }
+      .button-group { display: none !important; }
+      .cover-container, .marquee-container { display: none !important; }
+      .github-logo-container { display: none !important; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- লোগো সেクション -->
-        <div class="footer-logo">
-            <img src="logo.png" alt="জেলা রেকর্ড রুম লোগো">
+  <!-- ==================== COVER PAGE SLIDER ==================== -->
+  <div class="cover-container">
+    <div class="cover-slider" id="coverSlider">
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="নিঝুম দ্বীপ">
+        <div class="slide-caption">
+          <h3>নিঝুম দ্বীপ, নোয়াখালী</h3>
+          <p>চিত্রল হরিণ ও প্রাকৃতিক সৌন্দর্যে ঘেরা নোয়াখালীর অনন্য দ্বীপ।</p>
         </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=1200&q=80" alt="জাতীয় শহীদ মিনার">
+        <div class="slide-caption">
+          <h3>জাতীয় শহীদ মিনার</h3>
+          <p>ভাষা শহীদদের আত্মত্যাগের স্মরণে নির্মিত মহান স্তম্ভ।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80" alt="নোয়াখালী পৌর পার্ক">
+        <div class="slide-caption">
+          <h3>নোয়াখালী পৌর পার্ক</h3>
+          <p>নোয়াখালী শহরের অন্যতম বিনোদন কেন্দ্র ও লেক সংলগ্ন মনোরম পরিবেশ।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80" alt="সোনাইমুড়ী গান্ধী আশ্রম">
+        <div class="slide-caption">
+          <h3>সোনাইমুড়ী গান্ধী আশ্রম, নোয়াখালী</h3>
+          <p>ঐতিহাসিক শান্তি ও মানবসেবার অনন্য প্রতীকী স্থান।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=80" alt="জাতীয় স্মৃতিসৌধ">
+        <div class="slide-caption">
+          <h3>জাতীয় স্মৃতিসৌধ, সাভার</h3>
+          <p>বাংলাদেশের মুক্তিযুদ্ধের বীর শহীদদের স্মরণে নির্মিত সর্বোচ্চ স্মারক।</p>
+        </div>
+      </div>
+      <div class="slide-item">
+        <img src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1200&q=80" alt="বজরা শাহী মসজিদ">
+        <div class="slide-caption">
+          <h3>বজরা শাহী মসজিদ, নোয়াখালী</h3>
+          <p>মোগল আমলের ঐতিহাসিক কারুকার্যময় ও ঐতিহ্যবাহী শাহী মসজিদ।</p>
+        </div>
+      </div>
+    </div>
+    <div class="slider-dots">
+      <span class="dot active" onclick="goToSlide(0)"></span>
+      <span class="dot" onclick="goToSlide(1)"></span>
+      <span class="dot" onclick="goToSlide(2)"></span>
+      <span class="dot" onclick="goToSlide(3)"></span>
+      <span class="dot" onclick="goToSlide(4)"></span>
+      <span class="dot" onclick="goToSlide(5)"></span>
+    </div>
+  </div>
 
-        <div class="header-title">
-            খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম
-        </div>
+  <!-- ==================== SCROLLING TEXT MARQUEE (NOAKHALI PRAYER TIMES & POLICY) ==================== -->
+  <div class="marquee-container">
+    <marquee behavior="scroll" direction="left" scrollamount="6">
+      *** নিজে নামাজ পড়ুন অন্যকে নামাজ পড়ার সুযোগ দিন। *** মা-বাবার সেবা করুন। *** বাল্য বিবাহ কে না বলুন। *** নোয়াখালীর স্থানীয় সময়সূচী অনুযায়ী নামাজের ওয়াক্ত: [ফজর: ০৪:৩৩ AM - ০৫:৪৭ AM] | [যুহর: ১১:৪৪ AM - ০৩:০৮ PM] | [আসর: ০৩:০৮ PM - ০৫:৪১ PM] | [মাগরিব: ০৫:৪১ PM - ০৬:৫৫ PM] | [এশা: ০৬:৫৫ PM - ০৪:৩৩ AM] *** প্রতিদিন একটি ভালো কাজ করুন। ***
+    </marquee>
+  </div>
 
-        <div class="content-box">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ক্রমিক</th>
-                        <th>খতিয়ান নং</th>
-                        <th>মৌজা</th>
-                        <th>মোট জমি</th>
-                        <th>তারিখ</th>
-                        <th>সংরক্ষণ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="6">কোনো খতিয়ান সংরক্ষিত নেই।</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+  <!-- ==================== PUBLIC VIEW PAGE ==================== -->
+  <div id="public_view_page" style="display:none;">
+    <div class="top-bar">
+      <span id="top_eng_date">ইংরেজি: লোড হচ্ছে...</span>
+      <span>|</span>
+      <span id="top_bangla_date">বাংলা: লোড হচ্ছে...</span>
     </div>
 
+    <div class="nav-bar">
+      <img src="https://land.gov.bd/sites/default/files/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div style="font-size: 20px; color: #1b5e20;">
+        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-ellipsis-v" style="margin-left: 15px;"></i>
+      </div>
+    </div>
+
+    <div class="khatian-card">
+      <div class="khatian-title">খতিয়ান নং - <span id="view_khatian">-</span></div>
+
+      <div class="info-row"><div class="info-label">মালিক</div><div class="info-colon">:</div><div class="info-value" id="view_owner">-</div></div>
+      <div class="info-row"><div class="info-label">দাগ নং</div><div class="info-colon">:</div><div class="info-value" id="view_dag">-</div></div>
+      <div class="info-row"><div class="info-label">সার্ভে</div><div class="info-colon">:</div><div class="info-value" id="view_survey">বি আর এস</div></div>
+      <div class="info-row"><div class="info-label">মৌজা</div><div class="info-colon">:</div><div class="info-value" id="view_mouza">-</div></div>
+      <div class="info-row"><div class="info-label">উপজেলা</div><div class="info-colon">:</div><div class="info-value" id="view_upazila">-</div></div>
+      <div class="info-row"><div class="info-label">জেলা</div><div class="info-colon">:</div><div class="info-value" id="view_district">-</div></div>
+      <div class="info-row"><div class="info-label">বিভাগ</div><div class="info-colon">:</div><div class="info-value" id="view_division">-</div></div>
+      <div class="info-row"><div class="info-label">তারিখ</div><div class="info-colon">:</div><div class="info-value" id="view_date">-</div></div>
+    </div>
+
+    <div class="footer-section">
+      <div class="section-title">গুরুত্বপূর্ণ লিংক</div>
+      <div class="links-grid">
+        <a href="#" class="link-item">► বাংলাদেশ জাতীয় তথ্য বাতায়ন</a>
+        <a href="#" class="link-item">► সাপোর্ট টিকেট</a>
+        <a href="#" class="link-item">► ভূমি মন্ত্রণালয়</a>
+        <a href="#" class="link-item">► গোপনীয়তা নীতি</a>
+        <a href="#" class="link-item">► তথ্য অধিদপ্তর (পিআইডি)</a>
+        <a href="#" class="link-item">► সাধারণ জিজ্ঞাসা</a>
+        <a href="#" class="link-item">► অভিযোগ প্রতিকার ব্যবস্থা</a>
+        <a href="#" class="link-item">► যোগাযোগ</a>
+      </div>
+
+      <div class="footer-logos">
+        <div>
+          <div style="font-weight: bold; color: #1b5e20; margin-bottom: 8px;">পরিকল্পনা ও বাস্তবায়নে</div>
+          <div class="partner-logos">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="Gov">
+            <span style="font-size: 11px; font-weight: bold; color: #2e7d32;">জনবান্ধব ভূমি সেবা অটোমেশন</span>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight: bold; color: #1b5e20; margin-bottom: 8px;">সামাজিক যোগাযোগ</div>
+          <div class="social-icons">
+            <a href="#" class="social-icon bg-fb"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon bg-x"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" class="social-icon bg-insta"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon bg-yt"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="playstore-btn">
+    </div>
+  </div>
+
+
+  <!-- ==================== ADMIN / SYSTEM MANAGEMENT PAGE ==================== -->
+  <div id="main_app_page" class="app-container" style="display:none;">
+
+    <!-- LOGIN PANEL -->
+    <div id="login_panel" style="max-width:400px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius:6px; background:#fafafa;">
+      <h4 style="text-align:center;">সিস্টেম লগইন</h4>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>ব্যবহারকারীর নাম:</label>
+          <input type="text" id="username" required placeholder="admin বা সাব-এডমিন ইউজারনেম">
+        </div>
+        <div class="form-group" style="margin-bottom:15px;">
+          <label>পাসওয়ার্ড:</label>
+          <input type="password" id="password" required placeholder="পাসওয়ার্ড দিন">
+        </div>
+        <button type="submit" class="btn btn-print" style="width:100%;">লগইন করুন</button>
+      </form>
+    </div>
+
+    <!-- MAIN APP PANEL -->
+    <div id="admin_panel" style="display:none;">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
+          <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
+          <span id="subadmin_action_buttons" style="display:inline-block;">
+            <button type="button" class="btn-recharge" onclick="openRechargeModal()"><i class="fas fa-wallet"></i> রিচার্জ করুন</button>
+            <button type="button" class="btn-history" onclick="openRechargeHistoryModal()"><i class="fas fa-history"></i> রিচার্জ হিস্টোরী</button>
+            <button type="button" class="btn-history" style="background-color: #6f42c1;" onclick="openOrderHistoryModal()"><i class="fas fa-list-alt"></i> অর্ডার হিস্টোরী</button>
+          </span>
+        </div>
+        <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
+      </div>
+
+      <!-- FREE QUICK SERVICES LINK SECTION -->
+      <div class="free-links-container">
+        <h4 style="margin-bottom: 5px; color: #1b5e20; border: none;"><i class="fas fa-gift"></i> সম্পূর্ণ ফ্রী সেবা পোর্টালসমূহ:</h4>
+        <div class="free-links-grid">
+          <a href="https://mswservices.gov.bd/auth/login" target="_blank" class="free-link-card">
+            <i class="fas fa-hands-helping"></i> সমাজ সেবা পোর্টাল
+          </a>
+          <a href="https://services.nidw.gov.bd/nid-pub/" target="_blank" class="free-link-card">
+            <i class="fas fa-id-card"></i> জাতীয় পরিচয়পত্র পোর্টাল
+          </a>
+          <a href="https://www.epassport.gov.bd/landing" target="_blank" class="free-link-card">
+            <i class="fas fa-passport"></i> ই-পাসপোর্ট আবেদন
+          </a>
+          <a href="https://everify.bdris.gov.bd/" target="_blank" class="free-link-card">
+            <i class="fas fa-certificate"></i> জন্ম/মৃত্যু নিবন্ধন ভেরিফাই
+          </a>
+          <a href="https://sebabari.shop/free.php" target="_blank" class="free-link-card">
+            <i class="fas fa-globe"></i> সেবা বাড়ি ফ্রি পেজ
+          </a>
+        </div>
+      </div>
+
+      <div class="app-nav">
+        <button type="button" class="nav-tab-btn active" id="tab_khatian_btn" onclick="switchTab('khatian_section')">
+          <i class="fas fa-file-alt"></i> খতিয়ান ব্যবস্থাপনা
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_bhumisheba_btn" onclick="switchTab('bhumisheba_section')">
+          <i class="fas fa-globe"></i> ভূমি সেবা পোর্টাল
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_sebabox_btn" onclick="switchTab('sebabox_section')">
+          <i class="fas fa-box-open"></i> সেবা বক্স (Sebabox)
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_bestbuy_btn" onclick="switchTab('bestbuy_section')">
+          <i class="fas fa-shopping-bag"></i> Best Buy পোর্টাল
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab_bdfast_btn" onclick="switchTab('bdfast_section')">
+          <i class="fas fa-shipping-fast"></i> BD Fast Service
+        </button>
+      </div>
+
+      <!-- RECHARGE MODAL POPUP -->
+      <div id="recharge_modal" class="modal-overlay">
+        <div class="modal-card">
+          <span class="modal-close" onclick="closeRechargeModal()">&times;</span>
+          <div class="bkash-box" style="text-align: center;">
+            <i class="fas fa-mobile-alt" style="font-size: 24px; margin-bottom: 5px;"></i><br>
+            <strong>বিকাশ রিচার্জ নির্দেশিকা:</strong><br>
+            বিকাশ পারসোনাল নম্বর: <strong style="font-size:18px; text-decoration: underline;">01833013604</strong> (Send Money)<br>
+            <small>টাকা পাঠানোর পর নিচের ফর্মে টাকার পরিমাণ, Transaction ID এবং সেন্ডমানির স্ক্রিনশট আপলোড করে সাবমিট করুন।</small>
+          </div>
+          <h4 style="margin-top: 10px;">ওয়ালেট রিচার্জের অনুরোধ পাঠান</h4>
+          <form onsubmit="requestRecharge(event)">
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+              <div class="form-group">
+                <label>টাকার পরিমাণ (৳):</label>
+                <input type="number" id="recharge_amount" required placeholder="যেমন: ১০০">
+              </div>
+              <div class="form-group">
+                <label>Transaction ID (TrxID):</label>
+                <input type="text" id="recharge_trxn" required placeholder="যেমন: B8A9XX123">
+              </div>
+              <div class="form-group">
+                <label>সেন্ডমানির স্ক্রিনশট আপলোড করুন:</label>
+                <input type="file" id="recharge_screenshot" accept="image/*" required>
+                <small style="color:#666; font-size:11px; margin-top:2px;">সর্বোচ্চ সাইজ: 2MB (JPG, PNG)</small>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-save" style="width:100%; margin-top:10px;">অনুরোধ পাঠান</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RECHARGE HISTORY MODAL FOR SUBADMIN -->
+      <div id="recharge_history_modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 650px;">
+          <span class="modal-close" onclick="closeRechargeHistoryModal()">&times;</span>
+          <h4>আমার রিচার্জ হিস্টোরী</h4>
+          <div class="filter-btn-group">
+            <button class="filter-btn active" onclick="filterSubadminRecharges('all', this)">সবগুলো</button>
+            <button class="filter-btn" onclick="filterSubadminRecharges('pending', this)">অপেক্ষমাণ (Pending)</button>
+            <button class="filter-btn" onclick="filterSubadminRecharges('approved', this)">সফল (Approved)</button>
+            <button class="filter-btn" onclick="filterSubadminRecharges('rejected', this)">বাতিল (Rejected)</button>
+          </div>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>পরিমাণ</th>
+                <th>TrxID</th>
+                <th>স্ক্রিনশট</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+              </tr>
+            </thead>
+            <tbody id="subadmin_recharge_list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ORDER HISTORY MODAL FOR SUBADMIN -->
+      <div id="order_history_modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 750px;">
+          <span class="modal-close" onclick="closeOrderHistoryModal()">&times;</span>
+          <h4>সকল অর্ডারের হিস্টোরী (তথ্য ও কর্তনকৃত টাকা)</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ক্যাটাগরি</th>
+                <th>সার্ভিসের বিবরণ</th>
+                <th>কর্তনকৃত টাকা (৳)</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+              </tr>
+            </thead>
+            <tbody id="subadmin_order_history_list">
+              <tr><td colspan="6">অর্ডার হিস্টোরী লোড হচ্ছে...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SCREENSHOT VIEW MODAL FOR ADMIN -->
+      <div id="screenshot_modal" class="modal-overlay">
+        <div class="modal-card" style="text-align:center;">
+          <span class="modal-close" onclick="closeScreenshotModal()">&times;</span>
+          <h4>সেন্ডমানি স্ক্রিনশট</h4>
+          <img id="screenshot_img_view" src="" alt="Screenshot" style="max-width:100%; max-height:70vh; border:1px solid #ccc; border-radius:5px; margin-top:10px;">
+        </div>
+      </div>
+
+      <!-- MASTER ADMIN CONTROLS -->
+      <div id="master_admin_controls" style="display:none;">
+        
+        <!-- ADMIN PRICE/FEE CONTROL SECTION -->
+        <div class="admin-section-box">
+          <h4><i class="fas fa-cog"></i> সেবা মূল্য ও ফি সেটিং (Admin Only)</h4>
+          <form onsubmit="saveServicePrices(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>খতিয়ান প্রিন্ট/ডাউনলোড ফি (৳):</label>
+                <input type="number" id="setting_print_fee" required placeholder="যেমন: ১০">
+              </div>
+              <div class="form-group">
+                <label>ভূমি সেবা অনলাইন পোর্টাল চার্জ (৳):</label>
+                <input type="number" id="setting_bhumisheba_fee" required placeholder="যেমন: ৫০">
+              </div>
+              <div class="form-group">
+                <label>সেবা বক্স (Sebabox) চার্জ (৳):</label>
+                <input type="number" id="setting_sebabox_fee" required placeholder="যেমন: ৩০">
+              </div>
+              <div class="form-group">
+                <label>Best Buy পোর্টাল চার্জ (৳):</label>
+                <input type="number" id="setting_bestbuy_fee" required placeholder="যেমন: ৪০">
+              </div>
+              <div class="form-group">
+                <label>BD Fast Service চার্জ (৳):</label>
+                <input type="number" id="setting_bdfast_fee" required placeholder="যেমন: ২৫">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-save"><i class="fas fa-check"></i> মূল্য সেভ করুন</button>
+          </form>
+        </div>
+
+        <div class="admin-section-box">
+          <h4>নতুন সাব-এডমিন যোগ করুন</h4>
+          <form id="subAdminForm" onsubmit="addSubAdmin(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>ইউজারনেম:</label>
+                <input type="text" id="sub_username" required placeholder="যেমন: user1">
+              </div>
+              <div class="form-group">
+                <label>পাসওয়ার্ড:</label>
+                <input type="password" id="sub_password" required placeholder="পাসওয়ার্ড">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-print">সাব-এডমিন তৈরি করুন</button>
+          </form>
+
+          <h4 style="margin-top:15px;">সাব-এডমিনদের তালিকা</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ইউজারনেম</th>
+                <th>বর্তমান ব্যালেন্স</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="subadmin_list"></tbody>
+          </table>
+        </div>
+
+        <div class="admin-section-box">
+          <h4>রিচার্জ অনুরোধসমূহ (বিকাশ) - এডমিন ভিউ</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ইউজারনেম</th>
+                <th>পরিমাণ</th>
+                <th>TrxID</th>
+                <th>স্ক্রিনশট</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="recharge_list"></tbody>
+          </table>
+        </div>
+
+        <!-- ADMIN PENDING ORDERS APPROVAL PANEL -->
+        <div class="admin-section-box">
+          <h4>পেন্ডিং অর্ডারসমূহ (এডমিন অনুমোদন প্যানেল)</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>আবেদনকারী</th>
+                <th>সার্ভিসের বিবরণ</th>
+                <th>ফি (৳)</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="admin_pending_orders_list">
+              <tr><td colspan="6">পেন্ডিং অর্ডার লোড হচ্ছে...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KHATIAN TAB SECTION -->
+      <div id="khatian_section">
+        <form id="khatianForm" style="margin-top:20px;">
+          <h4>খতিয়ান তথ্য ফর্ম</h4>
+
+          <div class="form-grid">
+            <div class="form-group"><label>খতিয়ান নং:</label><input type="text" id="in_khatian" placeholder="যেমন: ৪৮৫" oninput="renderPreview()"></div>
+            <div class="form-group"><label>পৃষ্ঠা নং:</label><input type="text" id="in_page" value="১ এর ১" oninput="renderPreview()"></div>
+            <div class="form-group"><label>বিভাগ:</label><input type="text" id="in_division" value="চট্টগ্রাম" oninput="renderPreview()"></div>
+            <div class="form-group"><label>জেলা:</label><input type="text" id="in_district" value="নোয়াখালী" oninput="renderPreview()"></div>
+            <div class="form-group"><label>উপজেলা/থানা:</label><input type="text" id="in_upazila" value="বেগমগঞ্জ" oninput="renderPreview()"></div>
+            <div class="form-group"><label>মৌজা:</label><input type="text" id="in_mouza" value="আলাদিনগর" oninput="renderPreview()"></div>
+            <div class="form-group"><label>সার্ভে / জে এল নং:</label><input type="text" id="in_jl" value="বি আর এস" oninput="renderPreview()"></div>
+            <div class="form-group"><label>রে: সা: নং:</label><input type="text" id="in_resa" placeholder="যেমন: -" oninput="renderPreview()"></div>
+
+            <div class="form-group full-width"><label>মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা:</label><textarea id="in_owner" rows="4" placeholder="যেমন: দং নজির আহম্মদ..." oninput="renderPreview()"></textarea></div>
+
+            <div class="form-group"><label>মালিকের মোট অংশ:</label><input type="text" id="in_owner_share" value="১.০০০" oninput="renderPreview()"></div>
+
+            <div class="form-group full-width">
+              <div class="dag-section">
+                <h4>দাগ ও জমির বিবরণ</h4>
+                <button type="button" class="btn-add-dag" onclick="addDagRow()">+ নতুন দাগ যোগ করুন</button>
+                <div id="dag_container"></div>
+              </div>
+            </div>
+
+            <div class="form-group"><label>মোট জমি (স্বয়ংক্রিয় গণনা):</label><input type="text" id="in_total_land_sum" placeholder="অটো গণনা হবে" readonly style="background:#e9ecef;"></div>
+            <div class="form-group full-width"><label>ধারামতে নোট বা পরিবর্তন বিবরণ:</label><input type="text" id="in_note" value="............ ধারামতে নোট বা পরিবর্তন মায়" oninput="renderPreview()"></div>
+            <div class="form-group"><label>মোকদ্দমা নং ও সন:</label><input type="text" id="in_case_note" value="মোকদ্দমা নং ............ এবং সন ............." oninput="renderPreview()"></div>
+            <div class="form-group"><label>প্রিন্ট তারিখ:</label><input type="text" id="in_print_date" value="১৮ সেপ্টেম্বর, ২০২৬" oninput="renderPreview()"></div>
+            <div class="form-group"><label>রেকর্ড আইডি:</label><input type="text" id="in_record_id" placeholder="স্বয়ংক্রিয় তৈরি হবে" readonly></div>
+          </div>
+
+          <div class="button-group">
+            <button type="button" class="btn btn-preview" onclick="renderPreview()">প্রিভিউ দেখুন</button>
+            <button type="button" class="btn btn-save" onclick="saveKhatian()">খতিয়ান সংরক্ষণ করুন</button>
+            <button type="button" class="btn btn-reset" onclick="resetKhatianForm()">ফরম রিসেট</button>
+          </div>
+        </form>
+
+        <div class="list-section" style="margin-top:30px;">
+          <h4>সংরক্ষিত খতিয়ানের তালিকা</h4>
+          <div style="overflow-x:auto;">
+            <table class="record-table">
+              <thead>
+                <tr>
+                  <th>ক্রমিক</th>
+                  <th>খতিয়ান নং</th>
+                  <th>মৌজা</th>
+                  <th>মোট জমি</th>
+                  <th>তারিখ</th>
+                  <th>অ্যাকশন</th>
+                </tr>
+              </thead>
+              <tbody id="khatian_list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BHUMISHEBA TAB SECTION -->
+      <div id="bhumisheba_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-globe"></i> ভূমি সেবা অনলাইন পোর্টাল</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">এই সেবার জন্য অর্ডার সাবমিট করলে আপনার অ্যাকাউন্ট থেকে ফি কেটে নেওয়া হবে এবং এডমিন অনুমোদন সাপেক্ষে লিংক চালু হবে।</p>
+          </div>
+          
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>নতুন ভূমি সেবা অর্ডার করুন</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের বিবরণ:</label>
+                <input type="text" id="bs_service_name" placeholder="যেমন: খতিয়ান বা নামজারি আবেদন">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="bs_service_amount" placeholder="যেমন: ৫০">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('ভূমি সেবা', 'bs_service_name', 'bs_service_amount', 'bhumisheba_iframe_container', 'https://app.bhumisheba.com/pages/home.php')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
+            </button>
+          </div>
+
+          <div id="bhumisheba_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- SEBABOX TAB SECTION -->
+      <div id="sebabox_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-box-open"></i> সেবা বক্স পোর্টাল (Sebabox)</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">সেবা বক্স পোর্টালে কাজের জন্য অর্ডার করুন।</p>
+          </div>
+          
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>সেবা বক্স অর্ডার ফরম</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের বিবরণ:</label>
+                <input type="text" id="sb_service_name" placeholder="যেমন: সেবা বক্স পোর্টালে কাজের আবেদন">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="sb_service_amount" placeholder="যেমন: ৩০">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('Sebabox', 'sb_service_name', 'sb_service_amount', 'sebabox_iframe_container', 'https://sebabox.info/index.php')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
+            </button>
+          </div>
+
+          <div id="sebabox_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- BESTBUY TAB SECTION -->
+      <div id="bestbuy_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-shopping-bag"></i> Best Buy পোর্টাল</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">Best Buy পোর্টালে এক্সেস পেতে অর্ডার করুন।</p>
+          </div>
+          
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>Best Buy অর্ডার ফরম</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের বিবরণ:</label>
+                <input type="text" id="bb_service_name" placeholder="যেমন: Best Buy ইউজার লগইন সেবা">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="bb_service_amount" placeholder="যেমন: ৪০">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BestBuy', 'bb_service_name', 'bb_service_amount', 'bestbuy_iframe_container', 'https://user.bestbuy-public.top/user-login?')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
+            </button>
+          </div>
+
+          <div id="bestbuy_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- BDFAST TAB SECTION -->
+      <div id="bdfast_section" style="display: none; margin-top: 20px;">
+        <div class="admin-section-box">
+          <h3><i class="fas fa-shipping-fast"></i> BD Fast Service</h3>
+          <hr style="margin: 15px 0;">
+          
+          <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="margin: 0;">BD Fast Service পোর্টালে কাজের জন্য অর্ডার করুন।</p>
+          </div>
+          
+          <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h4>BD Fast Service অর্ডার ফরম</h4>
+            <div class="form-grid" style="margin-top:10px;">
+              <div class="form-group">
+                <label>সার্ভিসের বিবরণ:</label>
+                <input type="text" id="bf_service_name" placeholder="যেমন: BD Fast Service পোর্টালে সেবা">
+              </div>
+              <div class="form-group">
+                <label>আবেদন ফি/চার্জ (৳):</label>
+                <input type="number" id="bf_service_amount" placeholder="যেমন: ২৫">
+              </div>
+            </div>
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BDFast', 'bf_service_name', 'bf_service_amount', 'bdfast_iframe_container', 'https://www.bdfastservice.xyz/login.php')">
+              <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
+            </button>
+          </div>
+
+          <div id="bdfast_iframe_container" style="display: none; margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <!-- PREVIEW AREA -->
+      <div id="preview_area" style="display:none; margin-top:30px;">
+        <div class="khatian-box">
+          <div class="page-number-top">পৃষ্ঠা নং: <span id="prev_page">১ এর ১</span></div>
+          <div class="khatian-top-title">খতিয়ান নং- <span id="prev_khatian">৪৮৫</span></div>
+
+          <div class="meta-line">
+            <div>বিভাগ: <span id="prev_division">চট্টগ্রাম</span></div>
+            <div>জেলা: <span id="prev_district">নোয়াখালী</span></div>
+            <div>উপজেলা/থানা: <span id="prev_upazila">বেগমগঞ্জ</span></div>
+            <div>মৌজা: <span id="prev_mouza">আলাদিনগর</span></div>
+            <div>জে, এল, নং: <span id="prev_jl">বি আর এস</span></div>
+            <div>রে: সা: নং: <span id="prev_resa">-</span></div>
+          </div>
+
+          <table class="khatian-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width: 25%;">
+                  <div class="th-container">
+                    <div class="th-label">মালিক, অকৃষি প্রজা বা ইজারাদারের নাম ও ঠিকানা</div>
+                    <div class="th-num">(১)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 6%;">
+                  <div class="th-container">
+                    <div class="th-label">অংশ</div>
+                    <div class="th-num">(২)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 6%;">
+                  <div class="th-container">
+                    <div class="th-label">রাজস্ব</div>
+                    <div class="th-num">(৩)</div>
+                  </div>
+                </th>
+                <th rowspan="2" style="width: 7%;">
+                  <div class="th-container">
+                    <div class="th-label">দাগ</div>
+                    <div class="th-num">(৪)</div>
+                  </div>
+                </th>
+                <th colspan="2" style="width: 14%;">জমির শ্রেণী</th>
+                <th colspan="2" style="width: 14%;">দাগের মোট পরিমাণ</th>
+                <th rowspan="2" style="width: 10%;">
+                  <div class="th-container">
+                    <div class="th-label">দাগের মধ্যে অত্র খতিয়ানের অংশ</div>
+                    <div class="th-num">(৭)</div>
+                  </div>
+                </th>
+                <th colspan="2" style="width: 10%;">অংশ অনুযায়ী জমির পরিমাণ</th>
+                <th rowspan="2" style="width: 8%;">
+                  <div class="th-container">
+                    <div class="th-label">দখল বিষয়ক বা অন্যান্য বিশেষ মন্তব্য</div>
+                    <div class="th-num">(৯)</div>
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th>কৃষি<br>৫(ক)</th>
+                <th>অকৃষি<br>৫(খ)</th>
+                <th>একর<br>৬(ক)</th>
+                <th>শতাংশ<br>৬(খ)</th>
+                <th>একর<br>৮(ক)</th>
+                <th>শতাংশ<br>৮(খ)</th>
+              </tr>
+            </thead>
+            <tbody id="prev_table_body"></tbody>
+            <tfoot>
+              <tr>
+                <td class="owner-td" style="font-size: 11px;">
+                  <span id="prev_note">............ ধারামতে নোট বা পরিবর্তন মায়</span><br>
+                  <span id="prev_case_note">মোকদ্দমা নং ............ এবং সন .............</span>
+                </td>
+                <td><b id="prev_owner_share">১.০০০</b></td>
+                <td></td>
+                <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
+                <td><b>মোট জমি:</b></td>
+                <td><b id="prev_total_land_sum">০</b></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top: 10px; font-size: 12px;">
+            মুদ্রণ: সেটেলমেন্ট প্রেস, ঢাকা। তারিখ: <span id="prev_print_date">১৮ সেপ্টেম্বর, ২০২৬</span>
+          </div>
+
+          <div class="footer-note-section">
+            <div style="font-size: 13px; font-weight: bold; width: 35%;">
+              বাংলাদেশ ফরম নং ৫৪৬২ (সংশোধিত)
+            </div>
+
+            <div style="width: 30%; text-align: center;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="অফিসিয়াল সীল" class="official-logo-img">
+            </div>
+
+            <div style="width: 35%; text-align: right;">
+              <img id="preview_qr" class="qr-code" src="" alt="QR Code">
+            </div>
+          </div>
+
+          <div class="button-group" style="margin-top:20px;">
+            <button type="button" class="btn btn-print" id="btn_print_action" onclick="payAndPrint()">ডাউনলোড / প্রিন্ট করুন (৳১০)</button>
+            <button type="button" class="btn btn-reset" onclick="closePreview()">প্রিভিউ বন্ধ করুন</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== GITHUB LOGO WATERMARK (AUTO BOTTOM CENTER) ==================== -->
+  <div class="github-logo-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="GitHub Logo" class="github-logo-img" id="github_watermark_logo">
+  </div>
+
+<script>
+  // ==================== COVER SLIDER SCRIPT ====================
+  var currentSlide = 0;
+  var totalSlides = 6;
+
+  function updateSlider() {
+    var slider = document.getElementById("coverSlider");
+    var dots = document.querySelectorAll(".slider-dots .dot");
+    if(slider) {
+      slider.style.transform = "translateX(-" + (currentSlide * 16.666) + "%)";
+      dots.forEach((dot, idx) => {
+        if(idx === currentSlide) {
+          dot.classList.add("active");
+        } else {
+          dot.classList.remove("active");
+        }
+      });
+    }
+  }
+
+  function goToSlide(index) {
+    currentSlide = index;
+    updateSlider();
+  }
+
+  setInterval(function() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+  }, 4000);
+
+  // ==================== FIREBASE CONFIGURATION ====================
+  var firebaseConfig = {
+    apiKey: "AIzaSyDBPuA4web1HgfPCAvfcyUq7w1IWXl1S6I",
+    authDomain: "land-management-21042.firebaseapp.com",
+    databaseURL: "https://land-management-21042-default-rtdb.firebaseio.com",
+    projectId: "land-management-21042",
+    storageBucket: "land-management-21042.firebasestorage.app",
+    messagingSenderId: "64550140691",
+    appId: "1:64550140691:web:76fc8ed3fbdd68736f38e6",
+    measurementId: "G-R8VQGCPYM"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  var db = firebase.database();
+
+  var QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=";
+  
+  // Dynamic Service Prices
+  var bhumishebaFee = 50;
+  var sebaboxFee = 30;
+  var bestbuyFee = 40;
+  var bdfastFee = 25;
+  var printFee = 10;
+  var currentFilterStatus = 'all';
+
+  window.addEventListener("DOMContentLoaded", function() {
+    var params = new URLSearchParams(window.location.search);
+    
+    if (params.has("k") || params.has("m")) {
+      document.getElementById("public_view_page").style.display = "block";
+      document.getElementById("main_app_page").style.display = "none";
+      loadPublicViewData(params);
+    } else {
+      document.getElementById("public_view_page").style.display = "none";
+      document.getElementById("main_app_page").style.display = "block";
+      listenToServiceSettings();
+      checkAuth();
+    }
+  });
+
+  /* DYNAMIC SERVICE PRICES LISTENERS */
+  function listenToServiceSettings() {
+    db.ref("settings/prices").on("value", snapshot => {
+      var prices = snapshot.val();
+      if (prices) {
+        if (prices.bhumishebaFee !== undefined) bhumishebaFee = parseFloat(prices.bhumishebaFee);
+        if (prices.sebaboxFee !== undefined) sebaboxFee = parseFloat(prices.sebaboxFee);
+        if (prices.bestbuyFee !== undefined) bestbuyFee = parseFloat(prices.bestbuyFee);
+        if (prices.bdfastFee !== undefined) bdfastFee = parseFloat(prices.bdfastFee);
+        if (prices.printFee !== undefined) printFee = parseFloat(prices.printFee);
+      }
+      
+      var printBtn = document.getElementById("btn_print_action");
+      if(printBtn) printBtn.innerText = "ডাউনলোড / প্রিন্ট করুন (৳" + printFee + ")";
+
+      var setPrint = document.getElementById("setting_print_fee");
+      var setBhumisheba = document.getElementById("setting_bhumisheba_fee");
+      var setSebabox = document.getElementById("setting_sebabox_fee");
+      var setBestbuy = document.getElementById("setting_bestbuy_fee");
+      var setBdfast = document.getElementById("setting_bdfast_fee");
+
+      if(setPrint && !setPrint.value) setPrint.value = printFee;
+      if(setBhumisheba && !setBhumisheba.value) setBhumisheba.value = bhumishebaFee;
+      if(setSebabox && !setSebabox.value) setSebabox.value = sebaboxFee;
+      if(setBestbuy && !setBestbuy.value) setBestbuy.value = bestbuyFee;
+      if(setBdfast && !setBdfast.value) setBdfast.value = bdfastFee;
+      
+      if(document.getElementById("bs_service_amount") && !document.getElementById("bs_service_amount").value) document.getElementById("bs_service_amount").value = bhumishebaFee;
+      if(document.getElementById("sb_service_amount") && !document.getElementById("sb_service_amount").value) document.getElementById("sb_service_amount").value = sebaboxFee;
+      if(document.getElementById("bb_service_amount") && !document.getElementById("bb_service_amount").value) document.getElementById("bb_service_amount").value = bestbuyFee;
+      if(document.getElementById("bf_service_amount") && !document.getElementById("bf_service_amount").value) document.getElementById("bf_service_amount").value = bdfastFee;
+    });
+  }
+
+  function saveServicePrices(e) {
+    e.preventDefault();
+    var newPrintFee = parseFloat(document.getElementById("setting_print_fee").value);
+    var newBhumishebaFee = parseFloat(document.getElementById("setting_bhumisheba_fee").value);
+    var newSebaboxFee = parseFloat(document.getElementById("setting_sebabox_fee").value);
+    var newBestbuyFee = parseFloat(document.getElementById("setting_bestbuy_fee").value);
+    var newBdfastFee = parseFloat(document.getElementById("setting_bdfast_fee").value);
+
+    db.ref("settings/prices").set({
+      printFee: newPrintFee,
+      bhumishebaFee: newBhumishebaFee,
+      sebaboxFee: newSebaboxFee,
+      bestbuyFee: newBestbuyFee,
+      bdfastFee: newBdfastFee
+    }).then(() => {
+      alert("সেবা মূল্য সফলভাবে আপডেট করা হয়েছে!");
+    });
+  }
+
+  function openRechargeModal() {
+    document.getElementById("recharge_modal").style.display = "flex";
+  }
+
+  function closeRechargeModal() {
+    document.getElementById("recharge_modal").style.display = "none";
+  }
+
+  function openRechargeHistoryModal() {
+    document.getElementById("recharge_history_modal").style.display = "flex";
+    loadSubadminRecharges();
+  }
+
+  function closeRechargeHistoryModal() {
+    document.getElementById("recharge_history_modal").style.display = "none";
+  }
+
+  function openOrderHistoryModal() {
+    document.getElementById("order_history_modal").style.display = "flex";
+    loadSubadminOrderHistory();
+  }
+
+  function closeOrderHistoryModal() {
+    document.getElementById("order_history_modal").style.display = "none";
+  }
+
+  function openScreenshotModal(imgSrc) {
+    document.getElementById("screenshot_img_view").src = imgSrc;
+    document.getElementById("screenshot_modal").style.display = "flex";
+  }
+
+  function closeScreenshotModal() {
+    document.getElementById("screenshot_modal").style.display = "none";
+    document.getElementById("screenshot_img_view").src = "";
+  }
+
+  function switchTab(sectionId) {
+    var sections = ['khatian_section', 'bhumisheba_section', 'sebabox_section', 'bestbuy_section', 'bdfast_section'];
+    var buttons = ['tab_khatian_btn', 'tab_bhumisheba_btn', 'tab_sebabox_btn', 'tab_bestbuy_btn', 'tab_bdfast_btn'];
+
+    sections.forEach(s => document.getElementById(s).style.display = "none");
+    buttons.forEach(b => document.getElementById(b).classList.remove("active"));
+
+    document.getElementById(sectionId).style.display = "block";
+    
+    if (sectionId === 'khatian_section') document.getElementById('tab_khatian_btn').classList.add("active");
+    if (sectionId === 'bhumisheba_section') document.getElementById('tab_bhumisheba_btn').classList.add("active");
+    if (sectionId === 'sebabox_section') document.getElementById('tab_sebabox_btn').classList.add("active");
+    if (sectionId === 'bestbuy_section') document.getElementById('tab_bestbuy_btn').classList.add("active");
+    if (sectionId === 'bdfast_section') document.getElementById('tab_bdfast_btn').classList.add("active");
+  }
+
+  /* ==================== PENDING ORDER & DEDUCTION SYSTEM ==================== */
+  function submitCustomOrder(category, nameInputId, amountInputId, containerId, targetUrl) {
+    var user = sessionStorage.getItem("loggedInUser");
+    var role = sessionStorage.getItem("userRole");
+    var serviceDetails = document.getElementById(nameInputId).value.trim();
+    var amount = parseFloat(document.getElementById(amountInputId).value);
+
+    if (!serviceDetails || isNaN(amount) || amount <= 0) {
+      alert("সঠিক সার্ভিসের বিবরণ এবং ফি প্রদান করুন!");
+      return;
+    }
+
+    if (role !== "admin") {
+      db.ref("users/" + user + "/balance").once("value").then(function(snapshot) {
+        var currentBalance = snapshot.val() || 0;
+        if (currentBalance < amount) {
+          alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + amount + "। দয়া করে রিচার্জ করুন।");
+          return;
+        }
+
+        if (confirm("এই সেবার জন্য আপনার অ্যাকাউন্ট থেকে ৳" + amount + " কাটা হবে। আপনি কি অর্ডার নিশ্চিত করতে চান?")) {
+          var newBalance = currentBalance - amount;
+          db.ref("users/" + user + "/balance").set(newBalance).then(function() {
+            saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
+          });
+        }
+      });
+    } else {
+      saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
+    }
+  }
+
+  function saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl) {
+    var orderData = {
+      requestedBy: user,
+      serviceCategory: category,
+      serviceDetails: serviceDetails,
+      amount: amount,
+      targetUrl: targetUrl,
+      containerId: containerId,
+      status: "pending",
+      date: new Date().toLocaleString("bn-BD"),
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    db.ref("bhumisheba_orders").push(orderData).then(function() {
+      alert("আপনার অর্ডারটি সফলভাবে জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
+      document.getElementById(containerId.replace('_iframe_container', '_service_name')).value = "";
+      loadWallet();
+    }).catch(function(error) {
+      alert("অর্ডার দিতে ত্রুটি: " + error.message);
+    });
+  }
+
+  function loadPendingOrdersForAdmin() {
+    var tbody = document.getElementById("admin_pending_orders_list");
+    if (!tbody) return;
+
+    db.ref("bhumisheba_orders").orderByChild("status").equalTo("pending")
+      .on("value", function(snapshot) {
+        tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+          tbody.innerHTML = "<tr><td colspan='6'>কোনো পেন্ডিং অর্ডার নেই।</td></tr>";
+          return;
+        }
+
+        snapshot.forEach(function(child) {
+          var orderId = child.key;
+          var order = child.val();
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(order.requestedBy)}</td>
+            <td>[${escapeHtml(order.serviceCategory)}] ${escapeHtml(order.serviceDetails)}</td>
+            <td>৳${order.amount}</td>
+            <td><span style="color:orange; font-weight:bold;">Pending</span></td>
+            <td>${order.date || '-'}</td>
+            <td>
+              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', '${order.containerId}', '${order.targetUrl}')">অনুমোদন</button>
+              <button class="btn-sm btn-del" onclick="rejectOrder('${orderId}', '${order.requestedBy}', ${order.amount})">বাতিল ও রিফান্ড</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  function approveOrder(orderId, containerId, targetUrl) {
+    var adminUser = sessionStorage.getItem("loggedInUser");
+    db.ref("bhumisheba_orders/" + orderId).update({
+      status: "approved",
+      approvedBy: adminUser,
+      approvedAt: firebase.database.ServerValue.TIMESTAMP
+    }).then(function() {
+      alert("অর্ডার অনুমোদিত হয়েছে।");
+      if(containerId && targetUrl) {
+        activatePortalFrame(containerId, targetUrl);
+      }
+    });
+  }
+
+  function rejectOrder(orderId, requestedBy, amount) {
+    if (confirm("অর্ডারটি বাতিল করতে চান? (কর্তনকৃত টাকা ইউজারের ওয়ালেটে রিফান্ড করা হবে)")) {
+      db.ref("bhumisheba_orders/" + orderId).once("value").then(function(snapshot) {
+        var orderData = snapshot.val();
+        if(orderData && orderData.status === "pending") {
+          db.ref("users/" + requestedBy + "/balance").once("value").then(function(balSnap) {
+            var currentBal = balSnap.val() || 0;
+            db.ref("users/" + requestedBy + "/balance").set(currentBal + amount).then(function() {
+              db.ref("bhumisheba_orders/" + orderId).update({ status: "rejected" }).then(() => {
+                alert("অর্ডার বাতিল করা হয়েছে এবং টাকা রিফান্ড করা হয়েছে।");
+              });
+            });
+          });
+        }
+      });
+    }
+  }
+
+  function loadSubadminOrderHistory() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var tbody = document.getElementById("subadmin_order_history_list");
+    if (!tbody) return;
+
+    db.ref("bhumisheba_orders").orderByChild("requestedBy").equalTo(user)
+      .on("value", function(snapshot) {
+        tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+          tbody.innerHTML = "<tr><td colspan='6'>আপনার কোনো অর্ডার হিস্টোরী নেই।</td></tr>";
+          return;
+        }
+
+        var i = 1;
+        snapshot.forEach(function(child) {
+          var order = child.val();
+          var badgeColor = order.status === 'approved' ? 'green' : (order.status === 'rejected' ? 'red' : 'orange');
+          var statusText = order.status === 'approved' ? 'সফল (Approved)' : (order.status === 'rejected' ? 'বাতিল (Rejected)' : 'অপেক্ষমাণ (Pending)');
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i++}</td>
+            <td>${escapeHtml(order.serviceCategory)}</td>
+            <td>${escapeHtml(order.serviceDetails)}</td>
+            <td><b>৳${order.amount}</b></td>
+            <td><span style="color:${badgeColor}; font-weight:bold;">${statusText}</span></td>
+            <td>${order.date || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  function activatePortalFrame(containerId, targetUrl) {
+    var container = document.getElementById(containerId);
+    if(!container) return;
+    container.style.display = "block";
+    container.innerHTML = `
+      <div style="text-align:center; padding: 30px; background: #f8f9fa; border: 2px dashed #28a745; border-radius: 8px;">
+        <h3 style="color: #28a745; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
+        <p style="margin-bottom: 15px;">নিচের বাটনে ক্লিক করে পোর্টালে প্রবেশ করুন:</p>
+        <a href="${targetUrl}" target="_blank" class="btn btn-save" style="text-decoration:none; font-size:15px; padding: 10px 20px;">
+          <i class="fas fa-external-link-alt"></i> সরাসরি পোর্টালে যান
+        </a>
+      </div>
+    `;
+  }
+
+  function loadPublicViewData(params) {
+    document.getElementById("view_khatian").innerText = params.get("k") || "-";
+    document.getElementById("view_owner").innerText = params.get("m") || "-";
+    document.getElementById("view_dag").innerText = params.get("d") || "-";
+    document.getElementById("view_survey").innerText = params.get("s") || "বি আর এস";
+    document.getElementById("view_mouza").innerText = params.get("mz") || "-";
+    document.getElementById("view_upazila").innerText = params.get("u") || "-";
+    document.getElementById("view_district").innerText = params.get("dt") || "-";
+    document.getElementById("view_division").innerText = params.get("dv") || "-";
+
+    var dateObj = getBanglaAndEnglishDate();
+    document.getElementById("view_date").innerText = dateObj.engFullDate;
+    document.getElementById("top_eng_date").innerText = "ইংরেজি: " + dateObj.topEngBar;
+    document.getElementById("top_bangla_date").innerText = "বাংলা: " + dateObj.topBanglaBar;
+  }
+
+  function getBanglaAndEnglishDate() {
+    var engMonths = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+    var engDays = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
+    var banMonths = ["বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ", "ভাদ্র", "আশ্বিন", "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"];
+
+    var now = new Date();
+    var dayName = engDays[now.getDay()];
+    var engDayNum = now.getDate();
+    var monthIdx = now.getMonth();
+    var engYear = now.getFullYear();
+
+    var engDayBn = toBanglaDigits(engDayNum);
+    var engYearBn = toBanglaDigits(engYear);
+
+    var bDay, bMonthIdx, bYear;
+    bYear = (monthIdx < 3 || (monthIdx === 3 && engDayNum < 14)) ? engYear - 594 : engYear - 593;
+
+    var dayOfYear = Math.floor((now - new Date(engYear, 0, 0)) / (1000 * 60 * 60 * 24));
+    var isLeap = (engYear % 4 === 0 && engYear % 100 !== 0) || (engYear % 400 === 0);
+    var boishakhStart = isLeap ? 105 : 104;
+
+    if (dayOfYear >= boishakhStart) {
+      var diff = dayOfYear - boishakhStart;
+      if (diff < 31) { bMonthIdx = 0; bDay = diff + 1; }
+      else if (diff < 62) { bMonthIdx = 1; bDay = diff - 31 + 1; }
+      else if (diff < 93) { bMonthIdx = 2; bDay = diff - 62 + 1; }
+      else if (diff < 124) { bMonthIdx = 3; bDay = diff - 93 + 1; }
+      else if (diff < 155) { bMonthIdx = 4; bDay = diff - 124 + 1; }
+      else if (diff < 186) { bMonthIdx = 5; bDay = diff - 155 + 1; }
+      else if (diff < 216) { bMonthIdx = 6; bDay = diff - 186 + 1; }
+      else if (diff < 246) { bMonthIdx = 7; bDay = diff - 216 + 1; }
+      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 246 + 1; }
+      else if (diff < 306) { bMonthIdx = 9; bDay = diff - 276 + 1; }
+      else {
+        var falgunDays = isLeap ? 30 : 29;
+        if (diff < 306 + falgunDays) { bMonthIdx = 10; bDay = diff - 306 + 1; }
+        else { bMonthIdx = 11; bDay = diff - (306 + falgunDays) + 1; }
+      }
+    } else {
+      var prevYearLeap = ((engYear - 1) % 4 === 0 && (engYear - 1) % 100 !== 0) || ((engYear - 1) % 400 === 0);
+      var prevBoishakhStart = prevYearLeap ? 105 : 104;
+      var totalPrevYearDays = prevYearLeap ? 366 : 365;
+      var diff = (totalPrevYearDays - prevBoishakhStart) + dayOfYear;
+
+      if (diff < 216) { bMonthIdx = 6; bDay = diff - 186 + 1; }
+      else if (diff < 246) { bMonthIdx = 7; bDay = diff - 216 + 1; }
+      else if (diff < 276) { bMonthIdx = 8; bDay = diff - 276 + 1; }
+      else if (diff < 306) { bMonthIdx = 9; bDay = diff - 276 + 1; }
+      else {
+        var falgunDays = prevYearLeap ? 30 : 29;
+        if (diff < 306 + falgunDays) { bMonthIdx = 10; bDay = diff - 306 + 1; }
+        else { bMonthIdx = 11; bDay = diff - (306 + falgunDays) + 1; }
+      }
+    }
+
+    return {
+      engFullDate: engDayBn + " " + engMonths[monthIdx] + ", " + engYearBn,
+      topEngBar: dayName + ", " + engDayBn + " " + engMonths[monthIdx] + " " + engYearBn,
+      topBanglaBar: toBanglaDigits(bDay) + " " + banMonths[bMonthIdx] + " " + toBanglaDigits(bYear) + " বঙ্গাব্দ"
+    };
+  }
+
+  /* FIREBASE LOGIN SYSTEM */
+  function handleLogin(e) {
+    e.preventDefault();
+    var user = document.getElementById("username").value.trim();
+    var pass = document.getElementById("password").value;
+
+    if (user === "admin" && pass === "12345") {
+      sessionStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem("loggedInUser", "admin");
+      sessionStorage.setItem("userRole", "admin");
+      checkAuth();
+      return;
+    }
+
+    db.ref("users/" + user).once("value").then(snapshot => {
+      var userData = snapshot.val();
+      if (userData && userData.password === pass) {
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("loggedInUser", user);
+        sessionStorage.setItem("userRole", userData.role || "subadmin");
+        checkAuth();
+      } else {
+        alert("ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!");
+      }
+    });
+  }
+
+  function handleLogout() {
+    sessionStorage.clear();
+    location.href = window.location.pathname;
+  }
+
+  function checkAuth() {
+    var logged = sessionStorage.getItem("isLoggedIn") === "true";
+    var role = sessionStorage.getItem("userRole");
+    var username = sessionStorage.getItem("loggedInUser");
+
+    document.getElementById("login_panel").style.display = logged ? "none" : "block";
+    document.getElementById("admin_panel").style.display = logged ? "block" : "none";
+
+    if (logged) {
+      document.getElementById("display_username").innerText = username;
+      document.getElementById("display_role").innerText = role === "admin" ? "অ্যাডমিন" : "সাব-অ্যাডমিন";
+
+      if (role === "admin") {
+        document.getElementById("master_admin_controls").style.display = "block";
+        document.getElementById("wallet_balance").innerText = "অসীম (Unlimited)";
+        document.getElementById("subadmin_action_buttons").style.display = "none";
+        loadSubAdmins();
+        loadRechargeRequests();
+        loadPendingOrdersForAdmin();
+      } else {
+        document.getElementById("master_admin_controls").style.display = "none";
+        document.getElementById("subadmin_action_buttons").style.display = "inline-block";
+        loadWallet();
+      }
+
+      loadSavedKatians();
+      renderPreview();
+    }
+  }
+
+  function loadWallet() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var role = sessionStorage.getItem("userRole");
+    if (role === "admin") {
+      document.getElementById("wallet_balance").innerText = "অসীম (Unlimited)";
+      return;
+    }
+    db.ref("users/" + user + "/balance").on("value", snapshot => {
+      var bal = snapshot.val() || 0;
+      document.getElementById("wallet_balance").innerText = "৳ " + bal;
+    });
+  }
+
+  function requestRecharge(e) {
+    e.preventDefault();
+    var user = sessionStorage.getItem("loggedInUser");
+    var amount = parseFloat(document.getElementById("recharge_amount").value);
+    var trxn = document.getElementById("recharge_trxn").value.trim();
+    var fileInput = document.getElementById("recharge_screenshot");
+
+    if (fileInput.files && fileInput.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var base64Img = event.target.result;
+        var rechargeData = {
+          username: user,
+          amount: amount,
+          trxn: trxn,
+          screenshot: base64Img,
+          status: "pending",
+          date: new Date().toLocaleString("bn-BD"),
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+        db.ref("recharge_requests").push(rechargeData).then(() => {
+          alert("রিচার্জের অনুরোধ সফলভাবে পাঠানো হয়েছে!");
+          closeRechargeModal();
+          document.getElementById("recharge_amount").value = "";
+          document.getElementById("recharge_trxn").value = "";
+          document.getElementById("recharge_screenshot").value = "";
+        });
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+    }
+  }
+
+  function loadSubadminRecharges() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var tbody = document.getElementById("subadmin_recharge_list");
+    if (!tbody) return;
+
+    db.ref("recharge_requests").orderByChild("username").equalTo(user)
+      .on("value", snapshot => {
+        tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+          tbody.innerHTML = "<tr><td colspan='6'>কোনো রিচার্জ অনুরোধ নেই।</td></tr>";
+          return;
+        }
+
+        var i = 1;
+        snapshot.forEach(child => {
+          var req = child.val();
+          if (currentFilterStatus !== 'all' && req.status !== currentFilterStatus) return;
+
+          var badgeColor = req.status === 'approved' ? 'green' : (req.status === 'rejected' ? 'red' : 'orange');
+          var statusText = req.status === 'approved' ? 'সফল' : (req.status === 'rejected' ? 'বাতিল' : 'অপেক্ষমাণ');
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i++}</td>
+            <td>৳${req.amount}</td>
+            <td>${escapeHtml(req.trxn)}</td>
+            <td><button class="btn-sm btn-prt" onclick="openScreenshotModal('${req.screenshot}')">ভিউ</button></td>
+            <td><span style="color:${badgeColor}; font-weight:bold;">${statusText}</span></td>
+            <td>${req.date || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  function filterSubadminRecharges(status, btnElement) {
+    currentFilterStatus = status;
+    var group = btnElement.parentElement;
+    Array.from(group.children).forEach(b => b.classList.remove("active"));
+    btnElement.classList.add("active");
+    loadSubadminRecharges();
+  }
+
+  function loadRechargeRequests() {
+    var tbody = document.getElementById("recharge_list");
+    if (!tbody) return;
+
+    db.ref("recharge_requests").on("value", snapshot => {
+      tbody.innerHTML = "";
+      if (!snapshot.exists()) {
+        tbody.innerHTML = "<tr><td colspan='8'>কোনো রিচার্জ অনুরোধ নেই।</td></tr>";
+        return;
+      }
+
+      var i = 1;
+      snapshot.forEach(child => {
+        var key = child.key;
+        var req = child.val();
+        var badgeColor = req.status === 'approved' ? 'green' : (req.status === 'rejected' ? 'red' : 'orange');
+
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i++}</td>
+          <td>${escapeHtml(req.username)}</td>
+          <td>৳${req.amount}</td>
+          <td>${escapeHtml(req.trxn)}</td>
+          <td><button class="btn-sm btn-prt" onclick="openScreenshotModal('${req.screenshot}')">ভিউ</button></td>
+          <td><span style="color:${badgeColor}; font-weight:bold;">${req.status}</span></td>
+          <td>${req.date || '-'}</td>
+          <td>
+            ${req.status === 'pending' ? `
+              <button class="btn-sm btn-save" onclick="approveRecharge('${key}', '${req.username}',${req.amount})">অনুমোদন</button>
+              <button class="btn-sm btn-del" onclick="rejectRecharge('${key}')">বাতিল</button>
+            ` : 'সম্পন্ন'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  function approveRecharge(reqId, username, amount) {
+    db.ref("users/" + username + "/balance").once("value").then(snapshot => {
+      var currentBal = snapshot.val() || 0;
+      var newBal = currentBal + amount;
+
+      db.ref("users/" + username + "/balance").set(newBal).then(() => {
+        db.ref("recharge_requests/" + reqId).update({ status: "approved" }).then(() => {
+          alert("রিচার্জ সফলভাবে অনুমোদিত হয়েছে!");
+        });
+      });
+    });
+  }
+
+  function rejectRecharge(reqId) {
+    db.ref("recharge_requests/" + reqId).update({ status: "rejected" }).then(() => {
+      alert("রিচার্জ অনুরোধ বাতিল করা হয়েছে।");
+    });
+  }
+
+  function addSubAdmin(e) {
+    e.preventDefault();
+    var user = document.getElementById("sub_username").value.trim();
+    var pass = document.getElementById("sub_password").value;
+
+    db.ref("users/" + user).set({
+      password: pass,
+      balance: 0,
+      role: "subadmin"
+    }).then(() => {
+      alert("সাব-এডমিন সফলভাবে তৈরি হয়েছে!");
+      document.getElementById("subAdminForm").reset();
+    });
+  }
+
+  function loadSubAdmins() {
+    var tbody = document.getElementById("subadmin_list");
+    if (!tbody) return;
+
+    db.ref("users").on("value", snapshot => {
+      tbody.innerHTML = "";
+      var i = 1;
+      snapshot.forEach(child => {
+        var username = child.key;
+        var data = child.val();
+        if (data.role === "subadmin") {
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i++}</td>
+            <td>${escapeHtml(username)}</td>
+            <td>৳${data.balance || 0}</td>
+            <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${username}')">মুছে ফেলুন</button></td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    });
+  }
+
+  function deleteSubAdmin(username) {
+    if (confirm(username + " সাব-এডমিনকে মুছে ফেলতে চান?")) {
+      db.ref("users/" + username).remove().then(() => {
+        alert("সফলভাবে মুছে ফেলা হয়েছে!");
+      });
+    }
+  }
+
+  /* KHATIAN SCRIPT */
+  var dagRowsData = [
+    {dag:"", class:"নাল", a_ekr:"", a_shataṁśa:"", d_ekr:"", d_shataṁśa:"", anśa:"", note:""}
+  ];
+
+  function initDagRows() {
+    var container = document.getElementById("dag_container");
+    if(!container) return;
+    container.innerHTML = "";
+    dagRowsData.forEach((row, idx) => {
+      var div = document.createElement("div");
+      div.className = "dag-row";
+      div.innerHTML = `
+        <input type="text" placeholder="দাগ" value="${row.dag}" oninput="updateDagData(${idx}, 'dag', this.value)">
+        <input type="text" placeholder="শ্রেণী" value="${row.class}" oninput="updateDagData(${idx}, 'class', this.value)">
+        <input type="text" placeholder="একর" value="${row.a_ekr}" oninput="updateDagData(${idx}, 'a_ekr', this.value)">
+        <input type="text" placeholder="শতাংশ" value="${row.a_shataṁśa}" oninput="updateDagData(${idx}, 'a_shataṁśa', this.value)">
+        <input type="text" placeholder="একর" value="${row.d_ekr}" oninput="updateDagData(${idx}, 'd_ekr', this.value)">
+        <input type="text" placeholder="শতাংশ" value="${row.d_shataṁśa}" oninput="updateDagData(${idx}, 'd_shataṁśa', this.value)">
+        <input type="text" placeholder="অংশ" value="${row.anśa}" oninput="updateDagData(${idx}, 'anśa', this.value)">
+        <input type="text" placeholder="মন্তব্য" value="${row.note}" oninput="updateDagData(${idx}, 'note', this.value)">
+        <button type="button" class="btn-sm btn-del" onclick="removeDagRow(${idx})">X</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function addDagRow() {
+    dagRowsData.push({dag:"", class:"নাল", a_ekr:"", a_shataṁśa:"", d_ekr:"", d_shataṁśa:"", anśa:"", note:""});
+    initDagRows();
+    renderPreview();
+  }
+
+  function removeDagRow(idx) {
+    dagRowsData.splice(idx, 1);
+    initDagRows();
+    renderPreview();
+  }
+
+  function updateDagData(idx, field, val) {
+    dagRowsData[idx][field] = val;
+    renderPreview();
+  }
+
+  function renderPreview() {
+    var khatian = document.getElementById("in_khatian").value || "৪৮৫";
+    var page = document.getElementById("in_page").value || "১ এর ১";
+    var division = document.getElementById("in_division").value || "চট্টগ্রাম";
+    var district = document.getElementById("in_district").value || "নোয়াখালী";
+    var upazila = document.getElementById("in_upazila").value || "বেগমগঞ্জ";
+    var mouza = document.getElementById("in_mouza").value || "আলাদিনগর";
+    var jl = document.getElementById("in_jl").value || "বি আর এস";
+    var resa = document.getElementById("in_resa").value || "-";
+    var owner = document.getElementById("in_owner").value || "দং নজির আহম্মদ...";
+    var ownerShare = document.getElementById("in_owner_share").value || "১.০০০";
+    var note = document.getElementById("in_note").value || "";
+    var caseNote = document.getElementById("in_case_note").value || "";
+    var printDate = document.getElementById("in_print_date").value || "";
+
+    document.getElementById("prev_khatian").innerText = khatian;
+    document.getElementById("prev_page").innerText = page;
+    document.getElementById("prev_division").innerText = division;
+    document.getElementById("prev_district").innerText = district;
+    document.getElementById("prev_upazila").innerText = upazila;
+    document.getElementById("prev_mouza").innerText = mouza;
+    document.getElementById("prev_jl").innerText = jl;
+    document.getElementById("prev_resa").innerText = resa;
+    document.getElementById("prev_owner_share").innerText = ownerShare;
+    document.getElementById("prev_note").innerText = note;
+    document.getElementById("prev_case_note").innerText = caseNote;
+    document.getElementById("prev_print_date").innerText = printDate;
+
+    var tbody = document.getElementById("prev_table_body");
+    tbody.innerHTML = "";
+
+    var totalShataṁśa = 0;
+
+    dagRowsData.forEach((row, i) => {
+      var tr = document.createElement("tr");
+      if (i === 0) {
+        tr.innerHTML = `
+          <td rowspan="${dagRowsData.length}" class="owner-td">${escapeHtml(owner)}</td>
+          <td rowspan="${dagRowsData.length}">${escapeHtml(ownerShare)}</td>
+          <td rowspan="${dagRowsData.length}"></td>
+          <td>${escapeHtml(row.dag)}</td>
+          <td>${escapeHtml(row.class)}</td>
+          <td></td>
+          <td>${escapeHtml(row.a_ekr)}</td>
+          <td>${escapeHtml(row.a_shataṁśa)}</td>
+          <td>${escapeHtml(row.anśa)}</td>
+          <td>${escapeHtml(row.d_ekr)}</td>
+          <td>${escapeHtml(row.d_shataṁśa)}</td>
+          <td>${escapeHtml(row.note)}</td>
+        `;
+      } else {
+        tr.innerHTML = `
+          <td>${escapeHtml(row.dag)}</td>
+          <td>${escapeHtml(row.class)}</td>
+          <td></td>
+          <td>${escapeHtml(row.a_ekr)}</td>
+          <td>${escapeHtml(row.a_shataṁśa)}</td>
+          <td>${escapeHtml(row.anśa)}</td>
+          <td>${escapeHtml(row.d_ekr)}</td>
+          <td>${escapeHtml(row.d_shataṁśa)}</td>
+          <td>${escapeHtml(row.note)}</td>
+        `;
+      }
+      tbody.appendChild(tr);
+
+      var sh = parseFloat(row.d_shataṁśa) || 0;
+      totalShataṁśa += sh;
+    });
+
+    document.getElementById("in_total_land_sum").value = totalShataṁśa + " শতাংশ";
+    document.getElementById("prev_total_land_sum").innerText = totalShataṁśa + " শতাংশ";
+
+    var qrData = window.location.origin + window.location.pathname + "?k=" + encodeURIComponent(khatian) + "&m=" + encodeURIComponent(owner) + "&d=" + encodeURIComponent(dagRowsData.map(r=>r.dag).join(',')) + "&mz=" + encodeURIComponent(mouza) + "&u=" + encodeURIComponent(upazila) + "&dt=" + encodeURIComponent(district) + "&dv=" + encodeURIComponent(division);
+    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(qrData);
+
+    document.getElementById("preview_area").style.display = "block";
+  }
+
+  function saveKhatian() {
+    var khatian = document.getElementById("in_khatian").value;
+    if (!khatian) {
+      alert("খতিয়ান নং প্রদান করুন!");
+      return;
+    }
+
+    var recordData = {
+      khatian: khatian,
+      mouza: document.getElementById("in_mouza").value,
+      total_land: document.getElementById("in_total_land_sum").value,
+      date: document.getElementById("in_print_date").value,
+      formData: {
+        page: document.getElementById("in_page").value,
+        division: document.getElementById("in_division").value,
+        district: document.getElementById("in_district").value,
+        upazila: document.getElementById("in_upazila").value,
+        mouza: document.getElementById("in_mouza").value,
+        jl: document.getElementById("in_jl").value,
+        resa: document.getElementById("in_resa").value,
+        owner: document.getElementById("in_owner").value,
+        owner_share: document.getElementById("in_owner_share").value,
+        note: document.getElementById("in_note").value,
+        case_note: document.getElementById("in_case_note").value,
+        print_date: document.getElementById("in_print_date").value,
+        dagRows: dagRowsData
+      }
+    };
+
+    db.ref("khatian_records").push(recordData).then(() => {
+      alert("খতিয়ান সফলভাবে সংরক্ষণ করা হয়েছে!");
+      loadSavedKatians();
+    });
+  }
+
+  function loadSavedKatians() {
+    var tbody = document.getElementById("khatian_list");
+    if(!tbody) return;
+
+    db.ref("khatian_records").on("value", snapshot => {
+      tbody.innerHTML = "";
+      if(!snapshot.exists()) {
+        tbody.innerHTML = "<tr><td colspan='6'>কোনো খতিয়ান সংরক্ষিত নেই।</td></tr>";
+        return;
+      }
+      var i = 1;
+      snapshot.forEach(child => {
+        var key = child.key;
+        var rec = child.val();
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i++}</td>
+          <td>${escapeHtml(rec.khatian)}</td>
+          <td>${escapeHtml(rec.mouza)}</td>
+          <td>${escapeHtml(rec.total_land)}</td>
+          <td>${escapeHtml(rec.date)}</td>
+          <td>
+            <button class="btn-sm btn-edit" onclick="loadKhatianRecord('${key}')">লোড</button>
+            <button class="btn-sm btn-del" onclick="deleteKhatianRecord('${key}')">মুছুন</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  function loadKhatianRecord(key) {
+    db.ref("khatian_records/" + key).once("value").then(snapshot => {
+      var rec = snapshot.val();
+      if(rec && rec.formData) {
+        var d = rec.formData;
+        document.getElementById("in_khatian").value = rec.khatian;
+        document.getElementById("in_page").value = d.page || "";
+        document.getElementById("in_division").value = d.division || "";
+        document.getElementById("in_district").value = d.district || "";
+        document.getElementById("in_upazila").value = d.upazila || "";
+        document.getElementById("in_mouza").value = d.mouza || "";
+        document.getElementById("in_jl").value = d.jl || "";
+        document.getElementById("in_resa").value = d.resa || "";
+        document.getElementById("in_owner").value = d.owner || "";
+        document.getElementById("in_owner_share").value = d.owner_share || "";
+        document.getElementById("in_note").value = d.note || "";
+        document.getElementById("in_case_note").value = d.case_note || "";
+        document.getElementById("in_print_date").value = d.print_date || "";
+        document.getElementById("in_record_id").value = key;
+
+        dagRowsData = d.dagRows || [];
+        initDagRows();
+        renderPreview();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+    });
+  }
+
+  function deleteKhatianRecord(key) {
+    if(confirm("এই খতিয়ানটি মুছে ফেলতে চান?")) {
+      db.ref("khatian_records/" + key).remove().then(() => {
+        alert("মুছে ফেলা হয়েছে!");
+      });
+    }
+  }
+
+  function resetKhatianForm() {
+    document.getElementById("khatianForm").reset();
+    document.getElementById("in_record_id").value = "";
+    dagRowsData = [{dag:"", class:"নাল", a_ekr:"", a_shataṁśa:"", d_ekr:"", d_shataṁśa:"", anśa:"", note:""}];
+    initDagRows();
+    renderPreview();
+  }
+
+  function payAndPrint() {
+    var user = sessionStorage.getElementById("loggedInUser") ? sessionStorage.getItem("loggedInUser") : sessionStorage.getItem("loggedInUser");
+    var role = sessionStorage.getItem("userRole");
+
+    if (role === "admin") {
+      window.print();
+      return;
+    }
+
+    db.ref("users/" + user + "/balance").once("value").then(snapshot => {
+      var bal = snapshot.val() || 0;
+      if (bal < printFee) {
+        alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রিন্ট করার জন্য ন্যূনতম ৳" + printFee + " প্রয়োজন। দয়া করে রিচার্জ করুন।");
+        openRechargeModal();
+        return;
+      }
+
+      if (confirm("প্রিন্ট/ডাউনলোড বাবদ আপনার অ্যাকাউন্ট থেকে ৳" + printFee + " কাটা হবে।")) {
+        var newBal = bal - printFee;
+        db.ref("users/" + user + "/balance").set(newBal).then(() => {
+          loadWallet();
+          window.print();
+        });
+      }
+    });
+  }
+
+  function closePreview() {
+    document.getElementById("preview_area").style.display = "none";
+  }
+
+  function toBanglaDigits(n) {
+    var bnNums = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+    return n.toString().replace(/\d/g, x => bnNums[x]);
+  }
+
+  function escapeHtml(str) {
+    if(!str) return "";
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  initDagRows();
+</script>
 </body>
 </html>
