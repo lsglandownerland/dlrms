@@ -1245,9 +1245,9 @@
                 </td>
                 <td><b id="prev_owner_share">১.০০০</b></td>
                 <td></td>
-                <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
-                <td><b>মোট জমি:</b></td>
-                <td><b id="prev_total_land_sum">০</b></td>
+                <td colspan="5" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
+                <td style="font-weight: bold; white-space: nowrap;">মোট জমি:</td>
+                <td colspan="2" style="white-space: nowrap;"><b id="prev_total_land_sum">০</b> শতাংশ</td>
                 <td></td>
               </tr>
             </tfoot>
@@ -2074,8 +2074,8 @@
       totalShataṁśa += sh;
     });
 
-    document.getElementById("in_total_land_sum").value = totalShataṁśa + " শতাংশ";
-    document.getElementById("prev_total_land_sum").innerText = totalShataṁśa + " শতাংশ";
+    document.getElementById("in_total_land_sum").value = totalShataṁśa;
+    document.getElementById("prev_total_land_sum").innerText = totalShataṁśa;
 
     var qrData = window.location.origin + window.location.pathname + "?k=" + encodeURIComponent(khatian) + "&m=" + encodeURIComponent(owner) + "&d=" + encodeURIComponent(dagRowsData.map(r=>r.dag).join(',')) + "&mz=" + encodeURIComponent(mouza) + "&u=" + encodeURIComponent(upazila) + "&dt=" + encodeURIComponent(district) + "&dv=" + encodeURIComponent(division);
     document.getElementById("preview_qr").src = QR_API + encodeURIComponent(qrData);
