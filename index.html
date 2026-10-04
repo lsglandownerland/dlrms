@@ -21,9 +21,6 @@
     body {
       background-color: #f4f6f9;
       color: #333;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
 
     /* Cover Page Carousel Style */
@@ -117,7 +114,6 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      flex: 1;
     }
 
     h4 {
@@ -561,26 +557,6 @@
       color: #fff;
     }
 
-    /* GitHub Logo Watermark Container Style (Updated to center at bottom automatically) */
-    .github-logo-container {
-      position: fixed;
-      bottom: 20px;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      pointer-events: none;
-      z-index: 1000;
-    }
-
-    .github-logo-img {
-      width: 150px;
-      height: 150px;
-      object-fit: contain;
-      opacity: 0.15;
-    }
-
     @media print {
       @page {
         size: A4 landscape;
@@ -604,7 +580,6 @@
       }
       .button-group { display: none !important; }
       .cover-container, .marquee-container { display: none !important; }
-      .github-logo-container { display: none !important; }
     }
   </style>
 </head>
@@ -666,10 +641,10 @@
     </div>
   </div>
 
-  <!-- ==================== SCROLLING TEXT MARQUEE (NOAKHALI PRAYER TIMES & POLICY) ==================== -->
+  <!-- ==================== SCROLLING TEXT MARQUEE (POLICY & PRAYER TIMES) ==================== -->
   <div class="marquee-container">
     <marquee behavior="scroll" direction="left" scrollamount="6">
-      *** নিজে নামাজ পড়ুন অন্যকে নামাজ পড়ার সুযোগ দিন। *** মা-বাবার সেবা করুন। *** বাল্য বিবাহ কে না বলুন। *** নোয়াখালীর স্থানীয় সময়সূচী অনুযায়ী নামাজের ওয়াক্ত: [ফজর: ০৪:৩৩ AM - ০৫:৪৭ AM] | [যুহর: ১১:৪৪ AM - ০৩:০৮ PM] | [আসর: ০৩:০৮ PM - ০৫:৪১ PM] | [মাগরিব: ০৫:৪১ PM - ০৬:৫৫ PM] | [এশা: ০৬:৫৫ PM - ০৪:৩৩ AM] *** প্রতিদিন একটি ভালো কাজ করুন। ***
+      *** টাকা থাকলে বন্ধু-বান্ধব কাছের বড় ভাই, টাকা না থাকলে হাতে মানুষ চিনা যায়, বিপদে পড়ে দেখো কে ছিল আপন। *** নিজে নামাজ পড়ুন অন্যকে নামাজ পড়ার সুযোগ দিন। *** মা-বাবার সেবা করুন। *** বাল্য বিবাহ কে না বলুন। *** নোয়াখালীর স্থানীয় সময়সূচী অনুযায়ী নামাজের ওয়াক্ত: [ফজর: ০৪:৩৩ AM - ০৫:৪৭ AM] | [যুহর: ১১:৪৪ AM - ০৩:০৮ PM] | [আসর: ০৩:০৮ PM - ০৫:৪১ PM] | [মাগরিব: ০৫:৪১ PM - ০৬:৫৫ PM] | [এশা: ০৬:৫৫ PM - ০৪:৩৩ AM] *** প্রতিদিন একটি ভালো কাজ করুন। ***
     </marquee>
   </div>
 
@@ -682,7 +657,7 @@
     </div>
 
     <div class="nav-bar">
-      <img src="https://land.gov.bd/sites/default/files/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <img src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
       <div style="font-size: 20px; color: #1b5e20;">
         <i class="fas fa-shopping-cart"></i>
         <i class="fas fa-ellipsis-v" style="margin-left: 15px;"></i>
@@ -719,7 +694,7 @@
         <div>
           <div style="font-weight: bold; color: #1b5e20; margin-bottom: 8px;">পরিকল্পনা ও বাস্তবায়নে</div>
           <div class="partner-logos">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="Gov">
+            <img src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="Gov">
             <span style="font-size: 11px; font-weight: bold; color: #2e7d32;">জনবান্ধব ভূমি সেবা অটোমেশন</span>
           </div>
         </div>
@@ -1270,7 +1245,7 @@
                 </td>
                 <td><b id="prev_owner_share">১.০০০</b></td>
                 <td></td>
-                <td colspan="6" style="font-weight: bold; font-size: 14px;">পরিবার পরিকল্পনা গ্রহণ করুন</td>
+                <td colspan="6" style="font-weight: bold; font-size: 14px;">টাকা থাকলে বন্ধু-বান্ধব কাছের বড় ভাই, টাকা না থাকলে হাতে মানুষ চিনা যায়, বিপদে পড়ে দেখো কে ছিল আপন।</td>
                 <td><b>মোট জমি:</b></td>
                 <td><b id="prev_total_land_sum">০</b></td>
                 <td></td>
@@ -1288,7 +1263,7 @@
             </div>
 
             <div style="width: 30%; text-align: center;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="অফিসিয়াল সীল" class="official-logo-img">
+              <img src="https://raw.githubusercontent.com/lsglandownerland/dlrms/main/logo.png" alt="অফিসিয়াল সীল" class="official-logo-img">
             </div>
 
             <div style="width: 35%; text-align: right;">
@@ -1305,11 +1280,6 @@
       </div>
 
     </div>
-  </div>
-
-  <!-- ==================== GITHUB LOGO WATERMARK (AUTO BOTTOM CENTER) ==================== -->
-  <div class="github-logo-container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" alt="GitHub Logo" class="github-logo-img" id="github_watermark_logo">
   </div>
 
 <script>
@@ -1501,6 +1471,7 @@
       return;
     }
 
+    // যদি সাব-এডমিন হয়, তবে তার ব্যালেন্স থেকে টাকা কাটা হবে
     if (role !== "admin") {
       db.ref("users/" + user + "/balance").once("value").then(function(snapshot) {
         var currentBalance = snapshot.val() || 0;
@@ -1517,6 +1488,7 @@
         }
       });
     } else {
+      // এডমিন ইউজার হলে ব্যালেন্স কাটার প্রয়োজন নেই (অসীম ব্যালেন্স)
       saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
     }
   }
@@ -1595,6 +1567,7 @@
       db.ref("bhumisheba_orders/" + orderId).once("value").then(function(snapshot) {
         var orderData = snapshot.val();
         if(orderData && orderData.status === "pending") {
+          // ইউজারের ওয়ালেটে টাকা রিফান্ড করা
           db.ref("users/" + requestedBy + "/balance").once("value").then(function(balSnap) {
             var currentBal = balSnap.val() || 0;
             db.ref("users/" + requestedBy + "/balance").set(currentBal + amount).then(function() {
@@ -2221,7 +2194,7 @@
   }
 
   function payAndPrint() {
-    var user = sessionStorage.getElementById("loggedInUser") ? sessionStorage.getItem("loggedInUser") : sessionStorage.getItem("loggedInUser");
+    var user = sessionStorage.getItem("loggedInUser");
     var role = sessionStorage.getItem("userRole");
 
     if (role === "admin") {
