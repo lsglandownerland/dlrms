@@ -102,7 +102,7 @@
       background: #1b5e20;
       color: #ffffff;
       padding: 10px 0;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
@@ -207,7 +207,8 @@
     .btn-save { background-color: #28a745; }
     .btn-reset { background-color: #6c757d; }
     .btn-print { background-color: #007bff; }
-    .btn-recharge { background-color: #e2136e; color: #fff; padding: 5px 12px; font-size: 13px; border-radius: 20px; border: none; cursor: pointer; margin-left: 10px; }
+    .btn-recharge { background-color: #e2136e; color: #fff; padding: 5px 12px; font-size: 13px; border-radius: 20px; border: none; cursor: pointer; margin-left: 5px; }
+    .btn-history { background-color: #17a2b8; color: #fff; padding: 5px 12px; font-size: 13px; border-radius: 20px; border: none; cursor: pointer; margin-left: 5px; }
     .btn-add-dag { background-color: #28a745; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
 
     .btn-sm {
@@ -640,10 +641,10 @@
     </div>
   </div>
 
-  <!-- ==================== SCROLLING TEXT MARQUEE ==================== -->
+  <!-- ==================== SCROLLING TEXT MARQUEE (NOAKHALI PRAYER TIMES & POLICY) ==================== -->
   <div class="marquee-container">
     <marquee behavior="scroll" direction="left" scrollamount="6">
-      *** নিজে নামাজ পড়ুন অন্যকে নামাজ পড়ার সুযোগ দিন। *** মা-বাবার সেবা করুন। *** বাল্য বিবাহ কে না বলুন। *** প্রতিদিন একটি ভালো কাজ করুন। ***
+      *** নিজে নামাজ পড়ুন অন্যকে নামাজ পড়ার সুযোগ দিন। *** মা-বাবার সেবা করুন। *** বাল্য বিবাহ কে না বলুন। *** নোয়াখালীর স্থানীয় সময়সূচী অনুযায়ী নামাজের ওয়াক্ত: [ফজর: ০৪:৩৩ AM - ০৫:৪৭ AM] | [যুহর: ১১:৪৪ AM - ০৩:০৮ PM] | [আসর: ০৩:০৮ PM - ০৫:৪১ PM] | [মাগরিব: ০৫:৪১ PM - ০৬:৫৫ PM] | [এশা: ০৬:৫৫ PM - ০৪:৩৩ AM] *** প্রতিদিন একটি ভালো কাজ করুন। ***
     </marquee>
   </div>
 
@@ -736,11 +737,15 @@
     <!-- MAIN APP PANEL -->
     <div id="admin_panel" style="display:none;">
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e9ecef; padding:12px; border-radius:5px; flex-wrap:wrap; gap:10px;">
         <div>
           <strong>ইউজার: </strong><span id="display_username"></span> (<span id="display_role"></span>)<br>
           <strong>ওয়ালেট ব্যালেন্স: </strong><span id="wallet_balance" style="color:#28a745; font-size:18px;">৳ 0</span>
-          <button type="button" class="btn-recharge" id="subadmin_recharge_btn" onclick="openRechargeModal()"><i class="fas fa-wallet"></i> রিচার্জ করুন</button>
+          <span id="subadmin_action_buttons" style="display:inline-block;">
+            <button type="button" class="btn-recharge" onclick="openRechargeModal()"><i class="fas fa-wallet"></i> রিচার্জ করুন</button>
+            <button type="button" class="btn-history" onclick="openRechargeHistoryModal()"><i class="fas fa-history"></i> রিচার্জ হিস্টোরী</button>
+            <button type="button" class="btn-history" style="background-color: #6f42c1;" onclick="openOrderHistoryModal()"><i class="fas fa-list-alt"></i> অর্ডার হিস্টোরী</button>
+          </span>
         </div>
         <button type="button" class="btn btn-del" onclick="handleLogout()">লগআউট</button>
       </div>
@@ -814,6 +819,56 @@
             </div>
             <button type="submit" class="btn btn-save" style="width:100%; margin-top:10px;">অনুরোধ পাঠান</button>
           </form>
+        </div>
+      </div>
+
+      <!-- RECHARGE HISTORY MODAL FOR SUBADMIN -->
+      <div id="recharge_history_modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 650px;">
+          <span class="modal-close" onclick="closeRechargeHistoryModal()">&times;</span>
+          <h4>আমার রিচার্জ হিস্টোরী</h4>
+          <div class="filter-btn-group">
+            <button class="filter-btn active" onclick="filterSubadminRecharges('all', this)">সবগুলো</button>
+            <button class="filter-btn" onclick="filterSubadminRecharges('pending', this)">অপেক্ষমাণ (Pending)</button>
+            <button class="filter-btn" onclick="filterSubadminRecharges('approved', this)">সফল (Approved)</button>
+            <button class="filter-btn" onclick="filterSubadminRecharges('rejected', this)">বাতিল (Rejected)</button>
+          </div>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>পরিমাণ</th>
+                <th>TrxID</th>
+                <th>স্ক্রিনশট</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+              </tr>
+            </thead>
+            <tbody id="subadmin_recharge_list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ORDER HISTORY MODAL FOR SUBADMIN -->
+      <div id="order_history_modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 750px;">
+          <span class="modal-close" onclick="closeOrderHistoryModal()">&times;</span>
+          <h4>সকল অর্ডারের হিস্টোরী (তথ্য ও কর্তনকৃত টাকা)</h4>
+          <table class="record-table">
+            <thead>
+              <tr>
+                <th>ক্রমিক</th>
+                <th>ক্যাটাগরি</th>
+                <th>সার্ভিসের বিবরণ</th>
+                <th>কর্তনকৃত টাকা (৳)</th>
+                <th>স্ট্যাটাস</th>
+                <th>তারিখ</th>
+              </tr>
+            </thead>
+            <tbody id="subadmin_order_history_list">
+              <tr><td colspan="6">অর্ডার হিস্টোরী লোড হচ্ছে...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -929,30 +984,6 @@
         </div>
       </div>
 
-      <!-- SUBADMIN RECHARGE HISTORY SECTION -->
-      <div id="subadmin_recharge_history" class="admin-section-box" style="display:none;">
-        <h4>আমার রিচার্জের অনুরোধসমূহ</h4>
-        <div class="filter-btn-group">
-          <button class="filter-btn active" onclick="filterSubadminRecharges('all', this)">সবগুলো</button>
-          <button class="filter-btn" onclick="filterSubadminRecharges('pending', this)">অপেক্ষমাণ (Pending)</button>
-          <button class="filter-btn" onclick="filterSubadminRecharges('approved', this)">সফল (Approved)</button>
-          <button class="filter-btn" onclick="filterSubadminRecharges('rejected', this)">বাতিল (Rejected)</button>
-        </div>
-        <table class="record-table">
-          <thead>
-            <tr>
-              <th>ক্রমিক</th>
-              <th>পরিমাণ</th>
-              <th>TrxID</th>
-              <th>স্ক্রিনশট</th>
-              <th>স্ট্যাটাস</th>
-              <th>তারিখ</th>
-            </tr>
-          </thead>
-          <tbody id="subadmin_recharge_list"></tbody>
-        </table>
-      </div>
-
       <!-- KHATIAN TAB SECTION -->
       <div id="khatian_section">
         <form id="khatianForm" style="margin-top:20px;">
@@ -1021,7 +1052,7 @@
           <hr style="margin: 15px 0;">
           
           <div style="background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
-            <p style="margin: 0;">এই সেবার জন্য অর্ডার সাবমিট করলে ফি কেটে নেওয়া হবে এবং এডমিন অনুমোদন সাপেক্ষে লিংক চালু হবে।</p>
+            <p style="margin: 0;">এই সেবার জন্য অর্ডার সাবমিট করলে আপনার অ্যাকাউন্ট থেকে ফি কেটে নেওয়া হবে এবং এডমিন অনুমোদন সাপেক্ষে লিংক চালু হবে।</p>
           </div>
           
           <div style="background: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;">
@@ -1384,6 +1415,24 @@
     document.getElementById("recharge_modal").style.display = "none";
   }
 
+  function openRechargeHistoryModal() {
+    document.getElementById("recharge_history_modal").style.display = "flex";
+    loadSubadminRecharges();
+  }
+
+  function closeRechargeHistoryModal() {
+    document.getElementById("recharge_history_modal").style.display = "none";
+  }
+
+  function openOrderHistoryModal() {
+    document.getElementById("order_history_modal").style.display = "flex";
+    loadSubadminOrderHistory();
+  }
+
+  function closeOrderHistoryModal() {
+    document.getElementById("order_history_modal").style.display = "none";
+  }
+
   function openScreenshotModal(imgSrc) {
     document.getElementById("screenshot_img_view").src = imgSrc;
     document.getElementById("screenshot_modal").style.display = "flex";
@@ -1410,9 +1459,10 @@
     if (sectionId === 'bdfast_section') document.getElementById('tab_bdfast_btn').classList.add("active");
   }
 
-  /* ==================== PENDING ORDER SYSTEM ==================== */
+  /* ==================== PENDING ORDER & DEDUCTION SYSTEM ==================== */
   function submitCustomOrder(category, nameInputId, amountInputId, containerId, targetUrl) {
     var user = sessionStorage.getItem("loggedInUser");
+    var role = sessionStorage.getItem("userRole");
     var serviceDetails = document.getElementById(nameInputId).value.trim();
     var amount = parseFloat(document.getElementById(amountInputId).value);
 
@@ -1421,6 +1471,29 @@
       return;
     }
 
+    // যদি সাব-এডমিন হয়, তবে তার ব্যালেন্স থেকে টাকা কাটা হবে
+    if (role !== "admin") {
+      db.ref("users/" + user + "/balance").once("value").then(function(snapshot) {
+        var currentBalance = snapshot.val() || 0;
+        if (currentBalance < amount) {
+          alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + amount + "। দয়া করে রিচার্জ করুন।");
+          return;
+        }
+
+        if (confirm("এই সেবার জন্য আপনার অ্যাকাউন্ট থেকে ৳" + amount + " কাটা হবে। আপনি কি অর্ডার নিশ্চিত করতে চান?")) {
+          var newBalance = currentBalance - amount;
+          db.ref("users/" + user + "/balance").set(newBalance).then(function() {
+            saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
+          });
+        }
+      });
+    } else {
+      // এডমিন ইউজার হলে ব্যালেন্স কাটার প্রয়োজন নেই (অসীম ব্যালেন্স)
+      saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
+    }
+  }
+
+  function saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl) {
     var orderData = {
       requestedBy: user,
       serviceCategory: category,
@@ -1435,7 +1508,8 @@
 
     db.ref("bhumisheba_orders").push(orderData).then(function() {
       alert("আপনার অর্ডারটি সফলভাবে জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
-      document.getElementById(nameInputId).value = "";
+      document.getElementById(containerId.replace('_iframe_container', '_service_name')).value = "";
+      loadWallet();
     }).catch(function(error) {
       alert("অর্ডার দিতে ত্রুটি: " + error.message);
     });
@@ -1465,8 +1539,8 @@
             <td><span style="color:orange; font-weight:bold;">Pending</span></td>
             <td>${order.date || '-'}</td>
             <td>
-              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', ${order.amount}, '${order.containerId}', '${order.targetUrl}')">অনুমোদন ও ফি কর্তন</button>
-              <button class="btn-sm btn-del" onclick="rejectOrder('${orderId}')">বাতিল</button>
+              <button class="btn-sm btn-save" onclick="approveOrder('${orderId}', '${order.containerId}', '${order.targetUrl}')">অনুমোদন</button>
+              <button class="btn-sm btn-del" onclick="rejectOrder('${orderId}', '${order.requestedBy}', ${order.amount})">বাতিল ও রিফান্ড</button>
             </td>
           `;
           tbody.appendChild(tr);
@@ -1474,43 +1548,70 @@
       });
   }
 
-  function approveOrder(orderId, fee, containerId, targetUrl) {
+  function approveOrder(orderId, containerId, targetUrl) {
     var adminUser = sessionStorage.getItem("loggedInUser");
-
-    db.ref("users/" + adminUser + "/balance").once("value").then(function(snapshot) {
-      var currentBalance = snapshot.val() || 0;
-
-      if (currentBalance < fee) {
-        alert("এডমিন ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + fee);
-        return;
-      }
-
-      if (confirm("আপনি কি নিশ্চিত যে ৳" + fee + " কেটে অর্ডারটি অনুমোদন করবেন?")) {
-        var newBalance = currentBalance - fee;
-
-        db.ref("users/" + adminUser + "/balance").set(newBalance).then(function() {
-          db.ref("bhumisheba_orders/" + orderId).update({
-            status: "approved",
-            approvedBy: adminUser,
-            approvedAt: firebase.database.ServerValue.TIMESTAMP
-          }).then(function() {
-            alert("অর্ডার অনুমোদিত হয়েছে এবং ওয়ালেট থেকে ফি কাটা হয়েছে।");
-            loadWallet();
-            if(containerId && targetUrl) {
-              activatePortalFrame(containerId, targetUrl);
-            }
-          });
-        });
+    db.ref("bhumisheba_orders/" + orderId).update({
+      status: "approved",
+      approvedBy: adminUser,
+      approvedAt: firebase.database.ServerValue.TIMESTAMP
+    }).then(function() {
+      alert("অর্ডার অনুমোদিত হয়েছে।");
+      if(containerId && targetUrl) {
+        activatePortalFrame(containerId, targetUrl);
       }
     });
   }
 
-  function rejectOrder(orderId) {
-    if (confirm("অর্ডারটি বাতিল করতে চান?")) {
-      db.ref("bhumisheba_orders/" + orderId).update({ status: "rejected" }).then(() => {
-        alert("অর্ডার বাতিল করা হয়েছে।");
+  function rejectOrder(orderId, requestedBy, amount) {
+    if (confirm("অর্ডারটি বাতিল করতে চান? (কর্তনকৃত টাকা ইউজারের ওয়ালেটে রিফান্ড করা হবে)")) {
+      db.ref("bhumisheba_orders/" + orderId).once("value").then(function(snapshot) {
+        var orderData = snapshot.val();
+        if(orderData && orderData.status === "pending") {
+          // ইউজারের ওয়ালেটে টাকা রিফান্ড করা
+          db.ref("users/" + requestedBy + "/balance").once("value").then(function(balSnap) {
+            var currentBal = balSnap.val() || 0;
+            db.ref("users/" + requestedBy + "/balance").set(currentBal + amount).then(function() {
+              db.ref("bhumisheba_orders/" + orderId).update({ status: "rejected" }).then(() => {
+                alert("অর্ডার বাতিল করা হয়েছে এবং টাকা রিফান্ড করা হয়েছে।");
+              });
+            });
+          });
+        }
       });
     }
+  }
+
+  function loadSubadminOrderHistory() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var tbody = document.getElementById("subadmin_order_history_list");
+    if (!tbody) return;
+
+    db.ref("bhumisheba_orders").orderByChild("requestedBy").equalTo(user)
+      .on("value", function(snapshot) {
+        tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+          tbody.innerHTML = "<tr><td colspan='6'>আপনার কোনো অর্ডার হিস্টোরী নেই।</td></tr>";
+          return;
+        }
+
+        var i = 1;
+        snapshot.forEach(function(child) {
+          var order = child.val();
+          var badgeColor = order.status === 'approved' ? 'green' : (order.status === 'rejected' ? 'red' : 'orange');
+          var statusText = order.status === 'approved' ? 'সফল (Approved)' : (order.status === 'rejected' ? 'বাতিল (Rejected)' : 'অপেক্ষমাণ (Pending)');
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i++}</td>
+            <td>${escapeHtml(order.serviceCategory)}</td>
+            <td>${escapeHtml(order.serviceDetails)}</td>
+            <td><b>৳${order.amount}</b></td>
+            <td><span style="color:${badgeColor}; font-weight:bold;">${statusText}</span></td>
+            <td>${order.date || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
   }
 
   function activatePortalFrame(containerId, targetUrl) {
@@ -1652,48 +1753,165 @@
 
       if (role === "admin") {
         document.getElementById("master_admin_controls").style.display = "block";
-        document.getElementById("subadmin_recharge_history").style.display = "none";
-        document.getElementById("subadmin_recharge_btn").style.display = "none";
-        renderSubAdmins();
-        renderRechargeRequests();
+        document.getElementById("wallet_balance").innerText = "অসীম (Unlimited)";
+        document.getElementById("subadmin_action_buttons").style.display = "none";
+        loadSubAdmins();
+        loadRechargeRequests();
         loadPendingOrdersForAdmin();
       } else {
         document.getElementById("master_admin_controls").style.display = "none";
-        document.getElementById("subadmin_recharge_history").style.display = "block";
-        document.getElementById("subadmin_recharge_btn").style.display = "inline-block";
-        renderSubadminRechargeList();
+        document.getElementById("subadmin_action_buttons").style.display = "inline-block";
+        loadWallet();
       }
 
-      initDefaultDags();
-      loadWallet();
-      renderList();
+      loadSavedKatians();
+      renderPreview();
     }
   }
 
-  function toEnglishDigits(str) {
-    var bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-    return String(str || '').replace(/[০-৯]/g, function(w) { return bn.indexOf(w); });
-  }
-
-  function toBanglaDigits(num) {
-    var bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-    return String(num).replace(/[0-9]/g, function(w) { return bn[parseInt(w)]; });
-  }
-
-  function calculateTotalLand() {
-    var rows = document.querySelectorAll("#dag_container .dag-row");
-    var total = 0;
-    rows.forEach(function(row) {
-      var val = row.querySelector(".d_sh_per")?.value || "";
-      var engVal = parseFloat(toEnglishDigits(val));
-      if (!isNaN(engVal)) {
-        total += engVal;
-      }
+  function loadWallet() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var role = sessionStorage.getItem("userRole");
+    if (role === "admin") {
+      document.getElementById("wallet_balance").innerText = "অসীম (Unlimited)";
+      return;
+    }
+    db.ref("users/" + user + "/balance").on("value", snapshot => {
+      var bal = snapshot.val() || 0;
+      document.getElementById("wallet_balance").innerText = "৳ " + bal;
     });
+  }
 
-    var banglaTotal = toBanglaDigits(total);
-    document.getElementById("in_total_land_sum").value = banglaTotal;
-    document.getElementById("prev_total_land_sum").innerText = banglaTotal;
+  function requestRecharge(e) {
+    e.preventDefault();
+    var user = sessionStorage.getItem("loggedInUser");
+    var amount = parseFloat(document.getElementById("recharge_amount").value);
+    var trxn = document.getElementById("recharge_trxn").value.trim();
+    var fileInput = document.getElementById("recharge_screenshot");
+
+    if (fileInput.files && fileInput.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var base64Img = event.target.result;
+        var rechargeData = {
+          username: user,
+          amount: amount,
+          trxn: trxn,
+          screenshot: base64Img,
+          status: "pending",
+          date: new Date().toLocaleString("bn-BD"),
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+        db.ref("recharge_requests").push(rechargeData).then(() => {
+          alert("রিচার্জের অনুরোধ সফলভাবে পাঠানো হয়েছে!");
+          closeRechargeModal();
+          document.getElementById("recharge_amount").value = "";
+          document.getElementById("recharge_trxn").value = "";
+          document.getElementById("recharge_screenshot").value = "";
+        });
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+    }
+  }
+
+  function loadSubadminRecharges() {
+    var user = sessionStorage.getItem("loggedInUser");
+    var tbody = document.getElementById("subadmin_recharge_list");
+    if (!tbody) return;
+
+    db.ref("recharge_requests").orderByChild("username").equalTo(user)
+      .on("value", snapshot => {
+        tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+          tbody.innerHTML = "<tr><td colspan='6'>কোনো রিচার্জ অনুরোধ নেই।</td></tr>";
+          return;
+        }
+
+        var i = 1;
+        snapshot.forEach(child => {
+          var req = child.val();
+          if (currentFilterStatus !== 'all' && req.status !== currentFilterStatus) return;
+
+          var badgeColor = req.status === 'approved' ? 'green' : (req.status === 'rejected' ? 'red' : 'orange');
+          var statusText = req.status === 'approved' ? 'সফল' : (req.status === 'rejected' ? 'বাতিল' : 'অপেক্ষমাণ');
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i++}</td>
+            <td>৳${req.amount}</td>
+            <td>${escapeHtml(req.trxn)}</td>
+            <td><button class="btn-sm btn-prt" onclick="openScreenshotModal('${req.screenshot}')">ভিউ</button></td>
+            <td><span style="color:${badgeColor}; font-weight:bold;">${statusText}</span></td>
+            <td>${req.date || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  function filterSubadminRecharges(status, btnElement) {
+    currentFilterStatus = status;
+    var group = btnElement.parentElement;
+    Array.from(group.children).forEach(b => b.classList.remove("active"));
+    btnElement.classList.add("active");
+    loadSubadminRecharges();
+  }
+
+  function loadRechargeRequests() {
+    var tbody = document.getElementById("recharge_list");
+    if (!tbody) return;
+
+    db.ref("recharge_requests").on("value", snapshot => {
+      tbody.innerHTML = "";
+      if (!snapshot.exists()) {
+        tbody.innerHTML = "<tr><td colspan='8'>কোনো রিচার্জ অনুরোধ নেই।</td></tr>";
+        return;
+      }
+
+      var i = 1;
+      snapshot.forEach(child => {
+        var key = child.key;
+        var req = child.val();
+        var badgeColor = req.status === 'approved' ? 'green' : (req.status === 'rejected' ? 'red' : 'orange');
+
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i++}</td>
+          <td>${escapeHtml(req.username)}</td>
+          <td>৳${req.amount}</td>
+          <td>${escapeHtml(req.trxn)}</td>
+          <td><button class="btn-sm btn-prt" onclick="openScreenshotModal('${req.screenshot}')">ভিউ</button></td>
+          <td><span style="color:${badgeColor}; font-weight:bold;">${req.status}</span></td>
+          <td>${req.date || '-'}</td>
+          <td>
+            ${req.status === 'pending' ? `
+              <button class="btn-sm btn-save" onclick="approveRecharge('${key}', '${req.username}',${req.amount})">অনুমোদন</button>
+              <button class="btn-sm btn-del" onclick="rejectRecharge('${key}')">বাতিল</button>
+            ` : 'সম্পন্ন'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  function approveRecharge(reqId, username, amount) {
+    db.ref("users/" + username + "/balance").once("value").then(snapshot => {
+      var currentBal = snapshot.val() || 0;
+      var newBal = currentBal + amount;
+
+      db.ref("users/" + username + "/balance").set(newBal).then(() => {
+        db.ref("recharge_requests/" + reqId).update({ status: "approved" }).then(() => {
+          alert("রিচার্জ সফলভাবে অনুমোদিত হয়েছে!");
+        });
+      });
+    });
+  }
+
+  function rejectRecharge(reqId) {
+    db.ref("recharge_requests/" + reqId).update({ status: "rejected" }).then(() => {
+      alert("রিচার্জ অনুরোধ বাতিল করা হয়েছে।");
+    });
   }
 
   function addSubAdmin(e) {
@@ -1701,206 +1919,283 @@
     var user = document.getElementById("sub_username").value.trim();
     var pass = document.getElementById("sub_password").value;
 
-    if (!user || !pass) {
-      alert("ইউজারনেম এবং পাসওয়ার্ড দিন!");
-      return;
-    }
-
-    if (user === "admin") {
-      alert("এই ব্যবহারকারীর নাম রিজার্ভ করা আছে!");
-      return;
-    }
-
     db.ref("users/" + user).set({
-      username: user,
       password: pass,
-      role: "subadmin",
-      balance: 0
+      balance: 0,
+      role: "subadmin"
     }).then(() => {
-      alert("সাব-এডমিন সফলভাবে ডাটাবেসে তৈরি হয়েছে!");
+      alert("সাব-এডমিন সফলভাবে তৈরি হয়েছে!");
       document.getElementById("subAdminForm").reset();
-    }).catch(error => {
-      alert("ত্রুটি: " + error.message);
     });
   }
 
-  function renderSubAdmins() {
+  function loadSubAdmins() {
     var tbody = document.getElementById("subadmin_list");
     if (!tbody) return;
 
     db.ref("users").on("value", snapshot => {
-      var users = snapshot.val() || {};
       tbody.innerHTML = "";
-
-      var subadminKeys = Object.keys(users).filter(u => users[u].role === "subadmin");
-
-      if (subadminKeys.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4">কোনো সাব-এডমিন নেই</td></tr>`;
-        return;
-      }
-
-      var idx = 1;
-      subadminKeys.forEach(u => {
-        var tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${idx++}</td>
-          <td>${escapeHtml(users[u].username)}</td>
-          <td>৳ ${users[u].balance || 0}</td>
-          <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${users[u].username}')">মুছুন</button></td>
-        `;
-        tbody.appendChild(tr);
+      var i = 1;
+      snapshot.forEach(child => {
+        var username = child.key;
+        var data = child.val();
+        if (data.role === "subadmin") {
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i++}</td>
+            <td>${escapeHtml(username)}</td>
+            <td>৳${data.balance || 0}</td>
+            <td><button class="btn-sm btn-del" onclick="deleteSubAdmin('${username}')">মুছে ফেলুন</button></td>
+          `;
+          tbody.appendChild(tr);
+        }
       });
     });
   }
 
-  function deleteSubAdmin(user) {
-    if (!confirm("আপনি কি নিশ্চিত এই সাব-এডমিন মুছে ফেলতে চান?")) return;
-    db.ref("users/" + user).remove().then(() => {
-      alert("সাব-এডমিন মুছে ফেলা হয়েছে।");
+  function deleteSubAdmin(username) {
+    if (confirm(username + " সাব-এডমিনকে মুছে ফেলতে চান?")) {
+      db.ref("users/" + username).remove().then(() => {
+        alert("সফলভাবে মুছে ফেলা হয়েছে!");
+      });
+    }
+  }
+
+  /* KHATIAN SCRIPT */
+  var dagRowsData = [
+    {dag:"", class:"নাল", a_ekr:"", a_shataṁśa:"", d_ekr:"", d_shataṁśa:"", anśa:"", note:""}
+  ];
+
+  function initDagRows() {
+    var container = document.getElementById("dag_container");
+    if(!container) return;
+    container.innerHTML = "";
+    dagRowsData.forEach((row, idx) => {
+      var div = document.createElement("div");
+      div.className = "dag-row";
+      div.innerHTML = `
+        <input type="text" placeholder="দাগ" value="${row.dag}" oninput="updateDagData(${idx}, 'dag', this.value)">
+        <input type="text" placeholder="শ্রেণী" value="${row.class}" oninput="updateDagData(${idx}, 'class', this.value)">
+        <input type="text" placeholder="একর" value="${row.a_ekr}" oninput="updateDagData(${idx}, 'a_ekr', this.value)">
+        <input type="text" placeholder="শতাংশ" value="${row.a_shataṁśa}" oninput="updateDagData(${idx}, 'a_shataṁśa', this.value)">
+        <input type="text" placeholder="একর" value="${row.d_ekr}" oninput="updateDagData(${idx}, 'd_ekr', this.value)">
+        <input type="text" placeholder="শতাংশ" value="${row.d_shataṁśa}" oninput="updateDagData(${idx}, 'd_shataṁśa', this.value)">
+        <input type="text" placeholder="অংশ" value="${row.anśa}" oninput="updateDagData(${idx}, 'anśa', this.value)">
+        <input type="text" placeholder="মন্তব্য" value="${row.note}" oninput="updateDagData(${idx}, 'note', this.value)">
+        <button type="button" class="btn-sm btn-del" onclick="removeDagRow(${idx})">X</button>
+      `;
+      container.appendChild(div);
     });
   }
 
-  function loadWallet() {
-    var user = sessionStorage.getItem("loggedInUser");
-    db.ref("users/" + user).on("value", snapshot => {
-      var userData = snapshot.val() || {};
-      document.getElementById("wallet_balance").innerText = "৳ " + (userData.balance || 0);
-    });
+  function addDagRow() {
+    dagRowsData.push({dag:"", class:"নাল", a_ekr:"", a_shataṁśa:"", d_ekr:"", d_shataṁśa:"", anśa:"", note:""});
+    initDagRows();
+    renderPreview();
   }
 
-  function requestRecharge(e) {
-    e.preventDefault();
-    var amount = parseFloat(document.getElementById("recharge_amount").value);
-    var trxnId = document.getElementById("recharge_trxn").value.trim();
-    var fileInput = document.getElementById("recharge_screenshot");
-    var file = fileInput.files[0];
-    var user = sessionStorage.getItem("loggedInUser");
+  function removeDagRow(idx) {
+    dagRowsData.splice(idx, 1);
+    initDagRows();
+    renderPreview();
+  }
 
-    if (!amount || amount <= 0 || !trxnId || !file) {
-      alert("সকল তথ্য ও স্ক্রিনশট সঠিকভাবে দিন।");
+  function updateDagData(idx, field, val) {
+    dagRowsData[idx][field] = val;
+    renderPreview();
+  }
+
+  function renderPreview() {
+    var khatian = document.getElementById("in_khatian").value || "৪৮৫";
+    var page = document.getElementById("in_page").value || "১ এর ১";
+    var division = document.getElementById("in_division").value || "চট্টগ্রাম";
+    var district = document.getElementById("in_district").value || "নোয়াখালী";
+    var upazila = document.getElementById("in_upazila").value || "বেগমগঞ্জ";
+    var mouza = document.getElementById("in_mouza").value || "আলাদিনগর";
+    var jl = document.getElementById("in_jl").value || "বি আর এস";
+    var resa = document.getElementById("in_resa").value || "-";
+    var owner = document.getElementById("in_owner").value || "দং নজির আহম্মদ...";
+    var ownerShare = document.getElementById("in_owner_share").value || "১.০০০";
+    var note = document.getElementById("in_note").value || "";
+    var caseNote = document.getElementById("in_case_note").value || "";
+    var printDate = document.getElementById("in_print_date").value || "";
+
+    document.getElementById("prev_khatian").innerText = khatian;
+    document.getElementById("prev_page").innerText = page;
+    document.getElementById("prev_division").innerText = division;
+    document.getElementById("prev_district").innerText = district;
+    document.getElementById("prev_upazila").innerText = upazila;
+    document.getElementById("prev_mouza").innerText = mouza;
+    document.getElementById("prev_jl").innerText = jl;
+    document.getElementById("prev_resa").innerText = resa;
+    document.getElementById("prev_owner_share").innerText = ownerShare;
+    document.getElementById("prev_note").innerText = note;
+    document.getElementById("prev_case_note").innerText = caseNote;
+    document.getElementById("prev_print_date").innerText = printDate;
+
+    var tbody = document.getElementById("prev_table_body");
+    tbody.innerHTML = "";
+
+    var totalShataṁśa = 0;
+
+    dagRowsData.forEach((row, i) => {
+      var tr = document.createElement("tr");
+      if (i === 0) {
+        tr.innerHTML = `
+          <td rowspan="${dagRowsData.length}" class="owner-td">${escapeHtml(owner)}</td>
+          <td rowspan="${dagRowsData.length}">${escapeHtml(ownerShare)}</td>
+          <td rowspan="${dagRowsData.length}"></td>
+          <td>${escapeHtml(row.dag)}</td>
+          <td>${escapeHtml(row.class)}</td>
+          <td></td>
+          <td>${escapeHtml(row.a_ekr)}</td>
+          <td>${escapeHtml(row.a_shataṁśa)}</td>
+          <td>${escapeHtml(row.anśa)}</td>
+          <td>${escapeHtml(row.d_ekr)}</td>
+          <td>${escapeHtml(row.d_shataṁśa)}</td>
+          <td>${escapeHtml(row.note)}</td>
+        `;
+      } else {
+        tr.innerHTML = `
+          <td>${escapeHtml(row.dag)}</td>
+          <td>${escapeHtml(row.class)}</td>
+          <td></td>
+          <td>${escapeHtml(row.a_ekr)}</td>
+          <td>${escapeHtml(row.a_shataṁśa)}</td>
+          <td>${escapeHtml(row.anśa)}</td>
+          <td>${escapeHtml(row.d_ekr)}</td>
+          <td>${escapeHtml(row.d_shataṁśa)}</td>
+          <td>${escapeHtml(row.note)}</td>
+        `;
+      }
+      tbody.appendChild(tr);
+
+      var sh = parseFloat(row.d_shataṁśa) || 0;
+      totalShataṁśa += sh;
+    });
+
+    document.getElementById("in_total_land_sum").value = totalShataṁśa + " শতাংশ";
+    document.getElementById("prev_total_land_sum").innerText = totalShataṁśa + " শতাংশ";
+
+    var qrData = window.location.origin + window.location.pathname + "?k=" + encodeURIComponent(khatian) + "&m=" + encodeURIComponent(owner) + "&d=" + encodeURIComponent(dagRowsData.map(r=>r.dag).join(',')) + "&mz=" + encodeURIComponent(mouza) + "&u=" + encodeURIComponent(upazila) + "&dt=" + encodeURIComponent(district) + "&dv=" + encodeURIComponent(division);
+    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(qrData);
+
+    document.getElementById("preview_area").style.display = "block";
+  }
+
+  function saveKhatian() {
+    var khatian = document.getElementById("in_khatian").value;
+    if (!khatian) {
+      alert("খতিয়ান নং প্রদান করুন!");
       return;
     }
 
-    var reader = new FileReader();
-    reader.onload = function(event) {
-      var reqId = "REQ-" + Date.now();
-      db.ref("recharges/" + reqId).set({
-        id: reqId,
-        username: user,
-        amount: amount,
-        trxnId: trxnId,
-        screenshot: event.target.result,
-        status: "pending",
-        date: new Date().toLocaleString("bn-BD")
-      }).then(() => {
-        alert("রিচার্জ অনুরোধ পাঠানো হয়েছে।");
-        document.getElementById("recharge_amount").value = "";
-        document.getElementById("recharge_trxn").value = "";
-        fileInput.value = "";
-        closeRechargeModal();
-      });
+    var recordData = {
+      khatian: khatian,
+      mouza: document.getElementById("in_mouza").value,
+      total_land: document.getElementById("in_total_land_sum").value,
+      date: document.getElementById("in_print_date").value,
+      formData: {
+        page: document.getElementById("in_page").value,
+        division: document.getElementById("in_division").value,
+        district: document.getElementById("in_district").value,
+        upazila: document.getElementById("in_upazila").value,
+        mouza: document.getElementById("in_mouza").value,
+        jl: document.getElementById("in_jl").value,
+        resa: document.getElementById("in_resa").value,
+        owner: document.getElementById("in_owner").value,
+        owner_share: document.getElementById("in_owner_share").value,
+        note: document.getElementById("in_note").value,
+        case_note: document.getElementById("in_case_note").value,
+        print_date: document.getElementById("in_print_date").value,
+        dagRows: dagRowsData
+      }
     };
-    reader.readAsDataURL(file);
+
+    db.ref("khatian_records").push(recordData).then(() => {
+      alert("খতিয়ান সফলভাবে সংরক্ষণ করা হয়েছে!");
+      loadSavedKatians();
+    });
   }
 
-  function renderRechargeRequests() {
-    var tbody = document.getElementById("recharge_list");
-    if (!tbody) return;
+  function loadSavedKatians() {
+    var tbody = document.getElementById("khatian_list");
+    if(!tbody) return;
 
-    db.ref("recharges").on("value", snapshot => {
-      var requests = snapshot.val() || {};
+    db.ref("khatian_records").on("value", snapshot => {
       tbody.innerHTML = "";
-      var keys = Object.keys(requests);
-
-      if (keys.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8">কোনো অনুরোধ নেই</td></tr>`;
+      if(!snapshot.exists()) {
+        tbody.innerHTML = "<tr><td colspan='6'>কোনো খতিয়ান সংরক্ষিত নেই।</td></tr>";
         return;
       }
-
-      var idx = 1;
-      for (var k in requests) {
-        var req = requests[k];
+      var i = 1;
+      snapshot.forEach(child => {
+        var key = child.key;
+        var rec = child.val();
         var tr = document.createElement("tr");
-        var screenshotBtn = req.screenshot ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` : "নাই";
-
         tr.innerHTML = `
-          <td>${idx++}</td>
-          <td>${escapeHtml(req.username)}</td>
-          <td>৳ ${req.amount}</td>
-          <td>${escapeHtml(req.trxnId)}</td>
-          <td>${screenshotBtn}</td>
-          <td>${req.status === "pending" ? "<span style='color:orange;'>অপেক্ষমাণ</span>" : req.status === "approved" ? "<span style='color:green;'>অনুমোদিত</span>" : "<span style='color:red;'>বাতিল</span>"}</td>
-          <td>${req.date}</td>
+          <td>${i++}</td>
+          <td>${escapeHtml(rec.khatian)}</td>
+          <td>${escapeHtml(rec.mouza)}</td>
+          <td>${escapeHtml(rec.total_land)}</td>
+          <td>${escapeHtml(rec.date)}</td>
           <td>
-            ${req.status === "pending" ? `
-              <button class="btn-sm btn-save" onclick="approveRecharge('${req.id}', '${req.username}',${req.amount})">অনুমোদন</button>
-              <button class="btn-sm btn-del" onclick="rejectRecharge('${req.id}')">বাতিল</button>
-            ` : "-"}
+            <button class="btn-sm btn-edit" onclick="loadKhatianRecord('${key}')">লোড</button>
+            <button class="btn-sm btn-del" onclick="deleteKhatianRecord('${key}')">মুছুন</button>
           </td>
         `;
         tbody.appendChild(tr);
-      }
-    });
-  }
-
-  function filterSubadminRecharges(status, btn) {
-    currentFilterStatus = status;
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-    if(btn) btn.classList.add("active");
-    renderSubadminRechargeList();
-  }
-
-  function renderSubadminRechargeList() {
-    var tbody = document.getElementById("subadmin_recharge_list");
-    var user = sessionStorage.getItem("loggedInUser");
-    if (!tbody || !user) return;
-
-    db.ref("recharges").on("value", snapshot => {
-      var requests = snapshot.val() || {};
-      tbody.innerHTML = "";
-      var myRequests = [];
-      for (var k in requests) {
-        if (requests[k].username === user) {
-          if (currentFilterStatus === 'all' || requests[k].status === currentFilterStatus) {
-            myRequests.push(requests[k]);
-          }
-        }
-      }
-
-      if (myRequests.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6">কোনো রেকর্ড নেই</td></tr>`;
-        return;
-      }
-
-      var idx = 1;
-      myRequests.forEach(req => {
-        var tr = document.createElement("tr");
-        var screenshotBtn = req.screenshot ? `<button class="btn-sm btn-preview" onclick="openScreenshotModal('${req.screenshot}')">দেখুন</button>` : "নাই";
-        tr.innerHTML = `<td>${idx++}</td><td>৳ ${req.amount}</td><td>${escapeHtml(req.trxnId)}</td><td>${screenshotBtn}</td><td>${req.status}</td><td>${req.date}</td>`;
-        tbody.appendChild(tr);
       });
     });
   }
 
-  function approveRecharge(reqId, user, amount) {
-    db.ref("users/" + user + "/balance").once("value").then(snapshot => {
-      var currentBal = snapshot.val() || 0;
-      db.ref("users/" + user + "/balance").set(currentBal + amount);
-      db.ref("recharges/" + reqId + "/status").set("approved").then(() => {
-        alert("অনুমোদন সফল হয়েছে!");
-      });
+  function loadKhatianRecord(key) {
+    db.ref("khatian_records/" + key).once("value").then(snapshot => {
+      var rec = snapshot.val();
+      if(rec && rec.formData) {
+        var d = rec.formData;
+        document.getElementById("in_khatian").value = rec.khatian;
+        document.getElementById("in_page").value = d.page || "";
+        document.getElementById("in_division").value = d.division || "";
+        document.getElementById("in_district").value = d.district || "";
+        document.getElementById("in_upazila").value = d.upazila || "";
+        document.getElementById("in_mouza").value = d.mouza || "";
+        document.getElementById("in_jl").value = d.jl || "";
+        document.getElementById("in_resa").value = d.resa || "";
+        document.getElementById("in_owner").value = d.owner || "";
+        document.getElementById("in_owner_share").value = d.owner_share || "";
+        document.getElementById("in_note").value = d.note || "";
+        document.getElementById("in_case_note").value = d.case_note || "";
+        document.getElementById("in_print_date").value = d.print_date || "";
+        document.getElementById("in_record_id").value = key;
+
+        dagRowsData = d.dagRows || [];
+        initDagRows();
+        renderPreview();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
     });
   }
 
-  function rejectRecharge(reqId) {
-    db.ref("recharges/" + reqId + "/status").set("rejected").then(() => {
-      alert("বাতিল করা হয়েছে।");
-    });
+  function deleteKhatianRecord(key) {
+    if(confirm("এই খতিয়ানটি মুছে ফেলতে চান?")) {
+      db.ref("khatian_records/" + key).remove().then(() => {
+        alert("মুছে ফেলা হয়েছে!");
+      });
+    }
+  }
+
+  function resetKhatianForm() {
+    document.getElementById("khatianForm").reset();
+    document.getElementById("in_record_id").value = "";
+    dagRowsData = [{dag:"", class:"নাল", a_ekr:"", a_shataṁśa:"", d_ekr:"", d_shataṁśa:"", anśa:"", note:""}];
+    initDagRows();
+    renderPreview();
   }
 
   function payAndPrint() {
-    var role = sessionStorage.getItem("userRole");
     var user = sessionStorage.getItem("loggedInUser");
+    var role = sessionStorage.getItem("userRole");
 
     if (role === "admin") {
       window.print();
@@ -1910,11 +2205,14 @@
     db.ref("users/" + user + "/balance").once("value").then(snapshot => {
       var bal = snapshot.val() || 0;
       if (bal < printFee) {
-        alert("অপর্যাপ্ত ব্যালেন্স! প্রয়োজন: ৳" + printFee);
+        alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রিন্ট করার জন্য ন্যূনতম ৳" + printFee + " প্রয়োজন। দয়া করে রিচার্জ করুন।");
+        openRechargeModal();
         return;
       }
-      if (confirm("প্রিন্ট করার জন্য ৳" + printFee + " কাটা হবে। নিশ্চিত?")) {
-        db.ref("users/" + user + "/balance").set(bal - printFee).then(() => {
+
+      if (confirm("প্রিন্ট/ডাউনলোড বাবদ আপনার অ্যাকাউন্ট থেকে ৳" + printFee + " কাটা হবে।")) {
+        var newBal = bal - printFee;
+        db.ref("users/" + user + "/balance").set(newBal).then(() => {
           loadWallet();
           window.print();
         });
@@ -1922,247 +2220,22 @@
     });
   }
 
-  function initDefaultDags() {
-    var container = document.getElementById("dag_container");
-    if (container && container.children.length === 0) {
-      addDagRow({ dagNo: "৪১৫০" });
-    }
-  }
-
-  function addDagRow(data) {
-    data = data || {};
-    var container = document.getElementById("dag_container");
-    var row = document.createElement("div");
-    row.className = "dag-row";
-    row.innerHTML = `
-      <input type="text" class="d_share" placeholder="অংশ" value="${escapeHtml(data.share || '')}">
-      <input type="text" class="d_no" placeholder="দাগ" value="${escapeHtml(data.dagNo || '')}" oninput="renderPreview()">
-      <input type="text" class="d_agri" placeholder="কৃষি" value="${escapeHtml(data.landClassAgri || '')}">
-      <input type="text" class="d_nonagri" placeholder="অকৃষি" value="${escapeHtml(data.landClassNonAgri || '')}">
-      <input type="text" class="d_tot_acre" placeholder="মোট একর" value="${escapeHtml(data.totalAcre || '')}">
-      <input type="text" class="d_tot_per" placeholder="মোট শতাংশ" value="${escapeHtml(data.totalPercent || '')}">
-      <input type="text" class="d_dag_share" placeholder="অত্র অংশ" value="${escapeHtml(data.dagShare || '')}">
-      <input type="text" class="d_sh_acre" placeholder="অংশ একর" value="${escapeHtml(data.shareAcre || '')}">
-      <input type="text" class="d_sh_per" placeholder="অংশ শতাংশ" value="${escapeHtml(data.sharePercent || '')}" oninput="calculateTotalLand(); renderPreview();">
-      <input type="text" class="d_comment" placeholder="মন্তব্য" value="${escapeHtml(data.comment || '')}">
-      <button type="button" class="btn-sm btn-del" onclick="removeDagRow(this)">×</button>
-    `;
-    container.appendChild(row);
-    calculateTotalLand();
-  }
-
-  function removeDagRow(btn) {
-    btn.closest(".dag-row").remove();
-    calculateTotalLand();
-    renderPreview();
-  }
-
-  function getDagData() {
-    var rows = document.querySelectorAll("#dag_container .dag-row");
-    var list = [];
-    rows.forEach(function(row) {
-      list.push({
-        share: row.querySelector(".d_share")?.value.trim() || "",
-        dagNo: row.querySelector(".d_no")?.value.trim() || "",
-        landClassAgri: row.querySelector(".d_agri")?.value.trim() || "",
-        landClassNonAgri: row.querySelector(".d_nonagri")?.value.trim() || "",
-        totalAcre: row.querySelector(".d_tot_acre")?.value.trim() || "",
-        totalPercent: row.querySelector(".d_tot_per")?.value.trim() || "",
-        dagShare: row.querySelector(".d_dag_share")?.value.trim() || "",
-        shareAcre: row.querySelector(".d_sh_acre")?.value.trim() || "",
-        sharePercent: row.querySelector(".d_sh_per")?.value.trim() || "",
-        comment: row.querySelector(".d_comment")?.value.trim() || ""
-      });
-    });
-    return list;
-  }
-
-  function escapeHtml(val) {
-    return String(val || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  }
-
-  function getFormData() {
-    return {
-      id: document.getElementById("in_record_id")?.value.trim() || "",
-      khatian: document.getElementById("in_khatian")?.value.trim() || "",
-      page: document.getElementById("in_page")?.value.trim() || "",
-      division: document.getElementById("in_division")?.value.trim() || "",
-      district: document.getElementById("in_district")?.value.trim() || "",
-      upazila: document.getElementById("in_upazila")?.value.trim() || "",
-      mouza: document.getElementById("in_mouza")?.value.trim() || "",
-      jl: document.getElementById("in_jl")?.value.trim() || "",
-      resa: document.getElementById("in_resa")?.value.trim() || "-",
-      owner: document.getElementById("in_owner")?.value || "",
-      ownerShare: document.getElementById("in_owner_share")?.value.trim() || "",
-      totalLandSum: document.getElementById("in_total_land_sum")?.value.trim() || "০",
-      note: document.getElementById("in_note")?.value.trim() || "",
-      caseNote: document.getElementById("in_case_note")?.value.trim() || "",
-      printDate: document.getElementById("in_print_date")?.value.trim() || "",
-      dags: getDagData()
-    };
-  }
-
-  function generateQRUrl(data) {
-    var baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-    var params = new URLSearchParams({
-      k: data.khatian || "",
-      m: data.owner || "",
-      d: (data.dags && data.dags[0]) ? data.dags[0].dagNo : "",
-      s: data.jl || "",
-      mz: data.mouza || "",
-      u: (data.upazila || "") + " রাজস্ব সার্কেল",
-      dt: data.district || "",
-      dv: data.division || ""
-    });
-    return baseUrl + "?" + params.toString();
-  }
-
-  function saveKhatian() {
-    var data = getFormData();
-    if (!data.khatian || !data.owner) {
-      alert("খতিয়ান নম্বর এবং মালিকের নাম আবশ্যক!");
-      return;
-    }
-    if (!data.id) {
-      data.id = "KHT-" + Date.now().toString(36).toUpperCase();
-      document.getElementById("in_record_id").value = data.id;
-    }
-    db.ref("khatians/" + data.id).set(data).then(() => {
-      alert("খতিয়ান সফলভাবে সংরক্ষিত হয়েছে!");
-      renderList();
-    });
-  }
-
-  function renderList() {
-    var tbody = document.getElementById("khatian_list");
-    if (!tbody) return;
-
-    db.ref("khatians").on("value", snapshot => {
-      var records = snapshot.val() || {};
-      tbody.innerHTML = "";
-      var keys = Object.keys(records);
-
-      if (keys.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6">কোনো রেকর্ড নেই</td></tr>`;
-        return;
-      }
-
-      var idx = 1;
-      for (var k in records) {
-        var rec = records[k];
-        var tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${idx++}</td>
-          <td>${escapeHtml(rec.khatian)}</td>
-          <td>${escapeHtml(rec.mouza)}</td>
-          <td>${escapeHtml(rec.totalLandSum)}</td>
-          <td>${escapeHtml(rec.printDate)}</td>
-          <td>
-            <button class="btn-sm btn-edit" onclick="loadKhatian('${rec.id}')">এডিট</button>
-            <button class="btn-sm btn-prt" onclick="loadKhatian('${rec.id}'); payAndPrint();">প্রিন্ট</button>
-            <button class="btn-sm btn-del" onclick="deleteKhatian('${rec.id}')">মুছুন</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      }
-    });
-  }
-
-  function loadKhatian(id) {
-    db.ref("khatians/" + id).once("value").then(snapshot => {
-      var rec = snapshot.val();
-      if (!rec) return;
-
-      document.getElementById("in_record_id").value = rec.id || "";
-      document.getElementById("in_khatian").value = rec.khatian || "";
-      document.getElementById("in_page").value = rec.page || "";
-      document.getElementById("in_division").value = rec.division || "";
-      document.getElementById("in_district").value = rec.district || "";
-      document.getElementById("in_upazila").value = rec.upazila || "";
-      document.getElementById("in_mouza").value = rec.mouza || "";
-      document.getElementById("in_jl").value = rec.jl || "";
-      document.getElementById("in_resa").value = rec.resa || "-";
-      document.getElementById("in_owner").value = rec.owner || "";
-      document.getElementById("in_owner_share").value = rec.ownerShare || "";
-      document.getElementById("in_total_land_sum").value = rec.totalLandSum || "০";
-      document.getElementById("in_note").value = rec.note || "";
-      document.getElementById("in_case_note").value = rec.caseNote || "";
-      document.getElementById("in_print_date").value = rec.printDate || "";
-
-      var container = document.getElementById("dag_container");
-      container.innerHTML = "";
-      if (rec.dags && rec.dags.length) {
-        rec.dags.forEach(d => addDagRow(d));
-      } else {
-        addDagRow();
-      }
-      renderPreview();
-    });
-  }
-
-  function deleteKhatian(id) {
-    if (!confirm("মুছে ফেলতে চান?")) return;
-    db.ref("khatians/" + id).remove().then(() => renderList());
-  }
-
-  function renderPreview() {
-    calculateTotalLand();
-    var data = getFormData();
-    var setTxt = (id, val, def) => { var el = document.getElementById(id); if (el) el.innerText = val || def || ""; };
-
-    setTxt("prev_page", data.page, "১ এর ১");
-    setTxt("prev_khatian", data.khatian, "-");
-    setTxt("prev_division", data.division, "-");
-    setTxt("prev_district", data.district, "-");
-    setTxt("prev_upazila", data.upazila, "-");
-    setTxt("prev_mouza", data.mouza, "-");
-    setTxt("prev_jl", data.jl, "-");
-    setTxt("prev_resa", data.resa, "-");
-    setTxt("prev_note", data.note);
-    setTxt("prev_case_note", data.caseNote);
-    setTxt("prev_owner_share", data.ownerShare, "১.০০০");
-    setTxt("prev_total_land_sum", data.totalLandSum, "০");
-    setTxt("prev_print_date", data.printDate, "১৮ সেপ্টেম্বর, ২০২৬");
-
-    document.getElementById("preview_qr").src = QR_API + encodeURIComponent(generateQRUrl(data));
-
-    var tbody = document.getElementById("prev_table_body");
-    tbody.innerHTML = "";
-    var dags = data.dags.length ? data.dags : [{}];
-
-    dags.forEach((dag, idx) => {
-      var tr = document.createElement("tr");
-      var ownerCell = idx === 0 ? `<td rowspan="${dags.length}" class="owner-td">${escapeHtml(data.owner)}</td>` : '';
-      tr.innerHTML = `
-        ${ownerCell}
-        <td>${escapeHtml(dag.share)}</td><td></td>
-        <td>${escapeHtml(dag.dagNo)}</td>
-        <td>${escapeHtml(dag.landClassAgri)}</td>
-        <td>${escapeHtml(dag.landClassNonAgri)}</td>
-        <td>${escapeHtml(dag.totalAcre)}</td>
-        <td>${escapeHtml(dag.totalPercent)}</td>
-        <td>${escapeHtml(dag.dagShare)}</td>
-        <td>${escapeHtml(dag.shareAcre)}</td>
-        <td>${escapeHtml(dag.sharePercent)}</td>
-        <td>${escapeHtml(dag.comment)}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    document.getElementById("preview_area").style.display = "block";
-  }
-
   function closePreview() {
     document.getElementById("preview_area").style.display = "none";
   }
 
-  function resetKhatianForm() {
-    document.getElementById("khatianForm").reset();
-    document.getElementById("dag_container").innerHTML = "";
-    initDefaultDags();
-    closePreview();
+  function toBanglaDigits(n) {
+    var bnNums = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+    return n.toString().replace(/\d/g, x => bnNums[x]);
   }
-</script>
 
+  function escapeHtml(str) {
+    if(!str) return "";
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  initDagRows();
+</script>
 </body>
 </html>
+```[cite: 1]
