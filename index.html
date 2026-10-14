@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>খতিয়ান তথ্য ব্যবস্থাপনা ও অনলাইন প্রিন্ট সিস্টেম</title>
+  <!-- Safety-cleanup draft: login, wallet orders, and unverified external portals are temporarily disabled. -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <!-- Firebase SDKs -->
@@ -721,6 +722,9 @@
     <!-- LOGIN PANEL -->
     <div id="login_panel" style="max-width:400px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius:6px; background:#fafafa;">
       <h4 style="text-align:center;">সিস্টেম লগইন</h4>
+      <div role="status" style="margin:12px 0;padding:10px;border:1px solid #d99b22;border-radius:5px;background:#fff8e5;color:#6b4b00;font-size:13px;line-height:1.6;">
+        নিরাপত্তা যাচাইয়ের জন্য লগইন সাময়িকভাবে বন্ধ। আগের ডেমো পাসওয়ার্ড বা Firebase Database-এ রাখা সাধারণ পাসওয়ার্ড দিয়ে লগইন করবেন না। নিরাপদ Firebase Authentication ও Database Security Rules সেটআপের পরই এটি পুনরায় চালু করা উচিত।
+      </div>
       <form onsubmit="handleLogin(event)">
         <div class="form-group" style="margin-bottom:10px;">
           <label>ব্যবহারকারীর নাম:</label>
@@ -754,20 +758,17 @@
       <div class="free-links-container">
         <h4 style="margin-bottom: 5px; color: #1b5e20; border: none;"><i class="fas fa-gift"></i> সম্পূর্ণ ফ্রী সেবা পোর্টালসমূহ:</h4>
         <div class="free-links-grid">
-          <a href="https://mswservices.gov.bd/auth/login" target="_blank" class="free-link-card">
+          <a href="https://mswservices.gov.bd/auth/login" target="_blank" rel="noopener noreferrer" class="free-link-card">
             <i class="fas fa-hands-helping"></i> সমাজ সেবা পোর্টাল
           </a>
-          <a href="https://services.nidw.gov.bd/nid-pub/" target="_blank" class="free-link-card">
+          <a href="https://services.nidw.gov.bd/nid-pub/" target="_blank" rel="noopener noreferrer" class="free-link-card">
             <i class="fas fa-id-card"></i> জাতীয় পরিচয়পত্র পোর্টাল
           </a>
-          <a href="https://www.epassport.gov.bd/landing" target="_blank" class="free-link-card">
+          <a href="https://www.epassport.gov.bd/landing" target="_blank" rel="noopener noreferrer" class="free-link-card">
             <i class="fas fa-passport"></i> ই-পাসপোর্ট আবেদন
           </a>
-          <a href="https://everify.bdris.gov.bd/" target="_blank" class="free-link-card">
+          <a href="https://everify.bdris.gov.bd/" target="_blank" rel="noopener noreferrer" class="free-link-card">
             <i class="fas fa-certificate"></i> জন্ম/মৃত্যু নিবন্ধন ভেরিফাই
-          </a>
-          <a href="https://sebabari.shop/free.php" target="_blank" class="free-link-card">
-            <i class="fas fa-globe"></i> সেবা বাড়ি ফ্রি পেজ
           </a>
         </div>
       </div>
@@ -1067,7 +1068,7 @@
                 <input type="number" id="bs_service_amount" placeholder="যেমন: ৫০">
               </div>
             </div>
-            <button type="button" class="btn btn-save" onclick="submitCustomOrder('ভূমি সেবা', 'bs_service_name', 'bs_service_amount', 'bhumisheba_iframe_container', 'https://app.bhumisheba.com/pages/home.php')">
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('ভূমি সেবা', 'bs_service_name', 'bs_service_amount', 'bhumisheba_iframe_container', '')">
               <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
             </button>
           </div>
@@ -1098,7 +1099,7 @@
                 <input type="number" id="sb_service_amount" placeholder="যেমন: ৩০">
               </div>
             </div>
-            <button type="button" class="btn btn-save" onclick="submitCustomOrder('Sebabox', 'sb_service_name', 'sb_service_amount', 'sebabox_iframe_container', 'https://sebabox.info/index.php')">
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('Sebabox', 'sb_service_name', 'sb_service_amount', 'sebabox_iframe_container', '')">
               <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
             </button>
           </div>
@@ -1129,7 +1130,7 @@
                 <input type="number" id="bb_service_amount" placeholder="যেমন: ৪০">
               </div>
             </div>
-            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BestBuy', 'bb_service_name', 'bb_service_amount', 'bestbuy_iframe_container', 'https://user.bestbuy-public.top/user-login?')">
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BestBuy', 'bb_service_name', 'bb_service_amount', 'bestbuy_iframe_container', '')">
               <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
             </button>
           </div>
@@ -1160,7 +1161,7 @@
                 <input type="number" id="bf_service_amount" placeholder="যেমন: ২৫">
               </div>
             </div>
-            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BDFast', 'bf_service_name', 'bf_service_amount', 'bdfast_iframe_container', 'https://www.bdfastservice.xyz/login.php')">
+            <button type="button" class="btn btn-save" onclick="submitCustomOrder('BDFast', 'bf_service_name', 'bf_service_amount', 'bdfast_iframe_container', '')">
               <i class="fas fa-paper-plane"></i> অর্ডার সাবমিট করুন
             </button>
           </div>
@@ -1460,58 +1461,14 @@
     if (sectionId === 'bdfast_section') document.getElementById('tab_bdfast_btn').classList.add("active");
   }
 
-  /* ==================== PENDING ORDER & DEDUCTION SYSTEM ==================== */
+  /* TEMPORARILY DISABLED: unverified third-party service destinations and client-side
+     wallet deductions are disabled until the destinations and server-side authorization are reviewed. */
   function submitCustomOrder(category, nameInputId, amountInputId, containerId, targetUrl) {
-    var user = sessionStorage.getItem("loggedInUser");
-    var role = sessionStorage.getItem("userRole");
-    var serviceDetails = document.getElementById(nameInputId).value.trim();
-    var amount = parseFloat(document.getElementById(amountInputId).value);
-
-    if (!serviceDetails || isNaN(amount) || amount <= 0) {
-      alert("সঠিক সার্ভিসের বিবরণ এবং ফি প্রদান করুন!");
-      return;
-    }
-
-    if (role !== "admin") {
-      db.ref("users/" + user + "/balance").once("value").then(function(snapshot) {
-        var currentBalance = snapshot.val() || 0;
-        if (currentBalance < amount) {
-          alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳" + amount + "। দয়া করে রিচার্জ করুন।");
-          return;
-        }
-
-        if (confirm("এই সেবার জন্য আপনার অ্যাকাউন্ট থেকে ৳" + amount + " কাটা হবে। আপনি কি অর্ডার নিশ্চিত করতে চান?")) {
-          var newBalance = currentBalance - amount;
-          db.ref("users/" + user + "/balance").set(newBalance).then(function() {
-            saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
-          });
-        }
-      });
-    } else {
-      saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl);
-    }
+    alert("নিরাপত্তা যাচাই চলায় এই থার্ড-পার্টি সেবা ও অর্ডার সাময়িকভাবে বন্ধ রাখা হয়েছে। যাচাইকৃত সেবা ও নিরাপদ সার্ভার-সাইড পেমেন্ট ব্যবস্থা যুক্ত না করা পর্যন্ত কোনো টাকা কাটা হবে না।");
   }
 
   function saveOrderToDB(user, category, serviceDetails, amount, containerId, targetUrl) {
-    var orderData = {
-      requestedBy: user,
-      serviceCategory: category,
-      serviceDetails: serviceDetails,
-      amount: amount,
-      targetUrl: targetUrl,
-      containerId: containerId,
-      status: "pending",
-      date: new Date().toLocaleString("bn-BD"),
-      timestamp: firebase.database.ServerValue.TIMESTAMP
-    };
-
-    db.ref("bhumisheba_orders").push(orderData).then(function() {
-      alert("আপনার অর্ডারটি সফলভাবে জমা দেওয়া হয়েছে এবং এডমিন অনুমোদনের অপেক্ষায় রয়েছে।");
-      document.getElementById(containerId.replace('_iframe_container', '_service_name')).value = "";
-      loadWallet();
-    }).catch(function(error) {
-      alert("অর্ডার দিতে ত্রুটি: " + error.message);
-    });
+    alert("নিরাপত্তা যাচাই চলায় অর্ডার সংরক্ষণ বন্ধ রাখা হয়েছে।");
   }
 
   function loadPendingOrdersForAdmin() {
@@ -1614,17 +1571,9 @@
 
   function activatePortalFrame(containerId, targetUrl) {
     var container = document.getElementById(containerId);
-    if(!container) return;
+    if (!container) return;
     container.style.display = "block";
-    container.innerHTML = `
-      <div style="text-align:center; padding: 30px; background: #f8f9fa; border: 2px dashed #28a745; border-radius: 8px;">
-        <h3 style="color: #28a745; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> সেবা সফলভাবে সক্রিয় করা হয়েছে</h3>
-        <p style="margin-bottom: 15px;">নিচের বাটনে ক্লিক করে পোর্টালে প্রবেশ করুন:</p>
-        <a href="${targetUrl}" target="_blank" class="btn btn-save" style="text-decoration:none; font-size:15px; padding: 10px 20px;">
-          <i class="fas fa-external-link-alt"></i> সরাসরি পোর্টালে যান
-        </a>
-      </div>
-    `;
+    container.textContent = "নিরাপত্তা যাচাই সম্পন্ন না হওয়া পর্যন্ত বাহ্যিক পোর্টাল লিংক নিষ্ক্রিয় রাখা হয়েছে।";
   }
 
   function loadPublicViewData(params) {
@@ -1705,31 +1654,11 @@
     };
   }
 
-  /* FIREBASE LOGIN SYSTEM */
+  /* TEMPORARILY DISABLED: insecure client-side login was found during safety cleanup.
+     Re-enable only after Firebase Authentication and restrictive database rules are configured. */
   function handleLogin(e) {
     e.preventDefault();
-    var user = document.getElementById("username").value.trim();
-    var pass = document.getElementById("password").value;
-
-    if (user === "admin" && pass === "12345") {
-      sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("loggedInUser", "admin");
-      sessionStorage.setItem("userRole", "admin");
-      checkAuth();
-      return;
-    }
-
-    db.ref("users/" + user).once("value").then(snapshot => {
-      var userData = snapshot.val();
-      if (userData && userData.password === pass) {
-        sessionStorage.setItem("isLoggedIn", "true");
-        sessionStorage.setItem("loggedInUser", user);
-        sessionStorage.setItem("userRole", userData.role || "subadmin");
-        checkAuth();
-      } else {
-        alert("ভুল ব্যবহারকারীর নাম অথবা পাসওয়ার্ড!");
-      }
-    });
+    alert("নিরাপত্তার কারণে লগইন সাময়িকভাবে বন্ধ রাখা হয়েছে। Firebase Authentication এবং Database Security Rules ঠিক করার পর লগইন চালু করতে হবে।");
   }
 
   function handleLogout() {
